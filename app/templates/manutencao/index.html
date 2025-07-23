@@ -1,0 +1,503 @@
+{% extends "base.html" %}
+
+{% block title %}Manutenção{% endblock %}
+
+{% block content %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        <i class="fas fa-tools me-2"></i>Gestão de Manutenção
+    </h1>
+    <div>
+        <a href="{{ url_for('manutencao.nova_os') }}" class="btn btn-primary btn-sm">
+            <i class="fas fa-plus me-1"></i>Nova OS
+        </a>
+        <a href="{{ url_for('manutencao.equipamentos') }}" class="btn btn-outline-primary btn-sm">
+            <i class="fas fa-cog me-1"></i>Equipamentos
+        </a>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            OS Abertas
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">15</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-wrench fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Preventivas Agendadas
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">8</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-calendar-check fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-danger shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                            Equipamentos Parados
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">3</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            MTBF Médio (horas)
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">168</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-chart-line fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Ações Rápidas</h6>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-2">
+                        <a href="#" class="btn btn-outline-primary btn-block" onclick="abrirOS('corretiva')">
+                            <i class="fas fa-tools fa-2x mb-2"></i><br>
+                            OS Corretiva
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="#" class="btn btn-outline-success btn-block" onclick="abrirOS('preventiva')">
+                            <i class="fas fa-calendar-check fa-2x mb-2"></i><br>
+                            OS Preventiva
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="#" class="btn btn-outline-info btn-block" onclick="consultarEquipamento()">
+                            <i class="fas fa-search fa-2x mb-2"></i><br>
+                            Consultar Equipamento
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="#" class="btn btn-outline-warning btn-block" onclick="agendarManutencao()">
+                            <i class="fas fa-clock fa-2x mb-2"></i><br>
+                            Agendar Manutenção
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="#" class="btn btn-outline-secondary btn-block" onclick="relatorioPecas()">
+                            <i class="fas fa-boxes fa-2x mb-2"></i><br>
+                            Relatório Peças
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="#" class="btn btn-outline-dark btn-block" onclick="indicadoresKPI()">
+                            <i class="fas fa-chart-bar fa-2x mb-2"></i><br>
+                            Indicadores KPI
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- OS Recentes e Equipamentos Críticos -->
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Ordens de Serviço Recentes</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>OS</th>
+                                <th>Equipamento</th>
+                                <th>Tipo</th>
+                                <th>Prioridade</th>
+                                <th>Status</th>
+                                <th>Data Abertura</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><a href="#" class="text-decoration-none">OS-2025-001</a></td>
+                                <td>Torno CNC-001</td>
+                                <td><span class="badge bg-danger">Corretiva</span></td>
+                                <td><span class="badge bg-danger">Alta</span></td>
+                                <td><span class="badge bg-warning">Em Andamento</span></td>
+                                <td>20/01/2025</td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <button class="btn btn-sm btn-info" title="Visualizar">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-success" title="Finalizar">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><a href="#" class="text-decoration-none">OS-2025-002</a></td>
+                                <td>Prensa Hidráulica-002</td>
+                                <td><span class="badge bg-success">Preventiva</span></td>
+                                <td><span class="badge bg-info">Média</span></td>
+                                <td><span class="badge bg-secondary">Agendada</span></td>
+                                <td>21/01/2025</td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <button class="btn btn-sm btn-info" title="Visualizar">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-warning" title="Iniciar">
+                                            <i class="fas fa-play"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><a href="#" class="text-decoration-none">OS-2025-003</a></td>
+                                <td>Compressor-001</td>
+                                <td><span class="badge bg-warning">Preditiva</span></td>
+                                <td><span class="badge bg-success">Baixa</span></td>
+                                <td><span class="badge bg-success">Concluída</span></td>
+                                <td>19/01/2025</td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <button class="btn btn-sm btn-info" title="Visualizar">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-secondary" title="Relatório">
+                                            <i class="fas fa-file-alt"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Equipamentos Críticos</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span>Torno CNC-001</span>
+                        <span class="badge bg-danger">Parado</span>
+                    </div>
+                    <div class="progress mb-1" style="height: 6px;">
+                        <div class="progress-bar bg-danger" style="width: 0%"></div>
+                    </div>
+                    <small class="text-muted">Última manutenção: 15/01/2025</small>
+                </div>
+
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span>Prensa Hidráulica-002</span>
+                        <span class="badge bg-warning">Atenção</span>
+                    </div>
+                    <div class="progress mb-1" style="height: 6px;">
+                        <div class="progress-bar bg-warning" style="width: 75%"></div>
+                    </div>
+                    <small class="text-muted">Próxima manutenção: 25/01/2025</small>
+                </div>
+
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span>Soldadora-003</span>
+                        <span class="badge bg-success">Normal</span>
+                    </div>
+                    <div class="progress mb-1" style="height: 6px;">
+                        <div class="progress-bar bg-success" style="width: 40%"></div>
+                    </div>
+                    <small class="text-muted">Próxima manutenção: 05/02/2025</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Agenda de Manutenções</h6>
+            </div>
+            <div class="card-body">
+                <div class="calendar-mini">
+                    <div class="mb-2">
+                        <strong>Hoje (21/01)</strong>
+                        <div class="ms-3">
+                            <small class="text-warning">
+                                <i class="fas fa-wrench me-1"></i>Lubrificação Prensa-002
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-2">
+                        <strong>Amanhã (22/01)</strong>
+                        <div class="ms-3">
+                            <small class="text-info">
+                                <i class="fas fa-cog me-1"></i>Inspeção Compressor-001
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-2">
+                        <strong>25/01</strong>
+                        <div class="ms-3">
+                            <small class="text-success">
+                                <i class="fas fa-tools me-1"></i>Revisão Geral Torno-004
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Gráficos de Indicadores -->
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Tipos de Manutenção (Últimos 30 dias)</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="tiposManutencaoChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Disponibilidade de Equipamentos</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="disponibilidadeChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Nova OS Rápida -->
+<div class="modal fade" id="novaOSModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nova Ordem de Serviço</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="novaOSForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="tipoOS" class="form-label">Tipo de OS</label>
+                                <select class="form-select" id="tipoOS" required>
+                                    <option value="">Selecione...</option>
+                                    <option value="corretiva">Corretiva</option>
+                                    <option value="preventiva">Preventiva</option>
+                                    <option value="preditiva">Preditiva</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="prioridadeOS" class="form-label">Prioridade</label>
+                                <select class="form-select" id="prioridadeOS" required>
+                                    <option value="baixa">Baixa</option>
+                                    <option value="media" selected>Média</option>
+                                    <option value="alta">Alta</option>
+                                    <option value="critica">Crítica</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="equipamentoOS" class="form-label">Equipamento</label>
+                        <select class="form-select" id="equipamentoOS" required>
+                            <option value="">Selecione um equipamento...</option>
+                            <option value="torno-001">Torno CNC-001</option>
+                            <option value="prensa-002">Prensa Hidráulica-002</option>
+                            <option value="compressor-001">Compressor-001</option>
+                            <option value="soldadora-003">Soldadora-003</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="descricaoOS" class="form-label">Descrição do Problema/Serviço</label>
+                        <textarea class="form-control" id="descricaoOS" rows="3" required></textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="solicitanteOS" class="form-label">Solicitante</label>
+                                <input type="text" class="form-control" id="solicitanteOS" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="dataAgendamentoOS" class="form-label">Data de Agendamento</label>
+                                <input type="datetime-local" class="form-control" id="dataAgendamentoOS">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="salvarOS()">Criar OS</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Gráfico de tipos de manutenção
+const ctx1 = document.getElementById('tiposManutencaoChart').getContext('2d');
+new Chart(ctx1, {
+    type: 'doughnut',
+    data: {
+        labels: ['Corretiva', 'Preventiva', 'Preditiva'],
+        datasets: [{
+            data: [45, 35, 20],
+            backgroundColor: [
+                '#e74a3b',
+                '#1cc88a',
+                '#36b9cc'
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+// Gráfico de disponibilidade
+const ctx2 = document.getElementById('disponibilidadeChart').getContext('2d');
+new Chart(ctx2, {
+    type: 'bar',
+    data: {
+        labels: ['Torno CNC-001', 'Prensa-002', 'Compressor-001', 'Soldadora-003'],
+        datasets: [{
+            label: 'Disponibilidade (%)',
+            data: [0, 85, 95, 92],
+            backgroundColor: ['#e74a3b', '#f6c23e', '#1cc88a', '#1cc88a']
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: 100,
+                ticks: {
+                    callback: function(value) {
+                        return value + '%';
+                    }
+                }
+            }
+        }
+    }
+});
+
+function abrirOS(tipo) {
+    document.getElementById('tipoOS').value = tipo;
+    new bootstrap.Modal(document.getElementById('novaOSModal')).show();
+}
+
+function salvarOS() {
+    const tipo = document.getElementById('tipoOS').value;
+    const equipamento = document.getElementById('equipamentoOS').value;
+    const descricao = document.getElementById('descricaoOS').value;
+    
+    if (!tipo || !equipamento || !descricao) {
+        showNotification('Preencha todos os campos obrigatórios.', 'warning');
+        return;
+    }
+    
+    // Simular criação da OS
+    showNotification('OS criada com sucesso!', 'success');
+    bootstrap.Modal.getInstance(document.getElementById('novaOSModal')).hide();
+    setTimeout(() => location.reload(), 1500);
+}
+
+function consultarEquipamento() {
+    showNotification('Abrindo consulta de equipamentos...', 'info');
+}
+
+function agendarManutencao() {
+    showNotification('Abrindo agenda de manutenção...', 'info');
+}
+
+function relatorioPecas() {
+    showNotification('Gerando relatório de peças...', 'info');
+}
+
+function indicadoresKPI() {
+    showNotification('Abrindo indicadores KPI...', 'info');
+}
+</script>
+{% endblock %}

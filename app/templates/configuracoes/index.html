@@ -1,0 +1,778 @@
+{% extends "base.html" %}
+
+{% block title %}Configurações do Sistema{% endblock %}
+
+{% block content %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        <i class="fas fa-cog me-2"></i>Configurações do Sistema
+    </h1>
+    <div>
+        <button class="btn btn-success btn-sm" onclick="salvarTodasConfiguracoes()">
+            <i class="fas fa-save me-1"></i>Salvar Alterações
+        </button>
+        <button class="btn btn-outline-secondary btn-sm" onclick="resetarConfiguracoes()">
+            <i class="fas fa-undo me-1"></i>Restaurar Padrões
+        </button>
+    </div>
+</div>
+
+<!-- Navegação por Abas -->
+<div class="card shadow">
+    <div class="card-header py-3">
+        <ul class="nav nav-tabs card-header-tabs" id="configTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="geral-tab" data-bs-toggle="tab" data-bs-target="#geral" type="button" role="tab">
+                    <i class="fas fa-cog me-1"></i>Geral
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="empresa-tab" data-bs-toggle="tab" data-bs-target="#empresa" type="button" role="tab">
+                    <i class="fas fa-building me-1"></i>Empresa
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="usuarios-tab" data-bs-toggle="tab" data-bs-target="#usuarios" type="button" role="tab">
+                    <i class="fas fa-users me-1"></i>Usuários
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="sistema-tab" data-bs-toggle="tab" data-bs-target="#sistema" type="button" role="tab">
+                    <i class="fas fa-server me-1"></i>Sistema
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="seguranca-tab" data-bs-toggle="tab" data-bs-target="#seguranca" type="button" role="tab">
+                    <i class="fas fa-shield-alt me-1"></i>Segurança
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="backup-tab" data-bs-toggle="tab" data-bs-target="#backup" type="button" role="tab">
+                    <i class="fas fa-database me-1"></i>Backup
+                </button>
+            </li>
+        </ul>
+    </div>
+    <div class="card-body">
+        <div class="tab-content" id="configTabsContent">
+            <!-- Configurações Gerais -->
+            <div class="tab-pane fade show active" id="geral" role="tabpanel">
+                <h5><i class="fas fa-cog me-2"></i>Configurações Gerais</h5>
+                <hr>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Aparência</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="tema" class="form-label">Tema do Sistema</label>
+                                    <select class="form-select" id="tema">
+                                        <option value="claro" selected>Claro</option>
+                                        <option value="escuro">Escuro</option>
+                                        <option value="auto">Automático</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="corPrimaria" class="form-label">Cor Primária</label>
+                                    <input type="color" class="form-control form-control-color" id="corPrimaria" value="#4e73df">
+                                </div>
+                                
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="modoCompacto">
+                                    <label class="form-check-label" for="modoCompacto">
+                                        Modo Compacto
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Localização</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="idioma" class="form-label">Idioma</label>
+                                    <select class="form-select" id="idioma">
+                                        <option value="pt-BR" selected>Português (Brasil)</option>
+                                        <option value="en-US">English (US)</option>
+                                        <option value="es-ES">Español</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="fuso" class="form-label">Fuso Horário</label>
+                                    <select class="form-select" id="fuso">
+                                        <option value="America/Sao_Paulo" selected>São Paulo (GMT-3)</option>
+                                        <option value="America/New_York">New York (GMT-5)</option>
+                                        <option value="Europe/London">London (GMT+0)</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="moeda" class="form-label">Moeda Padrão</label>
+                                    <select class="form-select" id="moeda">
+                                        <option value="BRL" selected>Real (R$)</option>
+                                        <option value="USD">Dólar ($)</option>
+                                        <option value="EUR">Euro (€)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Informações da Empresa -->
+            <div class="tab-pane fade" id="empresa" role="tabpanel">
+                <h5><i class="fas fa-building me-2"></i>Informações da Empresa</h5>
+                <hr>
+                
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Dados da Empresa</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="mb-3">
+                                            <label for="nomeEmpresa" class="form-label">Nome da Empresa</label>
+                                            <input type="text" class="form-control" id="nomeEmpresa" value="Corrigindo à Rota Industria Ltda.">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label for="cnpj" class="form-label">CNPJ</label>
+                                            <input type="text" class="form-control" id="cnpj" value="12.345.678/0001-90">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="mb-3">
+                                            <label for="endereco" class="form-label">Endereço</label>
+                                            <input type="text" class="form-control" id="endereco" value="Rua da Indústria, 1000">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label for="cidade" class="form-label">Cidade</label>
+                                            <input type="text" class="form-control" id="cidade" value="São Paulo">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label for="telefone" class="form-label">Telefone</label>
+                                            <input type="text" class="form-control" id="telefone" value="(11) 3000-0000">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="mb-3">
+                                            <label for="email" class="form-label">E-mail</label>
+                                            <input type="email" class="form-control" id="email" value="contato@corrigindoarota.com.br">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Logo da Empresa</h6>
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="mb-3">
+                                    <img src="/static/img/logo-placeholder.png" alt="Logo" class="img-fluid" style="max-height: 120px;">
+                                </div>
+                                <button class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-upload me-1"></i>Alterar Logo
+                                </button>
+                                <div class="mt-2">
+                                    <small class="text-muted">Tamanho recomendado: 200x80px</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gestão de Usuários -->
+            <div class="tab-pane fade" id="usuarios" role="tabpanel">
+                <h5><i class="fas fa-users me-2"></i>Gestão de Usuários</h5>
+                <hr>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Políticas de Senha</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="tamanhoMinimo" class="form-label">Tamanho Mínimo</label>
+                                    <input type="number" class="form-control" id="tamanhoMinimo" value="8" min="6" max="20">
+                                </div>
+                                
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="exigirMaiuscula" checked>
+                                    <label class="form-check-label" for="exigirMaiuscula">
+                                        Exigir letra maiúscula
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="exigirNumero" checked>
+                                    <label class="form-check-label" for="exigirNumero">
+                                        Exigir pelo menos um número
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="exigirEspecial">
+                                    <label class="form-check-label" for="exigirEspecial">
+                                        Exigir caractere especial
+                                    </label>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="expiracaoSenha" class="form-label">Expiração (dias)</label>
+                                    <input type="number" class="form-control" id="expiracaoSenha" value="90">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Controle de Acesso</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="tentativasLogin" class="form-label">Máximo de Tentativas de Login</label>
+                                    <input type="number" class="form-control" id="tentativasLogin" value="5" min="3" max="10">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="tempoBloqueio" class="form-label">Tempo de Bloqueio (minutos)</label>
+                                    <input type="number" class="form-control" id="tempoBloqueio" value="30">
+                                </div>
+                                
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="2fa">
+                                    <label class="form-check-label" for="2fa">
+                                        Autenticação de 2 fatores
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="ssoEnabled">
+                                    <label class="form-check-label" for="ssoEnabled">
+                                        Single Sign-On (SSO)
+                                    </label>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="sessaoTimeout" class="form-label">Timeout de Sessão (horas)</label>
+                                    <input type="number" class="form-control" id="sessaoTimeout" value="8" min="1" max="24">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Lista de Usuários Ativos -->
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">Usuários Ativos no Sistema</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Usuário</th>
+                                        <th>Perfil</th>
+                                        <th>Último Login</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>admin@sistema.com</td>
+                                        <td><span class="badge bg-danger">Admin</span></td>
+                                        <td>21/01/2025 14:30</td>
+                                        <td><span class="badge bg-success">Ativo</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-warning" onclick="resetarSenha('admin')">
+                                                <i class="fas fa-key"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-info" onclick="verSessoes('admin')">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>joao.silva@empresa.com</td>
+                                        <td><span class="badge bg-primary">Gestor</span></td>
+                                        <td>21/01/2025 09:15</td>
+                                        <td><span class="badge bg-success">Ativo</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-warning" onclick="resetarSenha('joao')">
+                                                <i class="fas fa-key"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-info" onclick="verSessoes('joao')">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configurações do Sistema -->
+            <div class="tab-pane fade" id="sistema" role="tabpanel">
+                <h5><i class="fas fa-server me-2"></i>Configurações do Sistema</h5>
+                <hr>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Performance</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="cacheTimeout" class="form-label">Cache Timeout (minutos)</label>
+                                    <input type="number" class="form-control" id="cacheTimeout" value="30">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="maxUpload" class="form-label">Tamanho Máximo de Upload (MB)</label>
+                                    <input type="number" class="form-control" id="maxUpload" value="16">
+                                </div>
+                                
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="compressionEnabled" checked>
+                                    <label class="form-check-label" for="compressionEnabled">
+                                        Compressão GZIP
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="cdnEnabled">
+                                    <label class="form-check-label" for="cdnEnabled">
+                                        CDN para arquivos estáticos
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Logs e Monitoramento</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="logLevel" class="form-label">Nível de Log</label>
+                                    <select class="form-select" id="logLevel">
+                                        <option value="DEBUG">Debug</option>
+                                        <option value="INFO" selected>Info</option>
+                                        <option value="WARNING">Warning</option>
+                                        <option value="ERROR">Error</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="logRetention" class="form-label">Retenção de Logs (dias)</label>
+                                    <input type="number" class="form-control" id="logRetention" value="30">
+                                </div>
+                                
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="auditEnabled" checked>
+                                    <label class="form-check-label" for="auditEnabled">
+                                        Log de Auditoria
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="errorNotification" checked>
+                                    <label class="form-check-label" for="errorNotification">
+                                        Notificação de Erros
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Informações do Sistema -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">Informações do Sistema</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <strong>Versão do Sistema:</strong><br>
+                                <span class="text-muted">v1.0.0</span>
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Última Atualização:</strong><br>
+                                <span class="text-muted">15/01/2025</span>
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Uptime:</strong><br>
+                                <span class="text-muted">7 dias, 14h 32m</span>
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Usuários Online:</strong><br>
+                                <span class="text-muted">12 usuários</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Segurança -->
+            <div class="tab-pane fade" id="seguranca" role="tabpanel">
+                <h5><i class="fas fa-shield-alt me-2"></i>Configurações de Segurança</h5>
+                <hr>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Proteção de Dados</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="encryptionEnabled" checked>
+                                    <label class="form-check-label" for="encryptionEnabled">
+                                        <strong>Criptografia de Dados</strong><br>
+                                        <small class="text-muted">Criptografar dados sensíveis no banco</small>
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="httpsOnly" checked>
+                                    <label class="form-check-label" for="httpsOnly">
+                                        <strong>HTTPS Obrigatório</strong><br>
+                                        <small class="text-muted">Forçar conexões seguras</small>
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="corsEnabled">
+                                    <label class="form-check-label" for="corsEnabled">
+                                        <strong>CORS Habilitado</strong><br>
+                                        <small class="text-muted">Permitir requisições cross-origin</small>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Monitoramento de Segurança</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="intrusionDetection" checked>
+                                    <label class="form-check-label" for="intrusionDetection">
+                                        <strong>Detecção de Intrusão</strong><br>
+                                        <small class="text-muted">Monitorar tentativas suspeitas</small>
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="ipWhitelist">
+                                    <label class="form-check-label" for="ipWhitelist">
+                                        <strong>Lista Branca de IPs</strong><br>
+                                        <small class="text-muted">Restringir acesso por IP</small>
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="rateLimiting" checked>
+                                    <label class="form-check-label" for="rateLimiting">
+                                        <strong>Rate Limiting</strong><br>
+                                        <small class="text-muted">Limitar requisições por minuto</small>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Logs de Segurança -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">Logs de Segurança Recentes</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Timestamp</th>
+                                        <th>Evento</th>
+                                        <th>Usuário/IP</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>21/01/2025 14:30:15</td>
+                                        <td>Login bem-sucedido</td>
+                                        <td>admin@sistema.com (192.168.1.100)</td>
+                                        <td><span class="badge bg-success">Sucesso</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>21/01/2025 13:45:22</td>
+                                        <td>Tentativa de login falhada</td>
+                                        <td>unknown@test.com (203.0.113.45)</td>
+                                        <td><span class="badge bg-warning">Falha</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>21/01/2025 12:15:08</td>
+                                        <td>Alteração de configuração</td>
+                                        <td>admin@sistema.com (192.168.1.100)</td>
+                                        <td><span class="badge bg-info">Info</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Backup -->
+            <div class="tab-pane fade" id="backup" role="tabpanel">
+                <h5><i class="fas fa-database me-2"></i>Backup e Recuperação</h5>
+                <hr>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Configurações de Backup</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="backupAutomatico" checked>
+                                    <label class="form-check-label" for="backupAutomatico">
+                                        <strong>Backup Automático</strong>
+                                    </label>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="frequenciaBackup" class="form-label">Frequência</label>
+                                    <select class="form-select" id="frequenciaBackup">
+                                        <option value="diario" selected>Diário</option>
+                                        <option value="semanal">Semanal</option>
+                                        <option value="mensal">Mensal</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="horarioBackup" class="form-label">Horário</label>
+                                    <input type="time" class="form-control" id="horarioBackup" value="02:00">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="retencaoBackup" class="form-label">Retenção (dias)</label>
+                                    <input type="number" class="form-control" id="retencaoBackup" value="30">
+                                </div>
+                                
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="backupNuvem">
+                                    <label class="form-check-label" for="backupNuvem">
+                                        <strong>Backup na Nuvem</strong>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Ações de Backup</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-primary" onclick="executarBackup()">
+                                        <i class="fas fa-play me-2"></i>Executar Backup Agora
+                                    </button>
+                                    
+                                    <button class="btn btn-success" onclick="verificarBackup()">
+                                        <i class="fas fa-check me-2"></i>Verificar Integridade
+                                    </button>
+                                    
+                                    <button class="btn btn-warning" onclick="restaurarBackup()">
+                                        <i class="fas fa-undo me-2"></i>Restaurar Backup
+                                    </button>
+                                    
+                                    <button class="btn btn-info" onclick="downloadBackup()">
+                                        <i class="fas fa-download me-2"></i>Download Backup
+                                    </button>
+                                </div>
+                                
+                                <div class="mt-3">
+                                    <h6>Status do Último Backup</h6>
+                                    <div class="alert alert-success">
+                                        <i class="fas fa-check-circle me-2"></i>
+                                        Backup realizado com sucesso<br>
+                                        <small>21/01/2025 02:00:00 - Tamanho: 156.8 MB</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Histórico de Backups -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">Histórico de Backups</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Data/Hora</th>
+                                        <th>Tipo</th>
+                                        <th>Tamanho</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>21/01/2025 02:00:00</td>
+                                        <td><span class="badge bg-primary">Automático</span></td>
+                                        <td>156.8 MB</td>
+                                        <td><span class="badge bg-success">Sucesso</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info" onclick="downloadBackupEspecifico('backup_210125')">
+                                                <i class="fas fa-download"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-warning" onclick="restaurarBackupEspecifico('backup_210125')">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>20/01/2025 02:00:00</td>
+                                        <td><span class="badge bg-primary">Automático</span></td>
+                                        <td>154.2 MB</td>
+                                        <td><span class="badge bg-success">Sucesso</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info" onclick="downloadBackupEspecifico('backup_200125')">
+                                                <i class="fas fa-download"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-warning" onclick="restaurarBackupEspecifico('backup_200125')">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function salvarTodasConfiguracoes() {
+    showNotification('Salvando todas as configurações...', 'info');
+    // Simular salvamento
+    setTimeout(() => {
+        showNotification('Configurações salvas com sucesso!', 'success');
+    }, 1500);
+}
+
+function resetarConfiguracoes() {
+    if (confirm('Tem certeza que deseja restaurar as configurações padrão?')) {
+        showNotification('Restaurando configurações padrão...', 'warning');
+        setTimeout(() => {
+            showNotification('Configurações restauradas!', 'info');
+            location.reload();
+        }, 2000);
+    }
+}
+
+function resetarSenha(usuario) {
+    if (confirm(`Resetar senha do usuário ${usuario}?`)) {
+        showNotification(`Senha do usuário ${usuario} foi resetada!`, 'success');
+    }
+}
+
+function verSessoes(usuario) {
+    showNotification(`Visualizando sessões ativas do usuário ${usuario}`, 'info');
+}
+
+function executarBackup() {
+    showNotification('Executando backup completo...', 'info');
+    setTimeout(() => {
+        showNotification('Backup executado com sucesso!', 'success');
+    }, 3000);
+}
+
+function verificarBackup() {
+    showNotification('Verificando integridade dos backups...', 'info');
+    setTimeout(() => {
+        showNotification('Todos os backups estão íntegros!', 'success');
+    }, 2000);
+}
+
+function restaurarBackup() {
+    if (confirm('ATENÇÃO: Esta ação irá sobrescrever todos os dados atuais. Continuar?')) {
+        showNotification('Iniciando processo de restauração...', 'warning');
+    }
+}
+
+function downloadBackup() {
+    showNotification('Preparando download do backup mais recente...', 'info');
+}
+
+function downloadBackupEspecifico(backup) {
+    showNotification(`Preparando download do ${backup}...`, 'info');
+}
+
+function restaurarBackupEspecifico(backup) {
+    if (confirm(`Restaurar o backup ${backup}? Esta ação não pode ser desfeita.`)) {
+        showNotification(`Restaurando ${backup}...`, 'warning');
+    }
+}
+</script>
+{% endblock %}

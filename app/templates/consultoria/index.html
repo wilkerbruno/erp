@@ -1,0 +1,460 @@
+{% extends "base.html" %}
+
+{% block title %}Consultoria{% endblock %}
+
+{% block content %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        <i class="fas fa-handshake me-2"></i>Projetos de Consultoria
+    </h1>
+    <div>
+        <a href="{{ url_for('consultoria.novo_projeto') }}" class="btn btn-primary btn-sm">
+            <i class="fas fa-plus me-1"></i>Novo Projeto
+        </a>
+        <a href="{{ url_for('consultoria.produtos_consultoria') }}" class="btn btn-outline-primary btn-sm">
+            <i class="fas fa-box me-1"></i>Produtos
+        </a>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Projetos Ativos
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">8</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-briefcase fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Receita Prevista
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 485K</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            Clientes Ativos
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">12</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Taxa de Sucesso
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">94%</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-chart-line fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pipeline de Projetos -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Pipeline de Projetos de Consultoria</h6>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <!-- Prospecção -->
+            <div class="col-md-3">
+                <div class="card bg-light">
+                    <div class="card-header bg-secondary text-white">
+                        <h6 class="mb-0"><i class="fas fa-search me-2"></i>Prospecção (5)</h6>
+                    </div>
+                    <div class="card-body p-2" style="min-height: 400px;">
+                        <div class="pipeline-item mb-2">
+                            <div class="card">
+                                <div class="card-body p-3">
+                                    <h6 class="card-title">Indústria ABC</h6>
+                                    <p class="card-text small">Implementação Lean Manufacturing</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">Maria Consultora</small>
+                                        <span class="badge bg-secondary">R$ 85K</span>
+                                    </div>
+                                    <div class="mt-2">
+                                        <small class="text-muted"><i class="fas fa-calendar"></i> Previsão: Fev/25</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Proposta -->
+            <div class="col-md-3">
+                <div class="card bg-light">
+                    <div class="card-header bg-warning text-white">
+                        <h6 class="mb-0"><i class="fas fa-file-alt me-2"></i>Proposta (3)</h6>
+                    </div>
+                    <div class="card-body p-2" style="min-height: 400px;">
+                        <div class="pipeline-item mb-2">
+                            <div class="card">
+                                <div class="card-body p-3">
+                                    <h6 class="card-title">Empresa XYZ</h6>
+                                    <p class="card-text small">Consultoria DRE + GRD</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">João Consultor</small>
+                                        <span class="badge bg-warning">R$ 125K</span>
+                                    </div>
+                                    <div class="mt-2">
+                                        <small class="text-warning"><i class="fas fa-clock"></i> Aguardando resposta</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Negociação -->
+            <div class="col-md-3">
+                <div class="card bg-light">
+                    <div class="card-header bg-info text-white">
+                        <h6 class="mb-0"><i class="fas fa-handshake me-2"></i>Negociação (2)</h6>
+                    </div>
+                    <div class="card-body p-2" style="min-height: 400px;">
+                        <div class="pipeline-item mb-2">
+                            <div class="card">
+                                <div class="card-body p-3">
+                                    <h6 class="card-title">Metalúrgica DEF</h6>
+                                    <p class="card-text small">Programa Excelência Integrada</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">Pedro Consultor</small>
+                                        <span class="badge bg-info">R$ 200K</span>
+                                    </div>
+                                    <div class="mt-2">
+                                        <small class="text-info"><i class="fas fa-comments"></i> Em negociação</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fechado -->
+            <div class="col-md-3">
+                <div class="card bg-light">
+                    <div class="card-header bg-success text-white">
+                        <h6 class="mb-0"><i class="fas fa-check me-2"></i>Fechado (8)</h6>
+                    </div>
+                    <div class="card-body p-2" style="min-height: 400px;">
+                        <div class="pipeline-item mb-2">
+                            <div class="card">
+                                <div class="card-body p-3">
+                                    <h6 class="card-title">Autopeças GHI</h6>
+                                    <p class="card-text small">Consultoria Financeira DRE</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">Ana Consultora</small>
+                                        <span class="badge bg-success">R$ 75K</span>
+                                    </div>
+                                    <div class="mt-2">
+                                        <small class="text-success"><i class="fas fa-play"></i> Iniciando em Jan</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Projetos em Execução -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Projetos em Execução</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Produto de Consultoria</th>
+                        <th>Consultor Responsável</th>
+                        <th>Progresso</th>
+                        <th>Fase Atual</th>
+                        <th>Próximo Marco</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Indústria Têxtil ABC</strong></td>
+                        <td>GRD - Shop Floor Management</td>
+                        <td>Maria Santos</td>
+                        <td>
+                            <div class="progress" style="height: 20px;">
+                                <div class="progress-bar bg-warning" style="width: 75%">75%</div>
+                            </div>
+                        </td>
+                        <td><span class="badge bg-warning">Implementação</span></td>
+                        <td>Treinamento Supervisores - 25/01</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-sm btn-info" onclick="verWorkflow(1)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-primary" onclick="atualizarProgresso(1)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Metalúrgica XYZ</strong></td>
+                        <td>Programa Excelência Integrada</td>
+                        <td>João Silva</td>
+                        <td>
+                            <div class="progress" style="height: 20px;">
+                                <div class="progress-bar bg-success" style="width: 45%">45%</div>
+                            </div>
+                        </td>
+                        <td><span class="badge bg-info">Diagnóstico</span></td>
+                        <td>Apresentação Diagnóstico - 30/01</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-sm btn-info" onclick="verWorkflow(2)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-primary" onclick="atualizarProgresso(2)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Charts -->
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Produtos de Consultoria Mais Vendidos</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="produtosChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Performance dos Consultores</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="consultoresChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Atualizar Progresso -->
+<div class="modal fade" id="progressoModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Atualizar Progresso do Projeto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="progressoForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="faseAtual" class="form-label">Fase Atual</label>
+                                <select class="form-select" id="faseAtual">
+                                    <option value="diagnostico">Diagnóstico</option>
+                                    <option value="planejamento">Planejamento</option>
+                                    <option value="implementacao">Implementação</option>
+                                    <option value="acompanhamento">Acompanhamento</option>
+                                    <option value="encerramento">Encerramento</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="percentualProgresso" class="form-label">Progresso (%)</label>
+                                <input type="range" class="form-range" id="percentualProgresso" min="0" max="100" value="50" oninput="updateProgressValue(this.value)">
+                                <div class="text-center"><span id="progressValue">50</span>%</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="proximoMarco" class="form-label">Próximo Marco</label>
+                        <input type="text" class="form-control" id="proximoMarco" placeholder="Descrição do próximo marco">
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="dataProximoMarco" class="form-label">Data do Próximo Marco</label>
+                                <input type="date" class="form-control" id="dataProximoMarco">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="statusProjeto" class="form-label">Status do Projeto</label>
+                                <select class="form-select" id="statusProjeto">
+                                    <option value="no_prazo">No Prazo</option>
+                                    <option value="atencao">Atenção</option>
+                                    <option value="atrasado">Atrasado</option>
+                                    <option value="pausado">Pausado</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="observacoes" class="form-label">Observações</label>
+                        <textarea class="form-control" id="observacoes" rows="3" placeholder="Atualizações sobre o andamento do projeto"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="salvarProgresso()">Salvar Progresso</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Chart de produtos mais vendidos
+const ctx1 = document.getElementById('produtosChart').getContext('2d');
+new Chart(ctx1, {
+    type: 'doughnut',
+    data: {
+        labels: ['GRD Shop Floor', 'DRE Gerencial', 'Excelência Integrada', 'ISO Implementation'],
+        datasets: [{
+            data: [35, 25, 30, 10],
+            backgroundColor: [
+                '#4e73df',
+                '#1cc88a',
+                '#36b9cc',
+                '#f6c23e'
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+// Chart de performance dos consultores
+const ctx2 = document.getElementById('consultoresChart').getContext('2d');
+new Chart(ctx2, {
+    type: 'bar',
+    data: {
+        labels: ['Maria Santos', 'João Silva', 'Pedro Lima', 'Ana Costa'],
+        datasets: [{
+            label: 'Projetos Ativos',
+            data: [3, 2, 2, 1],
+            backgroundColor: '#36b9cc'
+        }, {
+            label: 'Projetos Concluídos',
+            data: [12, 8, 6, 4],
+            backgroundColor: '#1cc88a'
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+function verWorkflow(projetoId) {
+    showNotification(`Visualizando workflow do projeto ${projetoId}`, 'info');
+}
+
+function atualizarProgresso(projetoId) {
+    // Carregar dados do projeto aqui
+    new bootstrap.Modal(document.getElementById('progressoModal')).show();
+}
+
+function updateProgressValue(value) {
+    document.getElementById('progressValue').textContent = value;
+}
+
+function salvarProgresso() {
+    const fase = document.getElementById('faseAtual').value;
+    const progresso = document.getElementById('percentualProgresso').value;
+    const marco = document.getElementById('proximoMarco').value;
+    
+    if (!fase || !marco) {
+        showNotification('Preencha todos os campos obrigatórios.', 'warning');
+        return;
+    }
+    
+    showNotification('Progresso atualizado com sucesso!', 'success');
+    bootstrap.Modal.getInstance(document.getElementById('progressoModal')).hide();
+    setTimeout(() => location.reload(), 1500);
+}
+</script>
+{% endblock %}

@@ -1,0 +1,256 @@
+<!-- Modal de Busca Global -->
+<div class="modal fade" id="searchModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent border-0">
+                        <i class="fas fa-search text-muted"></i>
+                    </span>
+                    <input type="text" class="form-control border-0 form-control-lg" 
+                           id="globalSearch" placeholder="Pesquisar em todo o sistema..." 
+                           autocomplete="off">
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="searchResults">
+                    <!-- Sugestões iniciais -->
+                    <div class="search-section">
+                        <h6 class="text-muted text-uppercase small mb-2">Sugestões</h6>
+                        <div class="list-group list-group-flush">
+                            <a href="#" class="list-group-item list-group-item-action border-0">
+                                <i class="fas fa-users text-primary me-3"></i>
+                                <span>Colaboradores</span>
+                                <small class="text-muted ms-auto">Gerenciar equipe</small>
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action border-0">
+                                <i class="fas fa-chart-line text-success me-3"></i>
+                                <span>DRE Gerencial</span>
+                                <small class="text-muted ms-auto">Relatórios financeiros</small>
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action border-0">
+                                <i class="fas fa-tasks text-warning me-3"></i>
+                                <span>Planos de Ação</span>
+                                <small class="text-muted ms-auto">Melhoria contínua</small>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Loading -->
+                <div id="searchLoading" class="text-center py-4" style="display: none;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Pesquisando...</span>
+                    </div>
+                    <div class="mt-2 text-muted">Pesquisando...</div>
+                </div>
+                
+                <!-- No Results -->
+                <div id="noResults" class="text-center py-4" style="display: none;">
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <h6 class="text-muted">Nenhum resultado encontrado</h6>
+                    <small class="text-muted">Tente usar palavras-chave diferentes</small>
+                </div>
+            </div>
+            <div class="modal-footer border-0 justify-content-between">
+                <div class="small text-muted">
+                    <kbd>↑</kbd> <kbd>↓</kbd> para navegar, <kbd>Enter</kbd> para selecionar
+                </div>
+                <div class="small text-muted">
+                    Powered by <strong>Corrigindo à Rota</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Global Search Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('globalSearch');
+    const searchResults = document.getElementById('searchResults');
+    const searchLoading = document.getElementById('searchLoading');
+    const noResults = document.getElementById('noResults');
+    
+    let searchTimeout;
+    
+    // Keyboard shortcut (Ctrl+K)
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            new bootstrap.Modal(document.getElementById('searchModal')).show();
+            setTimeout(() => searchInput.focus(), 100);
+        }
+    });
+    
+    searchInput.addEventListener('input', function() {
+        const query = this.value.trim();
+        
+        clearTimeout(searchTimeout);
+        
+        if (query.length < 2) {
+            showSuggestions();
+            return;
+        }
+        
+        searchTimeout = setTimeout(() => {
+            performSearch(query);
+        }, 300);
+    });
+    
+    function showSuggestions() {
+        searchResults.innerHTML = `
+            <div class="search-section">
+                <h6 class="text-muted text-uppercase small mb-2">Sugestões</h6>
+                <div class="list-group list-group-flush">
+                    <a href="/rh/colaboradores" class="list-group-item list-group-item-action border-0">
+                        <i class="fas fa-users text-primary me-3"></i>
+                        <span>Colaboradores</span>
+                        <small class="text-muted ms-auto">Gerenciar equipe</small>
+                    </a>
+                    <a href="/financeiro/dre" class="list-group-item list-group-item-action border-0">
+                        <i class="fas fa-chart-line text-success me-3"></i>
+                        <span>DRE Gerencial</span>
+                        <small class="text-muted ms-auto">Relatórios financeiros</small>
+                    </a>
+                    <a href="/planos-acao" class="list-group-item list-group-item-action border-0">
+                        <i class="fas fa-tasks text-warning me-3"></i>
+                        <span>Planos de Ação</span>
+                        <small class="text-muted ms-auto">Melhoria contínua</small>
+                    </a>
+                    <a href="/qualidade/nao-conformidades" class="list-group-item list-group-item-action border-0">
+                        <i class="fas fa-exclamation-triangle text-danger me-3"></i>
+                        <span>Não Conformidades</span>
+                        <small class="text-muted ms-auto">Gestão de qualidade</small>
+                    </a>
+                </div>
+            </div>
+        `;
+        searchResults.style.display = 'block';
+        searchLoading.style.display = 'none';
+        noResults.style.display = 'none';
+    }
+    
+    function performSearch(query) {
+        searchResults.style.display = 'none';
+        searchLoading.style.display = 'block';
+        noResults.style.display = 'none';
+        
+        // Simular busca (em produção, fazer chamada AJAX)
+        setTimeout(() => {
+            const results = mockSearch(query);
+            displayResults(results);
+        }, 500);
+    }
+    
+    function mockSearch(query) {
+        const allItems = [
+            { type: 'colaborador', title: 'João Silva', subtitle: 'Gerente de Produção', url: '/rh/colaborador/1', icon: 'fa-user' },
+            { type: 'plano', title: 'PA-2025-001', subtitle: 'Implementar 5S', url: '/planos-acao/1', icon: 'fa-tasks' },
+            { type: 'nc', title: 'NC-2025-003', subtitle: 'Produto não conforme', url: '/qualidade/nc/3', icon: 'fa-exclamation-triangle' },
+            { type: 'op', title: 'OP-2025-015', subtitle: 'Produção Produto A', url: '/producao/op/15', icon: 'fa-industry' },
+            { type: 'relatorio', title: 'DRE Janeiro 2025', subtitle: 'Relatório financeiro', url: '/relatorios/dre/202501', icon: 'fa-chart-line' }
+        ];
+        
+        return allItems.filter(item => 
+            item.title.toLowerCase().includes(query.toLowerCase()) ||
+            item.subtitle.toLowerCase().includes(query.toLowerCase())
+        );
+    }
+    
+    function displayResults(results) {
+        searchLoading.style.display = 'none';
+        
+        if (results.length === 0) {
+            noResults.style.display = 'block';
+            searchResults.style.display = 'none';
+            return;
+        }
+        
+        const groupedResults = groupResultsByType(results);
+        let html = '';
+        
+        Object.keys(groupedResults).forEach(type => {
+            const typeTitle = getTypeTitle(type);
+            html += `
+                <div class="search-section mb-3">
+                    <h6 class="text-muted text-uppercase small mb-2">${typeTitle}</h6>
+                    <div class="list-group list-group-flush">
+            `;
+            
+            groupedResults[type].forEach(item => {
+                html += `
+                    <a href="${item.url}" class="list-group-item list-group-item-action border-0">
+                        <i class="fas ${item.icon} text-primary me-3"></i>
+                        <span>${highlightQuery(item.title, searchInput.value)}</span>
+                        <small class="text-muted ms-auto">${item.subtitle}</small>
+                    </a>
+                `;
+            });
+            
+            html += '</div></div>';
+        });
+        
+        searchResults.innerHTML = html;
+        searchResults.style.display = 'block';
+        noResults.style.display = 'none';
+    }
+    
+    function groupResultsByType(results) {
+        return results.reduce((groups, item) => {
+            if (!groups[item.type]) {
+                groups[item.type] = [];
+            }
+            groups[item.type].push(item);
+            return groups;
+        }, {});
+    }
+    
+    function getTypeTitle(type) {
+        const titles = {
+            'colaborador': 'Colaboradores',
+            'plano': 'Planos de Ação',
+            'nc': 'Não Conformidades',
+            'op': 'Ordens de Produção',
+            'relatorio': 'Relatórios'
+        };
+        return titles[type] || type;
+    }
+    
+    function highlightQuery(text, query) {
+        if (!query) return text;
+        const regex = new RegExp(`(${query})`, 'gi');
+        return text.replace(regex, '<mark>$1</mark>');
+    }
+});
+</script>
+
+<style>
+.search-section:last-child {
+    margin-bottom: 0 !important;
+}
+
+.list-group-item {
+    transition: all 0.2s ease;
+}
+
+.list-group-item:hover {
+    background-color: #f8f9fc;
+    transform: translateX(5px);
+}
+
+mark {
+    background-color: #fff3cd;
+    padding: 0.1em 0.2em;
+    border-radius: 0.2em;
+}
+
+kbd {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.2rem;
+    padding: 0.1rem 0.4rem;
+    font-size: 0.75rem;
+}
+</style>

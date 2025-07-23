@@ -1,0 +1,397 @@
+{% extends "base.html" %}
+
+{% block title %}Novo Colaborador - RH{% endblock %}
+
+{% block head %}
+<style>
+    .step-indicator {
+        display: flex;
+        margin-bottom: 2rem;
+    }
+    .step {
+        flex: 1;
+        text-align: center;
+        padding: 10px;
+        border-bottom: 3px solid #e9ecef;
+        color: #6c757d;
+    }
+    .step.active {
+        border-bottom-color: #4e73df;
+        color: #4e73df;
+        font-weight: 600;
+    }
+    .step.completed {
+        border-bottom-color: #1cc88a;
+        color: #1cc88a;
+    }
+    .form-section {
+        display: none;
+    }
+    .form-section.active {
+        display: block;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        <i class="fas fa-user-plus me-2"></i>Cadastrar Novo Colaborador
+    </h1>
+    <a href="{{ url_for('rh.colaboradores') }}" class="btn btn-secondary btn-sm">
+        <i class="fas fa-arrow-left me-1"></i>Voltar
+    </a>
+</div>
+
+<div class="card shadow">
+    <div class="card-body">
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+            <div class="step active" data-step="1">
+                <i class="fas fa-user fa-2x mb-2"></i>
+                <div>Dados Pessoais</div>
+            </div>
+            <div class="step" data-step="2">
+                <i class="fas fa-building fa-2x mb-2"></i>
+                <div>Dados Corporativos</div>
+            </div>
+            <div class="step" data-step="3">
+                <i class="fas fa-key fa-2x mb-2"></i>
+                <div>Acesso ao Sistema</div>
+            </div>
+            <div class="step" data-step="4">
+                <i class="fas fa-check fa-2x mb-2"></i>
+                <div>Confirmação</div>
+            </div>
+        </div>
+
+        <form method="POST" id="colaboradorForm">
+            {{ form.hidden_tag() }}
+            
+            <!-- Etapa 1: Dados Pessoais -->
+            <div class="form-section active" id="step1">
+                <h5 class="mb-4"><i class="fas fa-user me-2"></i>Dados Pessoais</h5>
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="mb-3">
+                            {{ form.nome.label(class="form-label") }}
+                            {{ form.nome(class="form-control") }}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            {{ form.cpf.label(class="form-label") }}
+                            {{ form.cpf(class="form-control", placeholder="000.000.000-00") }}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="mb-3">
+                            {{ form.email.label(class="form-label") }}
+                            {{ form.email(class="form-control") }}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            {{ form.telefone.label(class="form-label") }}
+                            {{ form.telefone(class="form-control", placeholder="(11) 99999-9999") }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Etapa 2: Dados Corporativos -->
+            <div class="form-section" id="step2">
+                <h5 class="mb-4"><i class="fas fa-building me-2"></i>Dados Corporativos</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            {{ form.cargo.label(class="form-label") }}
+                            {{ form.cargo(class="form-control") }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            {{ form.departamento.label(class="form-label") }}
+                            {{ form.departamento(class="form-select") }}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            {{ form.data_admissao.label(class="form-label") }}
+                            {{ form.data_admissao(class="form-control") }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            {{ form.salario.label(class="form-label") }}
+                            <div class="input-group">
+                                <span class="input-group-text">R$</span>
+                                {{ form.salario(class="form-control") }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Etapa 3: Acesso ao Sistema -->
+            <div class="form-section" id="step3">
+                <h5 class="mb-4"><i class="fas fa-key me-2"></i>Acesso ao Sistema</h5>
+                
+                <div class="form-check form-switch mb-3">
+                    {{ form.criar_usuario(class="form-check-input") }}
+                    <label class="form-check-label" for="criar_usuario">
+                        <strong>Criar conta de usuário no sistema</strong>
+                        <br><small class="text-muted">Marque esta opção se o colaborador precisar acessar o sistema</small>
+                    </label>
+                </div>
+                
+                <div id="userFields" style="display: none;">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.username.label(class="form-label") }}
+                                {{ form.username(class="form-control") }}
+                                <div class="form-text">Nome único para login no sistema</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.perfil_usuario.label(class="form-label") }}
+                                {{ form.perfil_usuario(class="form-select") }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.senha_inicial.label(class="form-label") }}
+                                {{ form.senha_inicial(class="form-control") }}
+                                <div class="form-text">Senha temporária (usuário deve alterar no primeiro acesso)</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Informações sobre perfis -->
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h6><i class="fas fa-info-circle me-2"></i>Informações sobre Perfis</h6>
+                            <ul class="mb-0">
+                                <li><strong>Usuário:</strong> Acesso básico ao dashboard e planos de ação</li>
+                                <li><strong>Supervisor:</strong> Acesso a qualidade, produção e planos de ação</li>
+                                <li><strong>Gestor:</strong> Acesso completo exceto administração</li>
+                                <li><strong>Administrador:</strong> Acesso total ao sistema</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Etapa 4: Confirmação -->
+            <div class="form-section" id="step4">
+                <h5 class="mb-4"><i class="fas fa-check me-2"></i>Confirmação dos Dados</h5>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-user me-2"></i>Dados Pessoais</h6>
+                            </div>
+                            <div class="card-body">
+                                <div id="confirmacao-pessoal"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-building me-2"></i>Dados Corporativos</h6>
+                            </div>
+                            <div class="card-body">
+                                <div id="confirmacao-corporativo"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mt-3" id="confirmacao-usuario" style="display: none;">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="fas fa-key me-2"></i>Acesso ao Sistema</h6>
+                    </div>
+                    <div class="card-body">
+                        <div id="confirmacao-acesso"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="d-flex justify-content-between mt-4">
+                <button type="button" class="btn btn-secondary" id="prevBtn" onclick="changeStep(-1)" style="display: none;">
+                    <i class="fas fa-arrow-left me-1"></i>Anterior
+                </button>
+                
+                <div class="ms-auto">
+                    <button type="button" class="btn btn-primary" id="nextBtn" onclick="changeStep(1)">
+                        Próximo<i class="fas fa-arrow-right ms-1"></i>
+                    </button>
+                    <button type="submit" class="btn btn-success" id="submitBtn" style="display: none;">
+                        <i class="fas fa-save me-1"></i>Cadastrar Colaborador
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let currentStep = 1;
+const totalSteps = 4;
+
+// Toggle user fields
+document.getElementById('criar_usuario').addEventListener('change', function() {
+    const userFields = document.getElementById('userFields');
+    userFields.style.display = this.checked ? 'block' : 'none';
+});
+
+// Format CPF
+document.getElementById('cpf').addEventListener('input', function() {
+    let value = this.value.replace(/\D/g, '');
+    value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    this.value = value;
+});
+
+// Format phone
+document.getElementById('telefone').addEventListener('input', function() {
+    let value = this.value.replace(/\D/g, '');
+    value = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+    this.value = value;
+});
+
+function changeStep(direction) {
+    if (direction === 1 && currentStep < totalSteps) {
+        if (validateCurrentStep()) {
+            currentStep++;
+            showStep(currentStep);
+        }
+    } else if (direction === -1 && currentStep > 1) {
+        currentStep--;
+        showStep(currentStep);
+    }
+}
+
+function showStep(step) {
+    // Hide all sections
+    document.querySelectorAll('.form-section').forEach(section => {
+        section.classList.remove('active');
+    });
+    
+    // Show current section
+    document.getElementById(`step${step}`).classList.add('active');
+    
+    // Update step indicators
+    document.querySelectorAll('.step').forEach((stepEl, index) => {
+        stepEl.classList.remove('active', 'completed');
+        if (index + 1 < step) {
+            stepEl.classList.add('completed');
+        } else if (index + 1 === step) {
+            stepEl.classList.add('active');
+        }
+    });
+    
+    // Update buttons
+    document.getElementById('prevBtn').style.display = step > 1 ? 'block' : 'none';
+    document.getElementById('nextBtn').style.display = step < totalSteps ? 'block' : 'none';
+    document.getElementById('submitBtn').style.display = step === totalSteps ? 'block' : 'none';
+    
+    // If last step, show confirmation
+    if (step === totalSteps) {
+        showConfirmation();
+    }
+}
+
+function validateCurrentStep() {
+    const currentSection = document.getElementById(`step${currentStep}`);
+    const requiredFields = currentSection.querySelectorAll('input[required], select[required]');
+    let isValid = true;
+    
+    requiredFields.forEach(field => {
+        if (!field.value.trim()) {
+            field.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            field.classList.remove('is-invalid');
+        }
+    });
+    
+    // Special validation for step 3 (user creation)
+    if (currentStep === 3) {
+        const criarUsuario = document.getElementById('criar_usuario').checked;
+        if (criarUsuario) {
+            const username = document.getElementById('username');
+            const senha = document.getElementById('senha_inicial');
+            
+            if (!username.value.trim()) {
+                username.classList.add('is-invalid');
+                isValid = false;
+            }
+            if (!senha.value.trim()) {
+                senha.classList.add('is-invalid');
+                isValid = false;
+            }
+        }
+    }
+    
+    if (!isValid) {
+        showNotification('Preencha todos os campos obrigatórios.', 'warning');
+    }
+    
+    return isValid;
+}
+
+function showConfirmation() {
+    // Dados pessoais
+    const dadosPessoais = `
+        <p><strong>Nome:</strong> ${document.getElementById('nome').value}</p>
+        <p><strong>CPF:</strong> ${document.getElementById('cpf').value}</p>
+        <p><strong>Email:</strong> ${document.getElementById('email').value}</p>
+        <p><strong>Telefone:</strong> ${document.getElementById('telefone').value || 'Não informado'}</p>
+    `;
+    document.getElementById('confirmacao-pessoal').innerHTML = dadosPessoais;
+    
+    // Dados corporativos
+    const dadosCorporativos = `
+        <p><strong>Cargo:</strong> ${document.getElementById('cargo').value}</p>
+        <p><strong>Departamento:</strong> ${document.getElementById('departamento').selectedOptions[0].text}</p>
+        <p><strong>Data de Admissão:</strong> ${document.getElementById('data_admissao').value}</p>
+        <p><strong>Salário:</strong> R$ ${document.getElementById('salario').value || 'Não informado'}</p>
+    `;
+    document.getElementById('confirmacao-corporativo').innerHTML = dadosCorporativos;
+    
+    // Acesso ao sistema
+    const criarUsuario = document.getElementById('criar_usuario').checked;
+    if (criarUsuario) {
+        const dadosAcesso = `
+            <p><strong>Usuário:</strong> ${document.getElementById('username').value}</p>
+            <p><strong>Perfil:</strong> ${document.getElementById('perfil_usuario').selectedOptions[0].text}</p>
+            <p><strong>Senha:</strong> •••••••• (temporária)</p>
+        `;
+        document.getElementById('confirmacao-acesso').innerHTML = dadosAcesso;
+        document.getElementById('confirmacao-usuario').style.display = 'block';
+    } else {
+        document.getElementById('confirmacao-usuario').style.display = 'none';
+    }
+}
+
+// Initialize
+showStep(1);
+</script>
+{% endblock %}

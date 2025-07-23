@@ -1,0 +1,458 @@
+{% extends "base.html" %}
+
+{% block title %}DRE Gerencial - Financeiro{% endblock %}
+
+{% block content %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        <i class="fas fa-chart-line me-2"></i>DRE Gerencial
+    </h1>
+    <div>
+        <button class="btn btn-success btn-sm" onclick="exportarDRE()">
+            <i class="fas fa-file-excel me-1"></i>Exportar
+        </button>
+        <button class="btn btn-primary btn-sm" onclick="atualizarDados()">
+            <i class="fas fa-sync me-1"></i>Atualizar
+        </button>
+    </div>
+</div>
+
+<!-- Filtros de Período -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Filtros de Período</h6>
+    </div>
+    <div class="card-body">
+        <form class="row g-3">
+            <div class="col-md-3">
+                <label for="mes" class="form-label">Mês</label>
+                <select class="form-select" id="mes">
+                    <option value="1" selected>Janeiro</option>
+                    <option value="2">Fevereiro</option>
+                    <option value="3">Março</option>
+                    <option value="4">Abril</option>
+                    <option value="5">Maio</option>
+                    <option value="6">Junho</option>
+                    <option value="7">Julho</option>
+                    <option value="8">Agosto</option>
+                    <option value="9">Setembro</option>
+                    <option value="10">Outubro</option>
+                    <option value="11">Novembro</option>
+                    <option value="12">Dezembro</option>
+                </select>
+            </div>
+            
+            <div class="col-md-3">
+                <label for="ano" class="form-label">Ano</label>
+                <select class="form-select" id="ano">
+                    <option value="2023">2023</option>
+                    <option value="2024">2024</option>
+                    <option value="2025" selected>2025</option>
+                </select>
+            </div>
+            
+            <div class="col-md-3">
+                <label for="comparacao" class="form-label">Comparar com</label>
+                <select class="form-select" id="comparacao">
+                    <option value="mes_anterior">Mês Anterior</option>
+                    <option value="ano_anterior">Mesmo Mês Ano Anterior</option>
+                    <option value="orcamento">Orçamento</option>
+                </select>
+            </div>
+            
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="button" class="btn btn-primary" onclick="filtrarDRE()">
+                    <i class="fas fa-filter me-1"></i>Filtrar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- KPIs Principais -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Receita Líquida
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 1.250.000</div>
+                        <div class="text-xs text-success">
+                            <i class="fas fa-arrow-up"></i> 12.5% vs mês anterior
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            EBITDA
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 187.500</div>
+                        <div class="text-xs text-success">
+                            <i class="fas fa-arrow-up"></i> 15% (Margem)
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-chart-bar fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Lucro Líquido
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 125.000</div>
+                        <div class="text-xs text-success">
+                            <i class="fas fa-arrow-up"></i> 10% (Margem)
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-trophy fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            Margem Líquida
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">10.0%</div>
+                        <div class="text-xs text-danger">
+                            <i class="fas fa-arrow-down"></i> -2% vs mês anterior
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-percentage fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- DRE Detalhada -->
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">DRE Detalhada - Janeiro 2025</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Conta</th>
+                                <th class="text-end">Atual (R$)</th>
+                                <th class="text-end">Anterior (R$)</th>
+                                <th class="text-end">Variação (%)</th>
+                                <th class="text-end">% da Receita</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- RECEITAS -->
+                            <tr class="table-primary">
+                                <td><strong>RECEITA BRUTA</strong></td>
+                                <td class="text-end"><strong>1.470.588</strong></td>
+                                <td class="text-end">1.323.529</td>
+                                <td class="text-end text-success">11.1%</td>
+                                <td class="text-end">117.6%</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;&nbsp;Vendas de Produtos</td>
+                                <td class="text-end">1.400.000</td>
+                                <td class="text-end">1.260.000</td>
+                                <td class="text-end text-success">11.1%</td>
+                                <td class="text-end">112.0%</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;&nbsp;Prestação de Serviços</td>
+                                <td class="text-end">70.588</td>
+                                <td class="text-end">63.529</td>
+                                <td class="text-end text-success">11.1%</td>
+                                <td class="text-end">5.6%</td>
+                            </tr>
+                            
+                            <tr class="table-secondary">
+                                <td><strong>(-) DEDUÇÕES DA RECEITA</strong></td>
+                                <td class="text-end"><strong>(220.588)</strong></td>
+                                <td class="text-end">(198.529)</td>
+                                <td class="text-end text-danger">11.1%</td>
+                                <td class="text-end">-17.6%</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;&nbsp;Impostos sobre Vendas</td>
+                                <td class="text-end">(176.471)</td>
+                                <td class="text-end">(158.824)</td>
+                                <td class="text-end text-danger">11.1%</td>
+                                <td class="text-end">-14.1%</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;&nbsp;Devoluções</td>
+                                <td class="text-end">(44.117)</td>
+                                <td class="text-end">(39.705)</td>
+                                <td class="text-end text-danger">11.1%</td>
+                                <td class="text-end">-3.5%</td>
+                            </tr>
+                            
+                            <tr class="table-success">
+                                <td><strong>= RECEITA LÍQUIDA</strong></td>
+                                <td class="text-end"><strong>1.250.000</strong></td>
+                                <td class="text-end">1.125.000</td>
+                                <td class="text-end text-success">11.1%</td>
+                                <td class="text-end">100.0%</td>
+                            </tr>
+                            
+                            <!-- CUSTOS -->
+                            <tr class="table-warning">
+                                <td><strong>(-) CUSTO DAS VENDAS</strong></td>
+                                <td class="text-end"><strong>(750.000)</strong></td>
+                                <td class="text-end">(675.000)</td>
+                                <td class="text-end text-danger">11.1%</td>
+                                <td class="text-end">-60.0%</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;&nbsp;Material Direto</td>
+                                <td class="text-end">(500.000)</td>
+                                <td class="text-end">(450.000)</td>
+                                <td class="text-end text-danger">11.1%</td>
+                                <td class="text-end">-40.0%</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;&nbsp;Mão de Obra Direta</td>
+                                <td class="text-end">(150.000)</td>
+                                <td class="text-end">(135.000)</td>
+                                <td class="text-end text-danger">11.1%</td>
+                                <td class="text-end">-12.0%</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;&nbsp;Custos Indiretos</td>
+                                <td class="text-end">(100.000)</td>
+                                <td class="text-end">(90.000)</td>
+                                <td class="text-end text-danger">11.1%</td>
+                                <td class="text-end">-8.0%</td>
+                            </tr>
+                            
+                            <tr class="table-info">
+                                <td><strong>= LUCRO BRUTO</strong></td>
+                                <td class="text-end"><strong>500.000</strong></td>
+                                <td class="text-end">450.000</td>
+                                <td class="text-end text-success">11.1%</td>
+                                <td class="text-end">40.0%</td>
+                            </tr>
+                            
+                            <!-- DESPESAS OPERACIONAIS -->
+                            <tr class="table-warning">
+                                <td><strong>(-) DESPESAS OPERACIONAIS</strong></td>
+                                <td class="text-end"><strong>(312.500)</strong></td>
+                                <td class="text-end">(281.250)</td>
+                                <td class="text-end text-danger">11.1%</td>
+                                <td class="text-end">-25.0%</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;&nbsp;Despesas Administrativas</td>
+                                <td class="text-end">(125.000)</td>
+                                <td class="text-end">(112.500)</td>
+                                <td class="text-end text-danger">11.1%</td>
+                                <td class="text-end">-10.0%</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;&nbsp;Despesas Comerciais</td>
+                                <td class="text-end">(100.000)</td>
+                                <td class="text-end">(90.000)</td>
+                                <td class="text-end text-danger">11.1%</td>
+                                <td class="text-end">-8.0%</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;&nbsp;Despesas Financeiras</td>
+                                <td class="text-end">(87.500)</td>
+                                <td class="text-end">(78.750)</td>
+                                <td class="text-end text-danger">11.1%</td>
+                                <td class="text-end">-7.0%</td>
+                            </tr>
+                            
+                            <tr class="table-primary">
+                                <td><strong>= EBITDA</strong></td>
+                                <td class="text-end"><strong>187.500</strong></td>
+                                <td class="text-end">168.750</td>
+                                <td class="text-end text-success">11.1%</td>
+                                <td class="text-end">15.0%</td>
+                            </tr>
+                            
+                            <tr>
+                                <td>&nbsp;&nbsp;(-) Depreciação</td>
+                                <td class="text-end">(62.500)</td>
+                                <td class="text-end">(56.250)</td>
+                                <td class="text-end text-danger">11.1%</td>
+                                <td class="text-end">-5.0%</td>
+                            </tr>
+                            
+                            <tr class="table-success">
+                                <td><strong>= LUCRO LÍQUIDO</strong></td>
+                                <td class="text-end"><strong>125.000</strong></td>
+                                <td class="text-end">112.500</td>
+                                <td class="text-end text-success">11.1%</td>
+                                <td class="text-end">10.0%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="col-lg-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Evolução Mensal</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="evolucaoChart" width="400" height="300"></canvas>
+            </div>
+        </div>
+
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Composição de Custos</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="custosChart" width="400" height="300"></canvas>
+            </div>
+        </div>
+
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Indicadores Chave</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <h6>Margem Bruta</h6>
+                    <div class="progress">
+                        <div class="progress-bar bg-success" style="width: 40%">40%</div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <h6>Margem EBITDA</h6>
+                    <div class="progress">
+                        <div class="progress-bar bg-info" style="width: 15%">15%</div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <h6>Margem Líquida</h6>
+                    <div class="progress">
+                        <div class="progress-bar bg-warning" style="width: 10%">10%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Gráfico de evolução mensal
+const ctx1 = document.getElementById('evolucaoChart').getContext('2d');
+new Chart(ctx1, {
+    type: 'line',
+    data: {
+        labels: ['Set', 'Out', 'Nov', 'Dez', 'Jan'],
+        datasets: [{
+            label: 'Receita Líquida',
+            data: [950000, 1050000, 1100000, 1125000, 1250000],
+            borderColor: '#4e73df',
+            tension: 0.1
+        }, {
+            label: 'Lucro Líquido',
+            data: [95000, 105000, 110000, 112500, 125000],
+            borderColor: '#1cc88a',
+            tension: 0.1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function(value) {
+                        return 'R$ ' + value.toLocaleString();
+                    }
+                }
+            }
+        }
+    }
+});
+
+// Gráfico de composição de custos
+const ctx2 = document.getElementById('custosChart').getContext('2d');
+new Chart(ctx2, {
+    type: 'doughnut',
+    data: {
+        labels: ['Material Direto', 'Mão de Obra', 'Custos Indiretos', 'Desp. Admin', 'Desp. Comerciais'],
+        datasets: [{
+            data: [500000, 150000, 100000, 125000, 100000],
+            backgroundColor: [
+                '#e74a3b',
+                '#f6c23e',
+                '#36b9cc',
+                '#1cc88a',
+                '#858796'
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+function filtrarDRE() {
+    showNotification('Filtrando dados do DRE...', 'info');
+    // Implementar filtro
+}
+
+function exportarDRE() {
+    showNotification('Exportando DRE...', 'info');
+    // Implementar exportação
+}
+
+function atualizarDados() {
+    showNotification('Atualizando dados...', 'info');
+    // Implementar atualização
+}
+</script>
+{% endblock %}

@@ -1,0 +1,498 @@
+{% extends "base.html" %}
+
+{% block title %}Gestão de Projetos{% endblock %}
+
+{% block content %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        <i class="fas fa-project-diagram me-2"></i>Gestão de Projetos
+    </h1>
+    <div>
+        <a href="{{ url_for('projetos.novo_projeto') }}" class="btn btn-primary btn-sm">
+            <i class="fas fa-plus me-1"></i>Novo Projeto
+        </a>
+        <button class="btn btn-outline-primary btn-sm" onclick="visualizarGantt()">
+            <i class="fas fa-chart-bar me-1"></i>Cronograma Gantt
+        </button>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Projetos Ativos
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">12</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-project-diagram fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            Projetos Atrasados
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">3</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Projetos Concluídos
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">47</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Budget Total
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 2.5M</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Project Portfolio View -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                <h6 class="m-0 font-weight-bold text-primary">Portfólio de Projetos</h6>
+                <div>
+                    <button class="btn btn-sm btn-outline-primary" onclick="toggleView('cards')" id="cardsBtn">
+                        <i class="fas fa-th me-1"></i>Cards
+                    </button>
+                    <button class="btn btn-sm btn-primary" onclick="toggleView('table')" id="tableBtn">
+                        <i class="fas fa-table me-1"></i>Tabela
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Cards View -->
+                <div id="cardsView">
+                    <div class="row">
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card h-100 project-card" onclick="verProjeto(1)">
+                                <div class="card-header bg-primary text-white">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h6 class="mb-0">PROJ-2025-001</h6>
+                                        <span class="badge bg-warning">Em Andamento</span>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="card-title">Sistema de Automação Industrial</h6>
+                                    <p class="card-text small text-muted">
+                                        Implementação de sistema de automação para linha de produção A
+                                    </p>
+                                    <div class="mb-2">
+                                        <small class="text-muted">Progresso:</small>
+                                        <div class="progress mb-1" style="height: 8px;">
+                                            <div class="progress-bar bg-warning" style="width: 65%">65%</div>
+                                        </div>
+                                    </div>
+                                    <div class="row text-center">
+                                        <div class="col-6">
+                                            <small class="text-muted">Orçamento</small>
+                                            <div class="font-weight-bold">R$ 150.000</div>
+                                        </div>
+                                        <div class="col-6">
+                                            <small class="text-muted">Prazo</small>
+                                            <div class="text-danger font-weight-bold">28/02/2025</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            <i class="fas fa-user me-1"></i>João Silva
+                                        </small>
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-sm btn-outline-primary" onclick="event.stopPropagation(); editarProjeto(1)">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-info" onclick="event.stopPropagation(); tarefasProjeto(1)">
+                                                <i class="fas fa-tasks"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card h-100 project-card" onclick="verProjeto(2)">
+                                <div class="card-header bg-success text-white">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h6 class="mb-0">PROJ-2025-002</h6>
+                                        <span class="badge bg-light text-dark">Concluído</span>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="card-title">Implementação ISO 9001</h6>
+                                    <p class="card-text small text-muted">
+                                        Projeto de certificação ISO 9001 para toda a empresa
+                                    </p>
+                                    <div class="mb-2">
+                                        <small class="text-muted">Progresso:</small>
+                                        <div class="progress mb-1" style="height: 8px;">
+                                            <div class="progress-bar bg-success" style="width: 100%">100%</div>
+                                        </div>
+                                    </div>
+                                    <div class="row text-center">
+                                        <div class="col-6">
+                                            <small class="text-muted">Orçamento</small>
+                                            <div class="font-weight-bold">R$ 85.000</div>
+                                        </div>
+                                        <div class="col-6">
+                                            <small class="text-muted">Prazo</small>
+                                            <div class="text-success font-weight-bold">15/01/2025</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            <i class="fas fa-user me-1"></i>Maria Santos
+                                        </small>
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-sm btn-outline-primary" onclick="event.stopPropagation(); relatorioProjeto(2)">
+                                                <i class="fas fa-file-alt"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-success" onclick="event.stopPropagation(); licoesProjeto(2)">
+                                                <i class="fas fa-lightbulb"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card h-100 project-card" onclick="verProjeto(3)">
+                                <div class="card-header bg-info text-white">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h6 class="mb-0">PROJ-2025-003</h6>
+                                        <span class="badge bg-secondary">Planejado</span>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="card-title">Expansão Linha Produção B</h6>
+                                    <p class="card-text small text-muted">
+                                        Projeto de expansão e modernização da linha B
+                                    </p>
+                                    <div class="mb-2">
+                                        <small class="text-muted">Progresso:</small>
+                                        <div class="progress mb-1" style="height: 8px;">
+                                            <div class="progress-bar bg-secondary" style="width: 15%">15%</div>
+                                        </div>
+                                    </div>
+                                    <div class="row text-center">
+                                        <div class="col-6">
+                                            <small class="text-muted">Orçamento</small>
+                                            <div class="font-weight-bold">R$ 320.000</div>
+                                        </div>
+                                        <div class="col-6">
+                                            <small class="text-muted">Prazo</small>
+                                            <div class="text-primary font-weight-bold">15/04/2025</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            <i class="fas fa-user me-1"></i>Pedro Lima
+                                        </small>
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-sm btn-outline-primary" onclick="event.stopPropagation(); editarProjeto(3)">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-warning" onclick="event.stopPropagation(); iniciarProjeto(3)">
+                                                <i class="fas fa-play"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table View (Hidden by default) -->
+                <div id="tableView" style="display: none;">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Nome do Projeto</th>
+                                    <th>Gerente</th>
+                                    <th>Status</th>
+                                    <th>Progresso</th>
+                                    <th>Orçamento</th>
+                                    <th>Prazo</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><a href="#" class="text-decoration-none">PROJ-2025-001</a></td>
+                                    <td>Sistema de Automação Industrial</td>
+                                    <td>João Silva</td>
+                                    <td><span class="badge bg-warning">Em Andamento</span></td>
+                                    <td>
+                                        <div class="progress" style="height: 20px;">
+                                            <div class="progress-bar bg-warning" style="width: 65%">65%</div>
+                                        </div>
+                                    </td>
+                                    <td>R$ 150.000</td>
+                                    <td><span class="text-danger">28/02/2025</span></td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-sm btn-info" title="Visualizar">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-warning" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-primary" title="Tarefas">
+                                                <i class="fas fa-tasks"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><a href="#" class="text-decoration-none">PROJ-2025-002</a></td>
+                                    <td>Implementação ISO 9001</td>
+                                    <td>Maria Santos</td>
+                                    <td><span class="badge bg-success">Concluído</span></td>
+                                    <td>
+                                        <div class="progress" style="height: 20px;">
+                                            <div class="progress-bar bg-success" style="width: 100%">100%</div>
+                                        </div>
+                                    </td>
+                                    <td>R$ 85.000</td>
+                                    <td><span class="text-success">15/01/2025</span></td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-sm btn-info" title="Visualizar">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-secondary" title="Relatório">
+                                                <i class="fas fa-file-alt"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts and Analytics -->
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Status dos Projetos</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="statusChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Orçamento vs Realizado</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="orcamentoChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block head %}
+<style>
+.project-card {
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.project-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.project-card .card-header {
+    border-bottom: none;
+}
+
+.project-card .card-footer {
+    background-color: transparent;
+    border-top: 1px solid rgba(0,0,0,.125);
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function toggleView(view) {
+    const cardsView = document.getElementById('cardsView');
+    const tableView = document.getElementById('tableView');
+    const cardsBtn = document.getElementById('cardsBtn');
+    const tableBtn = document.getElementById('tableBtn');
+    
+    if (view === 'cards') {
+        cardsView.style.display = 'block';
+        tableView.style.display = 'none';
+        cardsBtn.classList.remove('btn-outline-primary');
+        cardsBtn.classList.add('btn-primary');
+        tableBtn.classList.remove('btn-primary');
+        tableBtn.classList.add('btn-outline-primary');
+    } else {
+        cardsView.style.display = 'none';
+        tableView.style.display = 'block';
+        tableBtn.classList.remove('btn-outline-primary');
+        tableBtn.classList.add('btn-primary');
+        cardsBtn.classList.remove('btn-primary');
+        cardsBtn.classList.add('btn-outline-primary');
+    }
+}
+
+// Chart de status dos projetos
+const ctx1 = document.getElementById('statusChart').getContext('2d');
+new Chart(ctx1, {
+    type: 'doughnut',
+    data: {
+        labels: ['Em Andamento', 'Concluídos', 'Planejados', 'Pausados'],
+        datasets: [{
+            data: [12, 47, 8, 2],
+            backgroundColor: [
+                '#f6c23e',
+                '#1cc88a',
+                '#36b9cc',
+                '#e74a3b'
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+// Chart de orçamento
+const ctx2 = document.getElementById('orcamentoChart').getContext('2d');
+new Chart(ctx2, {
+    type: 'bar',
+    data: {
+        labels: ['PROJ-001', 'PROJ-002', 'PROJ-003', 'PROJ-004'],
+        datasets: [{
+            label: 'Orçado',
+            data: [150000, 85000, 320000, 200000],
+            backgroundColor: '#36b9cc'
+        }, {
+            label: 'Realizado',
+            data: [98000, 85000, 48000, 0],
+            backgroundColor: '#1cc88a'
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function(value) {
+                        return 'R$ ' + value.toLocaleString();
+                    }
+                }
+            }
+        }
+    }
+});
+
+function verProjeto(id) {
+    showNotification(`Visualizando projeto ${id}`, 'info');
+}
+
+function editarProjeto(id) {
+    showNotification(`Editando projeto ${id}`, 'info');
+}
+
+function tarefasProjeto(id) {
+    showNotification(`Visualizando tarefas do projeto ${id}`, 'info');
+}
+
+function iniciarProjeto(id) {
+    if (confirm('Deseja iniciar este projeto?')) {
+        showNotification(`Projeto ${id} iniciado!`, 'success');
+    }
+}
+
+function relatorioProjeto(id) {
+    showNotification(`Gerando relatório do projeto ${id}`, 'info');
+}
+
+function licoesProjeto(id) {
+    showNotification(`Visualizando lições aprendidas do projeto ${id}`, 'info');
+}
+
+function visualizarGantt() {
+    showNotification('Abrindo cronograma Gantt...', 'info');
+}
+</script>
+{% endblock %}

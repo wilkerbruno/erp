@@ -1,0 +1,594 @@
+{% extends "base.html" %}
+
+{% block title %}Compras e Estoques{% endblock %}
+
+{% block content %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        <i class="fas fa-shopping-cart me-2"></i>Gestão de Compras e Estoques
+    </h1>
+    <div>
+        <a href="{{ url_for('compras.nova_ordem_compra') }}" class="btn btn-primary btn-sm">
+            <i class="fas fa-plus me-1"></i>Nova OC
+        </a>
+        <a href="{{ url_for('compras.fornecedores') }}" class="btn btn-outline-primary btn-sm">
+            <i class="fas fa-truck me-1"></i>Fornecedores
+        </a>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            OCs Pendentes
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">12</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-file-invoice fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Valor Total OCs
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 145K</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-danger shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                            Itens em Falta
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">8</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            NFs Recebidas
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">25</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Ações Rápidas</h6>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-2">
+                        <a href="#" class="btn btn-outline-primary btn-block" onclick="novaOrdemCompra()">
+                            <i class="fas fa-plus fa-2x mb-2"></i><br>
+                            Nova OC
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="#" class="btn btn-outline-success btn-block" onclick="receberNF()">
+                            <i class="fas fa-truck fa-2x mb-2"></i><br>
+                            Receber NF
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="#" class="btn btn-outline-info btn-block" onclick="consultarEstoque()">
+                            <i class="fas fa-boxes fa-2x mb-2"></i><br>
+                            Consultar Estoque
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="#" class="btn btn-outline-warning btn-block" onclick="aprovarOCs()">
+                            <i class="fas fa-check fa-2x mb-2"></i><br>
+                            Aprovar OCs
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="#" class="btn btn-outline-secondary btn-block" onclick="relatorioCompras()">
+                            <i class="fas fa-chart-bar fa-2x mb-2"></i><br>
+                            Relatórios
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="#" class="btn btn-outline-dark btn-block" onclick="gerenciarFornecedores()">
+                            <i class="fas fa-handshake fa-2x mb-2"></i><br>
+                            Fornecedores
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Workflow de Compras -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Workflow de Compras</h6>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <!-- Ordens Criadas -->
+            <div class="col-md-3">
+                <div class="card bg-light">
+                    <div class="card-header bg-secondary text-white">
+                        <h6 class="mb-0"><i class="fas fa-edit me-2"></i>Criadas (7)</h6>
+                    </div>
+                    <div class="card-body p-2" style="min-height: 300px;">
+                        <div class="workflow-item mb-2">
+                            <div class="card border-left-secondary">
+                                <div class="card-body p-3">
+                                    <h6 class="card-title">OC-2025-008</h6>
+                                    <p class="card-text small">Matéria Prima - Aço</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">Fornecedor ABC</small>
+                                        <span class="badge bg-secondary">R$ 15.500</span>
+                                    </div>
+                                    <div class="mt-2">
+                                        <button class="btn btn-sm btn-primary" onclick="aprovarOC('OC-2025-008')">
+                                            <i class="fas fa-check me-1"></i>Aprovar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="workflow-item mb-2">
+                            <div class="card border-left-secondary">
+                                <div class="card-body p-3">
+                                    <h6 class="card-title">OC-2025-009</h6>
+                                    <p class="card-text small">Ferramentas de Corte</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">Ferramentas XYZ</small>
+                                        <span class="badge bg-secondary">R$ 8.200</span>
+                                    </div>
+                                    <div class="mt-2">
+                                        <button class="btn btn-sm btn-primary" onclick="aprovarOC('OC-2025-009')">
+                                            <i class="fas fa-check me-1"></i>Aprovar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ordens Aprovadas -->
+            <div class="col-md-3">
+                <div class="card bg-light">
+                    <div class="card-header bg-success text-white">
+                        <h6 class="mb-0"><i class="fas fa-check me-2"></i>Aprovadas (5)</h6>
+                    </div>
+                    <div class="card-body p-2" style="min-height: 300px;">
+                        <div class="workflow-item mb-2">
+                            <div class="card border-left-success">
+                                <div class="card-body p-3">
+                                    <h6 class="card-title">OC-2025-006</h6>
+                                    <p class="card-text small">Componentes Eletrônicos</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">Eletrônicos DEF</small>
+                                        <span class="badge bg-success">R$ 12.300</span>
+                                    </div>
+                                    <div class="mt-2">
+                                        <small class="text-success"><i class="fas fa-clock"></i> Aguardando entrega</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Entrega Parcial -->
+            <div class="col-md-3">
+                <div class="card bg-light">
+                    <div class="card-header bg-warning text-white">
+                        <h6 class="mb-0"><i class="fas fa-shipping-fast me-2"></i>Parcial (3)</h6>
+                    </div>
+                    <div class="card-body p-2" style="min-height: 300px;">
+                        <div class="workflow-item mb-2">
+                            <div class="card border-left-warning">
+                                <div class="card-body p-3">
+                                    <h6 class="card-title">OC-2025-004</h6>
+                                    <p class="card-text small">Parafusos e Fixadores</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">Parafusos GHI</small>
+                                        <span class="badge bg-warning">R$ 3.500</span>
+                                    </div>
+                                    <div class="mt-2">
+                                        <div class="progress mb-1" style="height: 6px;">
+                                            <div class="progress-bar bg-warning" style="width: 60%"></div>
+                                        </div>
+                                        <small class="text-warning">60% recebido</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Concluídas -->
+            <div class="col-md-3">
+                <div class="card bg-light">
+                    <div class="card-header bg-primary text-white">
+                        <h6 class="mb-0"><i class="fas fa-check-double me-2"></i>Concluídas (25)</h6>
+                    </div>
+                    <div class="card-body p-2" style="min-height: 300px;">
+                        <div class="workflow-item mb-2">
+                            <div class="card border-left-primary">
+                                <div class="card-body p-3">
+                                    <h6 class="card-title">OC-2025-003</h6>
+                                    <p class="card-text small">Lubrificantes Industriais</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">Lubrificantes JKL</small>
+                                        <span class="badge bg-primary">R$ 5.800</span>
+                                    </div>
+                                    <div class="mt-2">
+                                        <small class="text-primary"><i class="fas fa-check"></i> Entregue 18/01</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabela de Ordens de Compra Recentes -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Ordens de Compra Recentes</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Número OC</th>
+                        <th>Fornecedor</th>
+                        <th>Valor Total</th>
+                        <th>Data Criação</th>
+                        <th>Status</th>
+                        <th>Aprovador</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="#" class="text-decoration-none">OC-2025-008</a></td>
+                        <td>Fornecedor ABC Ltda.</td>
+                        <td>R$ 15.500,00</td>
+                        <td>20/01/2025</td>
+                        <td><span class="badge bg-secondary">Criada</span></td>
+                        <td>-</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-sm btn-info" onclick="verOC('OC-2025-008')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="aprovarOC('OC-2025-008')">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="reprovarOC('OC-2025-008')">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="#" class="text-decoration-none">OC-2025-007</a></td>
+                        <td>Eletrônicos DEF S.A.</td>
+                        <td>R$ 12.300,00</td>
+                        <td>19/01/2025</td>
+                        <td><span class="badge bg-success">Aprovada</span></td>
+                        <td>João Silva</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-sm btn-info" onclick="verOC('OC-2025-007')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="receberMercadoria('OC-2025-007')">
+                                    <i class="fas fa-truck"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="#" class="text-decoration-none">OC-2025-006</a></td>
+                        <td>Parafusos GHI Ind.</td>
+                        <td>R$ 3.500,00</td>
+                        <td>18/01/2025</td>
+                        <td><span class="badge bg-warning">Entrega Parcial</span></td>
+                        <td>Maria Santos</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-sm btn-info" onclick="verOC('OC-2025-006')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="receberMercadoria('OC-2025-006')">
+                                    <i class="fas fa-truck"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Alertas de Estoque -->
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Alertas de Estoque</h6>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-danger" role="alert">
+                    <strong><i class="fas fa-exclamation-triangle me-2"></i>Estoque Crítico</strong>
+                    <ul class="mb-0 mt-2">
+                        <li>Aço Carbono 1020 - 5 unidades restantes</li>
+                        <li>Parafuso M8x20 - 12 unidades restantes</li>
+                        <li>Óleo Hidráulico ISO 32 - 3 litros restantes</li>
+                    </ul>
+                </div>
+                
+                <div class="alert alert-warning" role="alert">
+                    <strong><i class="fas fa-exclamation-circle me-2"></i>Estoque Baixo</strong>
+                    <ul class="mb-0 mt-2">
+                        <li>Rolamento 6205 - 25 unidades restantes</li>
+                        <li>Correia Dentada GT2 - 8 metros restantes</li>
+                        <li>Solda MIG 1.2mm - 2 rolos restantes</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Top Fornecedores (Último Trimestre)</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="fornecedoresChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Receber Mercadoria -->
+<div class="modal fade" id="receberNFModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Receber Nota Fiscal</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="receberNFForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="numeroNF" class="form-label">Número da NF</label>
+                                <input type="text" class="form-control" id="numeroNF" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="dataRecebimento" class="form-label">Data de Recebimento</label>
+                                <input type="date" class="form-control" id="dataRecebimento" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="fornecedorNF" class="form-label">Fornecedor</label>
+                                <select class="form-select" id="fornecedorNF" required>
+                                    <option value="">Selecione o fornecedor...</option>
+                                    <option value="1">Fornecedor ABC Ltda.</option>
+                                    <option value="2">Eletrônicos DEF S.A.</option>
+                                    <option value="3">Parafusos GHI Ind.</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="ocReferencia" class="form-label">OC de Referência</label>
+                                <select class="form-select" id="ocReferencia">
+                                    <option value="">Selecione a OC...</option>
+                                    <option value="OC-2025-007">OC-2025-007</option>
+                                    <option value="OC-2025-006">OC-2025-006</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Itens Recebidos</label>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Qty Solicitada</th>
+                                        <th>Qty Recebida</th>
+                                        <th>Observações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="itensRecebidos">
+                                    <tr>
+                                        <td>Componente Eletrônico A</td>
+                                        <td>100</td>
+                                        <td><input type="number" class="form-control form-control-sm" value="100" min="0"></td>
+                                        <td><input type="text" class="form-control form-control-sm" placeholder="Observações"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Componente Eletrônico B</td>
+                                        <td>50</td>
+                                        <td><input type="number" class="form-control form-control-sm" value="50" min="0"></td>
+                                        <td><input type="text" class="form-control form-control-sm" placeholder="Observações"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="observacoesGerais" class="form-label">Observações Gerais</label>
+                        <textarea class="form-control" id="observacoesGerais" rows="2" placeholder="Observações sobre o recebimento"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="confirmarRecebimento()">Confirmar Recebimento</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Chart de top fornecedores
+const ctx = document.getElementById('fornecedoresChart').getContext('2d');
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['Fornecedor ABC', 'Eletrônicos DEF', 'Parafusos GHI', 'Lubrificantes JKL'],
+        datasets: [{
+            label: 'Valor Comprado (R$)',
+            data: [125000, 98000, 75000, 42000],
+            backgroundColor: '#4e73df'
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function(value) {
+                        return 'R$ ' + value.toLocaleString();
+                    }
+                }
+            }
+        }
+    }
+});
+
+function novaOrdemCompra() {
+    showNotification('Redirecionando para nova ordem de compra...', 'info');
+}
+
+function receberNF() {
+    document.getElementById('dataRecebimento').value = new Date().toISOString().split('T')[0];
+    new bootstrap.Modal(document.getElementById('receberNFModal')).show();
+}
+
+function consultarEstoque() {
+    showNotification('Abrindo consulta de estoque...', 'info');
+}
+
+function aprovarOCs() {
+    showNotification('Abrindo lista de OCs para aprovação...', 'info');
+}
+
+function relatorioCompras() {
+    showNotification('Gerando relatório de compras...', 'info');
+}
+
+function gerenciarFornecedores() {
+    showNotification('Abrindo gestão de fornecedores...', 'info');
+}
+
+function aprovarOC(numero) {
+    if (confirm(`Aprovar a ordem de compra ${numero}?`)) {
+        showNotification(`OC ${numero} aprovada com sucesso!`, 'success');
+        setTimeout(() => location.reload(), 1500);
+    }
+}
+
+function reprovarOC(numero) {
+    const motivo = prompt(`Motivo da reprovação da OC ${numero}:`);
+    if (motivo) {
+        showNotification(`OC ${numero} reprovada. Motivo: ${motivo}`, 'warning');
+        setTimeout(() => location.reload(), 1500);
+    }
+}
+
+function verOC(numero) {
+    showNotification(`Visualizando OC ${numero}`, 'info');
+}
+
+function receberMercadoria(numero) {
+    document.getElementById('ocReferencia').value = numero;
+    receberNF();
+}
+
+function confirmarRecebimento() {
+    const numeroNF = document.getElementById('numeroNF').value;
+    const fornecedor = document.getElementById('fornecedorNF').value;
+    
+    if (!numeroNF || !fornecedor) {
+        showNotification('Preencha todos os campos obrigatórios.', 'warning');
+        return;
+    }
+    
+    showNotification('Recebimento registrado com sucesso! Estoque atualizado.', 'success');
+    bootstrap.Modal.getInstance(document.getElementById('receberNFModal')).hide();
+    setTimeout(() => location.reload(), 1500);
+}
+</script>
+{% endblock %}

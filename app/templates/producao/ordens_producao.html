@@ -1,0 +1,330 @@
+{% extends "base.html" %}
+
+{% block title %}Ordens de Produção - PCP{% endblock %}
+
+{% block content %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        <i class="fas fa-industry me-2"></i>Ordens de Produção (PCP)
+    </h1>
+    <a href="{{ url_for('producao.nova_ordem_producao') }}" class="btn btn-primary btn-sm">
+        <i class="fas fa-plus me-1"></i>Nova OP
+    </a>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            OPs Planejadas
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">15</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-calendar-alt fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            Em Andamento
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">8</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-cogs fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Concluídas
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">142</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-danger shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                            Atrasadas
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">3</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Filtros e Pesquisa</h6>
+    </div>
+    <div class="card-body">
+        <form method="GET" class="row g-3">
+            <div class="col-md-3">
+                <label for="search" class="form-label">Pesquisar</label>
+                <input type="text" class="form-control" id="search" name="search" placeholder="Número da OP ou produto">
+            </div>
+            
+            <div class="col-md-3">
+                <label for="status" class="form-label">Status</label>
+                <select class="form-select" id="status" name="status">
+                    <option value="todos">Todos</option>
+                    <option value="planejada">Planejada</option>
+                    <option value="em_andamento">Em Andamento</option>
+                    <option value="concluida">Concluída</option>
+                    <option value="cancelada">Cancelada</option>
+                </select>
+            </div>
+            
+            <div class="col-md-3">
+                <label for="data_inicio" class="form-label">Data Início</label>
+                <input type="date" class="form-control" id="data_inicio" name="data_inicio">
+            </div>
+            
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary me-2">
+                    <i class="fas fa-search"></i>
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="location.reload()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- OPs Table -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="m-0 font-weight-bold text-primary">Lista de Ordens de Produção</h6>
+        <div>
+            <button class="btn btn-sm btn-info" onclick="visualizarGantt()">
+                <i class="fas fa-chart-bar me-1"></i>Gantt
+            </button>
+            <button class="btn btn-sm btn-success" onclick="exportTableToCSV('opsTable', 'ordens_producao.csv')">
+                <i class="fas fa-file-excel me-1"></i>Exportar
+            </button>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="opsTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Número OP</th>
+                        <th>Produto</th>
+                        <th>Qtd Planejada</th>
+                        <th>Qtd Produzida</th>
+                        <th>Progresso</th>
+                        <th>Data Início</th>
+                        <th>Data Prevista</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dados de exemplo -->
+                    <tr>
+                        <td><a href="#" class="text-decoration-none">OP202500001</a></td>
+                        <td>Produto A - Modelo X</td>
+                        <td>1000</td>
+                        <td>750</td>
+                        <td>
+                            <div class="progress">
+                                <div class="progress-bar bg-warning" role="progressbar" style="width: 75%">75%</div>
+                            </div>
+                        </td>
+                        <td>15/01/2025</td>
+                        <td>25/01/2025</td>
+                        <td><span class="badge bg-warning">Em Andamento</span></td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-sm btn-info" title="Visualizar" onclick="verOP('OP202500001')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" title="Roteiro" onclick="gerenciarRoteiro('OP202500001')">
+                                    <i class="fas fa-route"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" title="Produção" onclick="registrarProducao('OP202500001')">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="#" class="text-decoration-none">OP202500002</a></td>
+                        <td>Produto B - Modelo Y</td>
+                        <td>500</td>
+                        <td>0</td>
+                        <td>
+                            <div class="progress">
+                                <div class="progress-bar bg-secondary" role="progressbar" style="width: 0%">0%</div>
+                            </div>
+                        </td>
+                        <td>20/01/2025</td>
+                        <td>30/01/2025</td>
+                        <td><span class="badge bg-secondary">Planejada</span></td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-sm btn-info" title="Visualizar" onclick="verOP('OP202500002')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" title="Roteiro" onclick="gerenciarRoteiro('OP202500002')">
+                                    <i class="fas fa-route"></i>
+                                </button>
+                                <button class="btn btn-sm btn-primary" title="Iniciar" onclick="iniciarOP('OP202500002')">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="#" class="text-decoration-none">OP202500003</a></td>
+                        <td>Produto C - Modelo Z</td>
+                        <td>2000</td>
+                        <td>2000</td>
+                        <td>
+                            <div class="progress">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 100%">100%</div>
+                            </div>
+                        </td>
+                        <td>05/01/2025</td>
+                        <td>18/01/2025</td>
+                        <td><span class="badge bg-success">Concluída</span></td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-sm btn-info" title="Visualizar" onclick="verOP('OP202500003')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-secondary" title="Relatório" onclick="relatorioOP('OP202500003')">
+                                    <i class="fas fa-file-alt"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Registrar Produção -->
+<div class="modal fade" id="producaoModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Registrar Produção</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="producaoForm">
+                    <div class="mb-3">
+                        <label for="opNumero" class="form-label">Ordem de Produção</label>
+                        <input type="text" class="form-control" id="opNumero" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="quantidadeProducao" class="form-label">Quantidade Produzida</label>
+                        <input type="number" class="form-control" id="quantidadeProducao" required min="1">
+                    </div>
+                    <div class="mb-3">
+                        <label for="dataProducao" class="form-label">Data da Produção</label>
+                        <input type="datetime-local" class="form-control" id="dataProducao" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="observacoesProducao" class="form-label">Observações</label>
+                        <textarea class="form-control" id="observacoesProducao" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="confirmarProducao()">Registrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function verOP(numero) {
+    // Implementar visualização da OP
+    showNotification(`Visualizando OP ${numero}`, 'info');
+}
+
+function gerenciarRoteiro(numero) {
+    // Implementar gestão do roteiro
+    showNotification(`Gerenciando roteiro da OP ${numero}`, 'info');
+}
+
+function registrarProducao(numero) {
+    document.getElementById('opNumero').value = numero;
+    document.getElementById('dataProducao').value = new Date().toISOString().slice(0, 16);
+    new bootstrap.Modal(document.getElementById('producaoModal')).show();
+}
+
+function confirmarProducao() {
+    const quantidade = document.getElementById('quantidadeProducao').value;
+    const data = document.getElementById('dataProducao').value;
+    
+    if (!quantidade || !data) {
+        showNotification('Preencha todos os campos obrigatórios.', 'warning');
+        return;
+    }
+    
+    // Simular registro de produção
+    showNotification('Produção registrada com sucesso!', 'success');
+    bootstrap.Modal.getInstance(document.getElementById('producaoModal')).hide();
+    setTimeout(() => location.reload(), 1500);
+}
+
+function iniciarOP(numero) {
+    if (confirm(`Deseja iniciar a produção da OP ${numero}?`)) {
+        showNotification(`OP ${numero} iniciada com sucesso!`, 'success');
+        setTimeout(() => location.reload(), 1500);
+    }
+}
+
+function visualizarGantt() {
+    showNotification('Abrindo visualização Gantt...', 'info');
+}
+
+function relatorioOP(numero) {
+    showNotification(`Gerando relatório da OP ${numero}...`, 'info');
+}
+</script>
+{% endblock %}

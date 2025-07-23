@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Corrigindo à Rota{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+        </h1>
+        <div class="text-muted">
+            Bem-vindo, <strong>{{ current_user.username }}</strong>!
+        </div>
+    </div>
+
+    {% if error %}
+    <div class="alert alert-danger">
+        <strong>Erro:</strong> {{ error }}
+    </div>
+    {% endif %}
+
+    <!-- Cards de Status -->
+    <div class="row">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Sistema
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">Ativo</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Usuário
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ current_user.perfil.title() }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-user fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Login
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {% if current_user.login_count %}
+                                    {{ current_user.login_count }}x
+                                {% else %}
+                                    Primeiro
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-sign-in-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Último Acesso
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {% if current_user.last_login %}
+                                    {{ current_user.last_login.strftime('%d/%m %H:%M') }}
+                                {% else %}
+                                    Agora
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clock fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Informações do Sistema -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-info-circle me-2"></i>Informações do Sistema
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Usuário Logado:</h6>
+                            <ul class="list-unstyled">
+                                <li><strong>Username:</strong> {{ current_user.username }}</li>
+                                <li><strong>Email:</strong> {{ current_user.email }}</li>
+                                <li><strong>Perfil:</strong> {{ current_user.perfil.title() }}</li>
+                                <li><strong>Status:</strong> 
+                                    {% if current_user.ativo %}
+                                        <span class="badge bg-success">Ativo</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Inativo</span>
+                                    {% endif %}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Módulos Disponíveis:</h6>
+                            <div class="row">
+                                {% if current_user.has_permission('rh') %}
+                                <div class="col-6 mb-2">
+                                    <a href="{{ url_for('rh.colaboradores') }}" class="btn btn-outline-primary btn-sm w-100">
+                                        <i class="fas fa-users me-1"></i>RH
+                                    </a>
+                                </div>
+                                {% endif %}
+                                
+                                {% if current_user.has_permission('qualidade') %}
+                                <div class="col-6 mb-2">
+                                    <a href="{{ url_for('qualidade.nao_conformidades') }}" class="btn btn-outline-warning btn-sm w-100">
+                                        <i class="fas fa-award me-1"></i>Qualidade
+                                    </a>
+                                </div>
+                                {% endif %}
+                                
+                                {% if current_user.has_permission('producao') %}
+                                <div class="col-6 mb-2">
+                                    <a href="{{ url_for('producao.ordens_producao') }}" class="btn btn-outline-info btn-sm w-100">
+                                        <i class="fas fa-industry me-1"></i>Produção
+                                    </a>
+                                </div>
+                                {% endif %}
+                                
+                                <div class="col-6 mb-2">
+                                    <a href="{{ url_for('planos_acao.index') }}" class="btn btn-outline-success btn-sm w-100">
+                                        <i class="fas fa-tasks me-1"></i>Planos de Ação
+                                    </a>
+                                </div>
+                                
+                                <div class="col-6 mb-2">
+                                    <a href="{{ url_for('relatorios.index') }}" class="btn btn-outline-dark btn-sm w-100">
+                                        <i class="fas fa-chart-bar me-1"></i>Relatórios
+                                    </a>
+                                </div>
+                                
+                                {% if current_user.has_permission('admin') %}
+                                <div class="col-6 mb-2">
+                                    <a href="{{ url_for('configuracoes.index') }}" class="btn btn-outline-secondary btn-sm w-100">
+                                        <i class="fas fa-cog me-1"></i>Configurações
+                                    </a>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
