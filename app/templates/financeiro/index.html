@@ -130,16 +130,77 @@
         </div>
     </div>
 </div>
+
+<!-- Seção de Gráficos Financeiros -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Dashboard Financeiro</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- Gráfico de Receitas vs Despesas -->
+                    <div class="col-lg-6 mb-4">
+                        <div class="card shadow">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Receitas vs Despesas</h6>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="receitasDespesasChart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Gráfico de Fluxo de Caixa -->
+                    <div class="col-lg-6 mb-4">
+                        <div class="card shadow">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Fluxo de Caixa Mensal</h6>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="fluxoCaixaChart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <!-- Gráfico de Despesas por Categoria -->
+                    <div class="col-lg-6 mb-4">
+                        <div class="card shadow">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Despesas por Categoria</h6>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="despesasCategoriaChart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Gráfico de Evolução Patrimonial -->
+                    <div class="col-lg-6 mb-4">
+                        <div class="card shadow">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Evolução Patrimonial</h6>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="evolucaoPatrimonialChart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 {% endblock %}
 
 {% block scripts %}
-<script>
-function novaAcao() {
-    alert('Funcionalidade em desenvolvimento');
-}
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-function acessarFuncionalidade(nome) {
-    alert('Funcionalidade "' + nome + '" será disponibilizada em breve!');
-}
-</script>
+<script src="{{ url_for('static', filename='js/graficos.js') }}"></script>
 {% endblock %}
