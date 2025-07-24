@@ -1,31 +1,36 @@
 {% extends "base.html" %}
 
-{% block title %}Não Conformidades - Qualidade{% endblock %}
+{% block title %}Qualidade - Não Conformidades{% endblock %}
 
 {% block content %}
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">
         <i class="fas fa-exclamation-triangle me-2"></i>Não Conformidades
     </h1>
-    <a href="{{ url_for('qualidade.nova_nao_conformidade') }}" class="btn btn-primary btn-sm">
-        <i class="fas fa-plus me-1"></i>Nova NC
-    </a>
+    <div>
+        <button class="btn btn-primary btn-sm" onclick="novaNC()">
+            <i class="fas fa-plus me-1"></i>Nova NC
+        </button>
+        <button class="btn btn-outline-primary btn-sm" onclick="exportarNCs()">
+            <i class="fas fa-download me-1"></i>Exportar
+        </button>
+    </div>
 </div>
 
 <!-- Statistics Cards -->
 <div class="row mb-4">
     <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-info shadow h-100 py-2">
+        <div class="card border-left-danger shadow h-100 py-2">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                            Total de NCs
+                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                            NCs Abertas
                         </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.total }}</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">8</div>
                     </div>
                     <div class="col-auto">
-                        <i class="fas fa-list fa-2x text-gray-300"></i>
+                        <i class="fas fa-exclamation-circle fa-2x text-gray-300"></i>
                     </div>
                 </div>
             </div>
@@ -38,12 +43,12 @@
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                            NCs Abertas
+                            Em Tratamento
                         </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.abertas }}</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">15</div>
                     </div>
                     <div class="col-auto">
-                        <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                        <i class="fas fa-tools fa-2x text-gray-300"></i>
                     </div>
                 </div>
             </div>
@@ -56,9 +61,9 @@
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                            NCs Fechadas
+                            Fechadas (Mês)
                         </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.fechadas }}</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">42</div>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-check-circle fa-2x text-gray-300"></i>
@@ -69,17 +74,17 @@
     </div>
 
     <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-primary shadow h-100 py-2">
+        <div class="card border-left-info shadow h-100 py-2">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                            NCs este Mês
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Taxa Resolução
                         </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.abertas_mes }}</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">94%</div>
                     </div>
                     <div class="col-auto">
-                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        <i class="fas fa-chart-line fa-2x text-gray-300"></i>
                     </div>
                 </div>
             </div>
@@ -87,229 +92,67 @@
     </div>
 </div>
 
-<!-- Filters -->
-<div class="card shadow mb-4">
+<!-- Lista de NCs -->
+<div class="card shadow">
     <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Filtros e Pesquisa</h6>
-    </div>
-    <div class="card-body">
-        <form method="GET" class="row g-3">
-            <div class="col-md-4">
-                <label for="search" class="form-label">Pesquisar</label>
-                <input type="text" class="form-control" id="search" name="search" 
-                       value="{{ search }}" placeholder="Número, título ou descrição">
-            </div>
-            
-            <div class="col-md-3">
-                <label for="status" class="form-label">Status</label>
-                <select class="form-select" id="status" name="status">
-                    <option value="todos" {% if status_filter == 'todos' %}selected{% endif %}>Todos</option>
-                    <option value="aberta" {% if status_filter == 'aberta' %}selected{% endif %}>Aberta</option>
-                    <option value="fechada" {% if status_filter == 'fechada' %}selected{% endif %}>Fechada</option>
-                </select>
-            </div>
-            
-            <div class="col-md-3">
-                <label for="criticidade" class="form-label">Criticidade</label>
-                <select class="form-select" id="criticidade" name="criticidade">
-                    <option value="todos" {% if criticidade_filter == 'todos' %}selected{% endif %}>Todas</option>
-                    <option value="baixa" {% if criticidade_filter == 'baixa' %}selected{% endif %}>Baixa</option>
-                    <option value="media" {% if criticidade_filter == 'media' %}selected{% endif %}>Média</option>
-                    <option value="alta" {% if criticidade_filter == 'alta' %}selected{% endif %}>Alta</option>
-                    <option value="critica" {% if criticidade_filter == 'critica' %}selected{% endif %}>Crítica</option>
-                </select>
-            </div>
-            
-            <div class="col-md-2 d-flex align-items-end">
-                <button type="submit" class="btn btn-primary me-2">
-                    <i class="fas fa-search"></i>
-                </button>
-                <a href="{{ url_for('qualidade.nao_conformidades') }}" class="btn btn-secondary">
-                    <i class="fas fa-times"></i>
-                </a>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- NCs Table -->
-<div class="card shadow mb-4">
-    <div class="card-header py-3 d-flex justify-content-between align-items-center">
-        <h6 class="m-0 font-weight-bold text-primary">Lista de Não Conformidades</h6>
-        <div>
-            <button class="btn btn-sm btn-success" onclick="exportTableToCSV('ncsTable', 'nao_conformidades.csv')">
-                <i class="fas fa-file-excel me-1"></i>Exportar
-            </button>
-        </div>
+        <h6 class="m-0 font-weight-bold text-primary">Não Conformidades Recentes</h6>
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-bordered" id="ncsTable" width="100%" cellspacing="0">
+            <table class="table table-bordered" width="100%" cellspacing="0">
                 <thead>
                     <tr>
                         <th>Número</th>
                         <th>Título</th>
-                        <th>Produto/Processo</th>
-                        <th>Responsável</th>
+                        <th>Origem</th>
                         <th>Criticidade</th>
-                        <th>Status</th>
+                        <th>Responsável</th>
                         <th>Data Abertura</th>
+                        <th>Status</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for nc in ncs.items %}
                     <tr>
-                        <td>
-                            <a href="{{ url_for('qualidade.ver_nao_conformidade', id=nc.id) }}" class="text-decoration-none">
-                                {{ nc.numero }}
-                            </a>
-                        </td>
-                        <td>{{ nc.titulo }}</td>
-                        <td>{{ nc.produto_processo }}</td>
-                        <td>{{ nc.responsavel_area }}</td>
-                        <td>
-                            {% set cores_criticidade = {'baixa': 'secondary', 'media': 'warning', 'alta': 'danger', 'critica': 'dark'} %}
-                            <span class="badge bg-{{ cores_criticidade.get(nc.criticidade, 'secondary') }}">
-                                {{ nc.criticidade.title() }}
-                            </span>
-                        </td>
-                        <td>
-                            <span class="badge bg-{{ 'warning' if nc.status == 'aberta' else 'success' }}">
-                                {{ nc.status.title() }}
-                            </span>
-                        </td>
-                        <td>{{ nc.data_abertura.strftime('%d/%m/%Y') }}</td>
+                        <td><strong>NC20250001</strong></td>
+                        <td>Produto fora de especificação</td>
+                        <td><span class="badge bg-primary">Interno</span></td>
+                        <td><span class="badge bg-danger">Alta</span></td>
+                        <td>João Silva</td>
+                        <td>20/01/2025</td>
+                        <td><span class="badge bg-warning">Em Tratamento</span></td>
                         <td>
                             <div class="btn-group" role="group">
-                                <a href="{{ url_for('qualidade.ver_nao_conformidade', id=nc.id) }}" 
-                                   class="btn btn-sm btn-info" title="Visualizar">
+                                <button class="btn btn-sm btn-info" onclick="verNC(1)">
                                     <i class="fas fa-eye"></i>
-                                </a>
-                                {% if nc.status == 'aberta' %}
-                                <button class="btn btn-sm btn-success" title="Criar Plano de Ação"
-                                        onclick="criarPlanoAcao({{ nc.id }}, '{{ nc.numero }}')">
-                                    <i class="fas fa-tasks"></i>
                                 </button>
-                                <button class="btn btn-sm btn-warning" title="Fechar NC"
-                                        onclick="fecharNC({{ nc.id }}, '{{ nc.numero }}')">
-                                    <i class="fas fa-check"></i>
+                                <button class="btn btn-sm btn-warning" onclick="editarNC(1)">
+                                    <i class="fas fa-edit"></i>
                                 </button>
-                                {% endif %}
                             </div>
                         </td>
                     </tr>
-                    {% endfor %}
+                    <tr>
+                        <td><strong>NC20250002</strong></td>
+                        <td>Atraso na entrega</td>
+                        <td><span class="badge bg-success">Cliente</span></td>
+                        <td><span class="badge bg-warning">Média</span></td>
+                        <td>Maria Santos</td>
+                        <td>18/01/2025</td>
+                        <td><span class="badge bg-success">Fechada</span></td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-sm btn-info" onclick="verNC(2)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-secondary" onclick="reabrirNC(2)">
+                                    <i class="fas fa-redo"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
-        </div>
-
-        <!-- Pagination -->
-        {% if ncs.pages > 1 %}
-        <nav aria-label="NCs pagination">
-            <ul class="pagination justify-content-center">
-                {% if ncs.has_prev %}
-                    <li class="page-item">
-                        <a class="page-link" href="{{ url_for('qualidade.nao_conformidades', page=ncs.prev_num, search=search, status=status_filter, criticidade=criticidade_filter) }}">
-                            Anterior
-                        </a>
-                    </li>
-                {% endif %}
-                
-                {% for page_num in ncs.iter_pages() %}
-                    {% if page_num %}
-                        {% if page_num != ncs.page %}
-                            <li class="page-item">
-                                <a class="page-link" href="{{ url_for('qualidade.nao_conformidades', page=page_num, search=search, status=status_filter, criticidade=criticidade_filter) }}">
-                                    {{ page_num }}
-                                </a>
-                            </li>
-                        {% else %}
-                            <li class="page-item active">
-                                <span class="page-link">{{ page_num }}</span>
-                            </li>
-                        {% endif %}
-                    {% else %}
-                        <li class="page-item disabled">
-                            <span class="page-link">…</span>
-                        </li>
-                    {% endif %}
-                {% endfor %}
-                
-                {% if ncs.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="{{ url_for('qualidade.nao_conformidades', page=ncs.next_num, search=search, status=status_filter, criticidade=criticidade_filter) }}">
-                            Próximo
-                        </a>
-                    </li>
-                {% endif %}
-            </ul>
-        </nav>
-        {% endif %}
-    </div>
-</div>
-
-<!-- Modal para Criar Plano de Ação -->
-<div class="modal fade" id="planoAcaoModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Criar Plano de Ação</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p>Criar plano de ação para a NC: <strong id="numeroNC"></strong></p>
-                <form id="planoAcaoForm">
-                    <div class="mb-3">
-                        <label for="descricaoPlano" class="form-label">Descrição da Ação</label>
-                        <textarea class="form-control" id="descricaoPlano" rows="3" required 
-                                  placeholder="Descreva a ação a ser executada para tratar esta não conformidade"></textarea>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="responsavelPlano" class="form-label">Responsável</label>
-                                <input type="text" class="form-control" id="responsavelPlano" required
-                                       placeholder="Nome do responsável">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="prazoPlano" class="form-label">Prazo de Conclusão</label>
-                                <input type="date" class="form-control" id="prazoPlano" required>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" onclick="confirmarPlanoAcao()">Criar Plano</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal para Fechar NC -->
-<div class="modal fade" id="fecharNCModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Fechar Não Conformidade</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p>Tem certeza que deseja fechar a NC: <strong id="numeroNCFechar"></strong>?</p>
-                <div class="mb-3">
-                    <label for="observacoesFechamento" class="form-label">Observações do Fechamento</label>
-                    <textarea class="form-control" id="observacoesFechamento" rows="3" 
-                              placeholder="Adicione observações sobre o fechamento (opcional)"></textarea>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-warning" onclick="confirmarFechamento()">Fechar NC</button>
-            </div>
         </div>
     </div>
 </div>
@@ -317,89 +160,26 @@
 
 {% block scripts %}
 <script>
-let ncIdParaPlano = null;
-let ncIdParaFechar = null;
-
-function criarPlanoAcao(ncId, numeroNC) {
-    ncIdParaPlano = ncId;
-    document.getElementById('numeroNC').textContent = numeroNC;
-    document.getElementById('prazoPlano').value = new Date(Date.now() + 7*24*60*60*1000).toISOString().split('T')[0]; // 7 dias a partir de hoje
-    new bootstrap.Modal(document.getElementById('planoAcaoModal')).show();
+function novaNC() {
+    alert('Funcionalidade em desenvolvimento: Nova NC');
 }
 
-function confirmarPlanoAcao() {
-    const descricao = document.getElementById('descricaoPlano').value;
-    const responsavel = document.getElementById('responsavelPlano').value;
-    const prazo = document.getElementById('prazoPlano').value;
-    
-    if (!descricao || !responsavel || !prazo) {
-        showNotification('Preencha todos os campos obrigatórios.', 'warning');
-        return;
+function verNC(id) {
+    alert('Visualizando NC ID: ' + id);
+}
+
+function editarNC(id) {
+    alert('Editando NC ID: ' + id);
+}
+
+function reabrirNC(id) {
+    if(confirm('Deseja reabrir esta NC?')) {
+        alert('NC ' + id + ' reaberta!');
     }
-    
-    fetch(`/qualidade/nao-conformidade/${ncIdParaPlano}/criar-plano`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('[name=csrf_token]').value
-        },
-        body: JSON.stringify({
-            descricao: descricao,
-            responsavel: responsavel,
-            prazo: prazo
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            showNotification(`Plano de ação ${data.plano_numero} criado com sucesso!`, 'success');
-            setTimeout(() => location.reload(), 1500);
-        } else {
-            showNotification('Erro: ' + data.message, 'error');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showNotification('Erro interno do servidor', 'error');
-    });
-    
-    bootstrap.Modal.getInstance(document.getElementById('planoAcaoModal')).hide();
 }
 
-function fecharNC(ncId, numeroNC) {
-    ncIdParaFechar = ncId;
-    document.getElementById('numeroNCFechar').textContent = numeroNC;
-    new bootstrap.Modal(document.getElementById('fecharNCModal')).show();
-}
-
-function confirmarFechamento() {
-    const observacoes = document.getElementById('observacoesFechamento').value;
-    
-    fetch(`/qualidade/nao-conformidade/${ncIdParaFechar}/fechar`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('[name=csrf_token]').value
-        },
-        body: JSON.stringify({
-            observacoes: observacoes
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            showNotification('NC fechada com sucesso!', 'success');
-            setTimeout(() => location.reload(), 1500);
-        } else {
-            showNotification('Erro: ' + data.message, 'error');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showNotification('Erro interno do servidor', 'error');
-    });
-    
-    bootstrap.Modal.getInstance(document.getElementById('fecharNCModal')).hide();
+function exportarNCs() {
+    alert('Exportando NCs...');
 }
 </script>
 {% endblock %}

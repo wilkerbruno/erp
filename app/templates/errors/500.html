@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Erro Interno - Corrigindo à Rota</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <title>Erro interno - ERP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <style>
         body {
-            background: linear-gradient(135deg, #e74a3b 0%, #c0392b 100%);
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             font-family: 'Nunito', sans-serif;
         }
         .error-container {
-            background: rgba(255, 255, 255, 0.95);
+            background: white;
             border-radius: 20px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
             padding: 3rem;
@@ -24,37 +24,9 @@
         .error-code {
             font-size: 8rem;
             font-weight: 900;
-            color: #e74a3b;
+            color: #f5576c;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
             margin-bottom: 1rem;
-        }
-        .error-message {
-            font-size: 1.5rem;
-            color: #5a5c69;
-            margin-bottom: 2rem;
-        }
-        .error-description {
-            color: #858796;
-            margin-bottom: 3rem;
-        }
-        .btn-home {
-            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
-            border: none;
-            border-radius: 25px;
-            padding: 12px 30px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-        .error-icon {
-            font-size: 4rem;
-            color: #e74a3b;
-            margin-bottom: 2rem;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
         }
     </style>
 </head>
@@ -63,54 +35,22 @@
         <div class="row justify-content-center">
             <div class="col-lg-6">
                 <div class="error-container">
-                    <div class="error-icon">
-                        <i class="fas fa-exclamation-triangle"></i>
-                    </div>
                     <div class="error-code">500</div>
                     <div class="error-message">
-                        <i class="fas fa-server me-2"></i>
-                        Erro Interno do Servidor
+                        <h2><i class="fas fa-exclamation-triangle me-2"></i>Erro Interno</h2>
+                        <p class="text-muted">Ops! Algo deu errado. Nossa equipe foi notificada.</p>
                     </div>
-                    <div class="error-description">
-                        <p>Oops! Algo deu errado em nosso servidor.</p>
-                        <p>Nosso time técnico foi notificado automaticamente e está trabalhando para resolver o problema.</p>
-                    </div>
-                    
-                    <div class="alert alert-info mb-4">
-                        <i class="fas fa-info-circle me-2"></i>
-                        <strong>Erro temporário!</strong> Tente novamente em alguns minutos.
-                    </div>
-                    
-                    <div class="mb-4">
-                        <h6>O que você pode fazer enquanto isso:</h6>
-                        <ul class="list-unstyled text-start">
-                            <li><i class="fas fa-check text-success me-2"></i>Aguardar alguns minutos e tentar novamente</li>
-                            <li><i class="fas fa-check text-success me-2"></i>Limpar o cache do navegador</li>
-                            <li><i class="fas fa-check text-success me-2"></i>Voltar para a página inicial</li>
-                            <li><i class="fas fa-check text-success me-2"></i>Entrar em contato com o suporte se persistir</li>
-                        </ul>
-                    </div>
-                    
-                    <div>
-                        <a href="/" class="btn btn-primary btn-home text-white me-3">
-                            <i class="fas fa-home me-2"></i>Voltar ao Início
-                        </a>
-                        <button class="btn btn-outline-secondary" onclick="location.reload()">
-                            <i class="fas fa-sync me-2"></i>Tentar Novamente
-                        </button>
-                    </div>
-                    
                     <div class="mt-4">
-                        <small class="text-muted">
-                            ID do Erro: <code>#{{ request.url_rule or 'unknown' }}-{{ moment().format('YYYYMMDDHHmmss') if moment else '20250121143000' }}</code><br>
-                            Para suporte: <a href="mailto:suporte@corrigindoarota.com.br" class="text-decoration-none">suporte@corrigindoarota.com.br</a>
-                        </small>
+                        <a href="/" class="btn btn-primary me-3">
+                            <i class="fas fa-home me-2"></i>Voltar ao Dashboard
+                        </a>
+                        <a href="javascript:location.reload()" class="btn btn-outline-secondary">
+                            <i class="fas fa-redo me-2"></i>Tentar Novamente
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

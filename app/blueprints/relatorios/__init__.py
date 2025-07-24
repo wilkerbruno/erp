@@ -1,5 +1,5 @@
 from flask import Blueprint
 
-bp = Blueprint('relatorios', __name__, template_folder='templates')
+bp = Blueprint('relatorios', __name__)
 
 from app.blueprints.relatorios import routes

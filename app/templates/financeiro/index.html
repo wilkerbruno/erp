@@ -1,0 +1,145 @@
+{%extends "base.html" %}
+
+{%block title %}Financeiro{%endblock %}
+
+{%block content %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        <i class="fas fa-dollar-sign me-2"></i>Financeiro
+    </h1>
+    <div>
+        <button class="btn btn-success btn-sm" onclick="novaAcao()">
+            <i class="fas fa-plus me-1"></i>Novo
+        </button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="alert alert-success" role="alert">
+            <h4 class="alert-heading"><i class="fas fa-dollar-sign me-2"></i>Módulo Financeiro</h4>
+            <p>Este módulo está em desenvolvimento ativo. As funcionalidades principais incluem:</p>
+            <hr>
+            <ul class="mb-0">
+                <li><strong>DRE Gerencial</strong> - Demonstrativo de resultados</li>
+                <li><strong>Contas a Pagar</strong> - Gestão de pagamentos</li>
+                <li><strong>Contas a Receber</strong> - Gestão de recebimentos</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-4 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Status
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">Em Desenvolvimento</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-code fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Previsão
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">Próxima Versão</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Funcionalidades
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">3</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-list fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Funcionalidades Disponíveis</h6>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-dollar-sign fa-2x text-success mb-3"></i>
+                        <h5>DRE Gerencial</h5>
+                        <p class="text-muted">Demonstrativo de resultados</p>
+                        <button class="btn btn-success btn-sm" onclick="acessarFuncionalidade('DRE Gerencial')">
+                            Em Breve
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-dollar-sign fa-2x text-success mb-3"></i>
+                        <h5>Contas a Pagar</h5>
+                        <p class="text-muted">Gestão de pagamentos</p>
+                        <button class="btn btn-success btn-sm" onclick="acessarFuncionalidade('Contas a Pagar')">
+                            Em Breve
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-dollar-sign fa-2x text-success mb-3"></i>
+                        <h5>Contas a Receber</h5>
+                        <p class="text-muted">Gestão de recebimentos</p>
+                        <button class="btn btn-success btn-sm" onclick="acessarFuncionalidade('Contas a Receber')">
+                            Em Breve
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function novaAcao() {
+    alert('Funcionalidade em desenvolvimento');
+}
+
+function acessarFuncionalidade(nome) {
+    alert('Funcionalidade "' + nome + '" será disponibilizada em breve!');
+}
+</script>
+{% endblock %}

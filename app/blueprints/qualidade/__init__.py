@@ -1,5 +1,5 @@
 from flask import Blueprint
 
-bp = Blueprint('qualidade', __name__, template_folder='templates')
+bp = Blueprint('qualidade', __name__)
 
 from app.blueprints.qualidade import routes

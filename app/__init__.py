@@ -25,33 +25,35 @@ def create_app(config_name='development'):
     login_manager.login_message = 'Faca login para acessar esta pagina.'
     login_manager.login_message_category = 'info'
     
-    # Register blueprints
-    try:
-        from app.blueprints.auth import bp as auth_bp
-        from app.blueprints.dashboard import bp as dashboard_bp
-        
-        app.register_blueprint(auth_bp, url_prefix='/auth')
-        app.register_blueprint(dashboard_bp, url_prefix='/')
-        
-        # Outros blueprints opcionais
-        other_blueprints = [
-            ('rh', '/rh'), ('qualidade', '/qualidade'), ('producao', '/producao'),
-            ('compras', '/compras'), ('planos_acao', '/planos-acao'), 
-            ('consultoria', '/consultoria'), ('financeiro', '/financeiro'),
-            ('manutencao', '/manutencao'), ('projetos', '/projetos'),
-            ('relatorios', '/relatorios'), ('configuracoes', '/configuracoes')
-        ]
-        
-        for bp_name, url_prefix in other_blueprints:
-            try:
-                module = __import__(f'app.blueprints.{bp_name}', fromlist=['bp'])
-                blueprint = getattr(module, 'bp')
-                app.register_blueprint(blueprint, url_prefix=url_prefix)
-            except Exception:
-                pass
-        
-    except Exception as e:
-        print(f"Erro ao registrar blueprints: {e}")
+    # Register blueprints - MUITO SIMPLES
+    from app.blueprints.auth import bp as auth_bp
+    from app.blueprints.dashboard import bp as dashboard_bp
+    
+    app.register_blueprint(auth_bp, url_prefix='/auth')
+    app.register_blueprint(dashboard_bp, url_prefix='/')
+    
+    # Modulos
+    modules = [
+        ('rh', '/rh'),
+        ('qualidade', '/qualidade'),
+        ('producao', '/producao'),
+        ('compras', '/compras'),
+        ('planos_acao', '/planos-acao'),
+        ('consultoria', '/consultoria'),
+        ('financeiro', '/financeiro'),
+        ('manutencao', '/manutencao'),
+        ('projetos', '/projetos'),
+        ('relatorios', '/relatorios'),
+        ('configuracoes', '/configuracoes')
+    ]
+    
+    for module_name, url_prefix in modules:
+        try:
+            module = __import__(f'app.blueprints.{module_name}', fromlist=['bp'])
+            blueprint = getattr(module, 'bp')
+            app.register_blueprint(blueprint, url_prefix=url_prefix)
+        except Exception as e:
+            print(f"Erro ao registrar {module_name}: {e}")
     
     # Error handlers
     @app.errorhandler(404)

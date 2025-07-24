@@ -1,73 +1,83 @@
-{% extends "base.html" %}
+{%extends "base.html" %}
 
-{% block title %}Relatórios e Analytics{% endblock %}
+{%block title %}Relatórios e Analytics{%endblock %}
 
-{% block content %}
+{%block content %}
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">
-        <i class="fas fa-chart-bar me-2"></i>Central de Relatórios e Analytics
+        <i class="fas fa-chart-bar me-2"></i>Relatórios e Analytics
     </h1>
     <div>
-        <button class="btn btn-primary btn-sm" onclick="criarRelatorioPersonalizado()">
-            <i class="fas fa-plus me-1"></i>Relatório Personalizado
-        </button>
-        <button class="btn btn-outline-primary btn-sm" onclick="agendarRelatorio()">
-            <i class="fas fa-clock me-1"></i>Agendar Relatório
+        <button class="btn btn-info btn-sm" onclick="novaAcao()">
+            <i class="fas fa-plus me-1"></i>Novo
         </button>
     </div>
 </div>
 
-<!-- Categorias de Relatórios -->
-<div class="row mb-4">
+<div class="row">
     <div class="col-12">
-        <div class="card shadow">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Categorias de Relatórios</h6>
-            </div>
+        <div class="alert alert-info" role="alert">
+            <h4 class="alert-heading"><i class="fas fa-chart-bar me-2"></i>Módulo Relatórios e Analytics</h4>
+            <p>Este módulo está em desenvolvimento ativo. As funcionalidades principais incluem:</p>
+            <hr>
+            <ul class="mb-0">
+                <li><strong>Dashboard Executivo</strong> - Visão executiva</li>
+                <li><strong>Relatórios Operacionais</strong> - Relatórios detalhados</li>
+                <li><strong>Indicadores</strong> - KPIs e métricas</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-4 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
             <div class="card-body">
-                <div class="row">
-                    <div class="col-lg-3 col-md-6 mb-4">
-                        <div class="card h-100 category-card" onclick="abrirCategoria('financeiro')">
-                            <div class="card-body text-center">
-                                <i class="fas fa-dollar-sign fa-3x text-success mb-3"></i>
-                                <h5>Financeiro</h5>
-                                <p class="text-muted">DRE, Fluxo de Caixa, Lucratividade</p>
-                                <span class="badge bg-success">12 relatórios</span>
-                            </div>
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Status
                         </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">Em Desenvolvimento</div>
                     </div>
-                    
-                    <div class="col-lg-3 col-md-6 mb-4">
-                        <div class="card h-100 category-card" onclick="abrirCategoria('producao')">
-                            <div class="card-body text-center">
-                                <i class="fas fa-industry fa-3x text-primary mb-3"></i>
-                                <h5>Produção</h5>
-                                <p class="text-muted">OEE, Produtividade, Qualidade</p>
-                                <span class="badge bg-primary">8 relatórios</span>
-                            </div>
-                        </div>
+                    <div class="col-auto">
+                        <i class="fas fa-code fa-2x text-gray-300"></i>
                     </div>
-                    
-                    <div class="col-lg-3 col-md-6 mb-4">
-                        <div class="card h-100 category-card" onclick="abrirCategoria('qualidade')">
-                            <div class="card-body text-center">
-                                <i class="fas fa-award fa-3x text-warning mb-3"></i>
-                                <h5>Qualidade</h5>
-                                <p class="text-muted">NCs, Auditorias, Indicadores</p>
-                                <span class="badge bg-warning">6 relatórios</span>
-                            </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Previsão
                         </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">Próxima Versão</div>
                     </div>
-                    
-                    <div class="col-lg-3 col-md-6 mb-4">
-                        <div class="card h-100 category-card" onclick="abrirCategoria('rh')">
-                            <div class="card-body text-center">
-                                <i class="fas fa-users fa-3x text-info mb-3"></i>
-                                <h5>Recursos Humanos</h5>
-                                <p class="text-muted">Turnover, Absenteísmo, Treinamentos</p>
-                                <span class="badge bg-info">5 relatórios</span>
-                            </div>
+                    <div class="col-auto">
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Funcionalidades
                         </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">3</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-list fa-2x text-gray-300"></i>
                     </div>
                 </div>
             </div>
@@ -75,452 +85,61 @@
     </div>
 </div>
 
-<!-- Relatórios Favoritos -->
-<div class="card shadow mb-4">
+<div class="card shadow">
     <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Relatórios Favoritos</h6>
+        <h6 class="m-0 font-weight-bold text-primary">Funcionalidades Disponíveis</h6>
     </div>
     <div class="card-body">
         <div class="row">
-            <div class="col-lg-4 col-md-6 mb-3">
-                <div class="card border-left-success">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="card-title mb-1">DRE Gerencial Mensal</h6>
-                                <small class="text-muted">Último: 20/01/2025</small>
-                            </div>
-                            <div class="btn-group" role="group">
-                                <button class="btn btn-sm btn-outline-primary" onclick="gerarRelatorio('dre_mensal')">
-                                    <i class="fas fa-play"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-secondary" onclick="agendarRelatorio('dre_mensal')">
-                                    <i class="fas fa-clock"></i>
-                                </button>
-                            </div>
-                        </div>
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-chart-bar fa-2x text-info mb-3"></i>
+                        <h5>Dashboard Executivo</h5>
+                        <p class="text-muted">Visão executiva</p>
+                        <button class="btn btn-info btn-sm" onclick="acessarFuncionalidade('Dashboard Executivo')">
+                            Em Breve
+                        </button>
                     </div>
                 </div>
             </div>
-            
-            <div class="col-lg-4 col-md-6 mb-3">
-                <div class="card border-left-primary">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="card-title mb-1">Produtividade Semanal</h6>
-                                <small class="text-muted">Último: 19/01/2025</small>
-                            </div>
-                            <div class="btn-group" role="group">
-                                <button class="btn btn-sm btn-outline-primary" onclick="gerarRelatorio('produtividade')">
-                                    <i class="fas fa-play"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-secondary" onclick="agendarRelatorio('produtividade')">
-                                    <i class="fas fa-clock"></i>
-                                </button>
-                            </div>
-                        </div>
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-chart-bar fa-2x text-info mb-3"></i>
+                        <h5>Relatórios Operacionais</h5>
+                        <p class="text-muted">Relatórios detalhados</p>
+                        <button class="btn btn-info btn-sm" onclick="acessarFuncionalidade('Relatórios Operacionais')">
+                            Em Breve
+                        </button>
                     </div>
                 </div>
             </div>
-            
-            <div class="col-lg-4 col-md-6 mb-3">
-                <div class="card border-left-warning">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="card-title mb-1">Indicadores de Qualidade</h6>
-                                <small class="text-muted">Último: 18/01/2025</small>
-                            </div>
-                            <div class="btn-group" role="group">
-                                <button class="btn btn-sm btn-outline-primary" onclick="gerarRelatorio('qualidade')">
-                                    <i class="fas fa-play"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-secondary" onclick="agendarRelatorio('qualidade')">
-                                    <i class="fas fa-clock"></i>
-                                </button>
-                            </div>
-                        </div>
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-chart-bar fa-2x text-info mb-3"></i>
+                        <h5>Indicadores</h5>
+                        <p class="text-muted">KPIs e métricas</p>
+                        <button class="btn btn-info btn-sm" onclick="acessarFuncionalidade('Indicadores')">
+                            Em Breve
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<!-- Dashboard Executivo -->
-<div class="card shadow mb-4">
-    <div class="card-header py-3 d-flex justify-content-between align-items-center">
-        <h6 class="m-0 font-weight-bold text-primary">Dashboard Executivo - Visão Geral</h6>
-        <div>
-            <select class="form-select form-select-sm" id="periodoFilter" onchange="atualizarDashboard()">
-                <option value="7">Últimos 7 dias</option>
-                <option value="30" selected>Últimos 30 dias</option>
-                <option value="90">Últimos 90 dias</option>
-                <option value="365">Último ano</option>
-            </select>
-        </div>
-    </div>
-    <div class="card-body">
-        <div class="row">
-            <!-- KPIs Principais -->
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="card bg-success text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <div class="text-white-50 small">Receita Líquida</div>
-                                <div class="h4 mb-0">R$ 1.25M</div>
-                                <div class="text-white-75 small">
-                                    <i class="fas fa-arrow-up"></i> 12.5% vs período anterior
-                                </div>
-                            </div>
-                            <div class="align-self-center">
-                                <i class="fas fa-dollar-sign fa-2x text-white-50"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="card bg-primary text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <div class="text-white-50 small">OEE Médio</div>
-                                <div class="h4 mb-0">78.5%</div>
-                                <div class="text-white-75 small">
-                                    <i class="fas fa-arrow-up"></i> 3.2% vs período anterior
-                                </div>
-                            </div>
-                            <div class="align-self-center">
-                                <i class="fas fa-cogs fa-2x text-white-50"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="card bg-warning text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <div class="text-white-50 small">NCs Abertas</div>
-                                <div class="h4 mb-0">8</div>
-                                <div class="text-white-75 small">
-                                    <i class="fas fa-arrow-down"></i> 25% vs período anterior
-                                </div>
-                            </div>
-                            <div class="align-self-center">
-                                <i class="fas fa-exclamation-triangle fa-2x text-white-50"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="card bg-info text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <div class="text-white-50 small">Colaboradores</div>
-                                <div class="h4 mb-0">156</div>
-                                <div class="text-white-75 small">
-                                    <i class="fas fa-arrow-up"></i> 2 novos este mês
-                                </div>
-                            </div>
-                            <div class="align-self-center">
-                                <i class="fas fa-users fa-2x text-white-50"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Charts Row -->
-        <div class="row">
-            <div class="col-lg-8">
-                <canvas id="trendsChart" width="400" height="200"></canvas>
-            </div>
-            <div class="col-lg-4">
-                <canvas id="distributionChart" width="400" height="200"></canvas>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Relatórios Disponíveis por Categoria -->
-<div class="card shadow mb-4">
-    <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Todos os Relatórios Disponíveis</h6>
-    </div>
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-bordered" width="100%" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th>Nome do Relatório</th>
-                        <th>Categoria</th>
-                        <th>Frequência</th>
-                        <th>Última Execução</th>
-                        <th>Status</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><i class="fas fa-chart-line me-2 text-success"></i>DRE Gerencial Detalhada</td>
-                        <td><span class="badge bg-success">Financeiro</span></td>
-                        <td>Mensal</td>
-                        <td>20/01/2025 14:30</td>
-                        <td><span class="badge bg-success">Ativo</span></td>
-                        <td>
-                            <div class="btn-group" role="group">
-                                <button class="btn btn-sm btn-primary" onclick="gerarRelatorio('dre_detalhada')">
-                                    <i class="fas fa-play"></i>
-                                </button>
-                                <button class="btn btn-sm btn-info" onclick="visualizarRelatorio('dre_detalhada')">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="btn btn-sm btn-secondary" onclick="configurarRelatorio('dre_detalhada')">
-                                    <i class="fas fa-cog"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><i class="fas fa-industry me-2 text-primary"></i>Produtividade por Linha</td>
-                        <td><span class="badge bg-primary">Produção</span></td>
-                        <td>Semanal</td>
-                        <td>19/01/2025 08:00</td>
-                        <td><span class="badge bg-success">Ativo</span></td>
-                        <td>
-                            <div class="btn-group" role="group">
-                                <button class="btn btn-sm btn-primary" onclick="gerarRelatorio('produtividade_linha')">
-                                    <i class="fas fa-play"></i>
-                                </button>
-                                <button class="btn btn-sm btn-info" onclick="visualizarRelatorio('produtividade_linha')">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="btn btn-sm btn-secondary" onclick="configurarRelatorio('produtividade_linha')">
-                                    <i class="fas fa-cog"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><i class="fas fa-award me-2 text-warning"></i>Indicadores de Qualidade</td>
-                        <td><span class="badge bg-warning">Qualidade</span></td>
-                        <td>Diário</td>
-                        <td>21/01/2025 07:00</td>
-                        <td><span class="badge bg-success">Ativo</span></td>
-                        <td>
-                            <div class="btn-group" role="group">
-                                <button class="btn btn-sm btn-primary" onclick="gerarRelatorio('indicadores_qualidade')">
-                                    <i class="fas fa-play"></i>
-                                </button>
-                                <button class="btn btn-sm btn-info" onclick="visualizarRelatorio('indicadores_qualidade')">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="btn btn-sm btn-secondary" onclick="configurarRelatorio('indicadores_qualidade')">
-                                    <i class="fas fa-cog"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><i class="fas fa-users me-2 text-info"></i>Análise de Turnover</td>
-                        <td><span class="badge bg-info">RH</span></td>
-                        <td>Mensal</td>
-                        <td>15/01/2025 16:45</td>
-                        <td><span class="badge bg-warning">Agendado</span></td>
-                        <td>
-                            <div class="btn-group" role="group">
-                                <button class="btn btn-sm btn-primary" onclick="gerarRelatorio('turnover')">
-                                    <i class="fas fa-play"></i>
-                                </button>
-                                <button class="btn btn-sm btn-info" onclick="visualizarRelatorio('turnover')">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="btn btn-sm btn-secondary" onclick="configurarRelatorio('turnover')">
-                                    <i class="fas fa-cog"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-{% endblock %}
-
-{% block head %}
-<style>
-.category-card {
-    cursor: pointer;
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-}
-
-.category-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-}
-
-.border-left-success {
-    border-left: 0.25rem solid #1cc88a !important;
-}
-
-.border-left-primary {
-    border-left: 0.25rem solid #4e73df !important;
-}
-
-.border-left-warning {
-    border-left: 0.25rem solid #f6c23e !important;
-}
-
-.text-white-50 {
-    color: rgba(255, 255, 255, 0.5) !important;
-}
-
-.text-white-75 {
-    color: rgba(255, 255, 255, 0.75) !important;
-}
-</style>
 {% endblock %}
 
 {% block scripts %}
 <script>
-// Gráfico de tendências
-const ctx1 = document.getElementById('trendsChart').getContext('2d');
-new Chart(ctx1, {
-    type: 'line',
-    data: {
-        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
-        datasets: [{
-            label: 'Receita (R$ mil)',
-            data: [1100, 1150, 1200, 1180, 1250, 1300],
-            borderColor: '#1cc88a',
-            tension: 0.1,
-            yAxisID: 'y'
-        }, {
-            label: 'OEE (%)',
-            data: [72, 74, 76, 75, 78, 80],
-            borderColor: '#4e73df',
-            tension: 0.1,
-            yAxisID: 'y1'
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: {
-            mode: 'index',
-            intersect: false,
-        },
-        scales: {
-            x: {
-                display: true,
-                title: {
-                    display: true,
-                    text: 'Período'
-                }
-            },
-            y: {
-                type: 'linear',
-                display: true,
-                position: 'left',
-                title: {
-                    display: true,
-                    text: 'Receita (R$ mil)'
-                }
-            },
-            y1: {
-                type: 'linear',
-                display: true,
-                position: 'right',
-                title: {
-                    display: true,
-                    text: 'OEE (%)'
-                },
-                grid: {
-                    drawOnChartArea: false,
-                },
-            }
-        }
-    }
-});
-
-// Gráfico de distribuição
-const ctx2 = document.getElementById('distributionChart').getContext('2d');
-new Chart(ctx2, {
-    type: 'doughnut',
-    data: {
-        labels: ['Financeiro', 'Produção', 'Qualidade', 'RH'],
-        datasets: [{
-            data: [40, 30, 20, 10],
-            backgroundColor: [
-                '#1cc88a',
-                '#4e73df',
-                '#f6c23e',
-                '#36b9cc'
-            ]
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                position: 'bottom'
-            },
-            title: {
-                display: true,
-                text: 'Distribuição de Relatórios por Categoria'
-            }
-        }
-    }
-});
-
-function abrirCategoria(categoria) {
-    showNotification(`Abrindo categoria ${categoria}...`, 'info');
+function novaAcao() {
+    alert('Funcionalidade em desenvolvimento');
 }
 
-function gerarRelatorio(tipo) {
-    showNotification(`Gerando relatório ${tipo}...`, 'info');
-    // Simular processo de geração
-    setTimeout(() => {
-        showNotification(`Relatório ${tipo} gerado com sucesso!`, 'success');
-    }, 2000);
-}
-
-function visualizarRelatorio(tipo) {
-    showNotification(`Abrindo visualização do relatório ${tipo}...`, 'info');
-}
-
-function configurarRelatorio(tipo) {
-    showNotification(`Abrindo configurações do relatório ${tipo}...`, 'info');
-}
-
-function agendarRelatorio(tipo = null) {
-    if (tipo) {
-        showNotification(`Agendando relatório ${tipo}...`, 'info');
-    } else {
-        showNotification('Abrindo agendador de relatórios...', 'info');
-    }
-}
-
-function criarRelatorioPersonalizado() {
-    showNotification('Abrindo criador de relatórios personalizados...', 'info');
-}
-
-function atualizarDashboard() {
-    const periodo = document.getElementById('periodoFilter').value;
-    showNotification(`Atualizando dashboard para últimos ${periodo} dias...`, 'info');
+function acessarFuncionalidade(nome) {
+    alert('Funcionalidade "' + nome + '" será disponibilizada em breve!');
 }
 </script>
 {% endblock %}

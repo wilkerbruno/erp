@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Recursos Humanos{% endblock %}
+
+{% block content %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        <i class="fas fa-users me-2"></i>Recursos Humanos
+    </h1>
+</div>
+
+<div class="row">
+    <div class="col-lg-6 col-md-12 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">Gestão de Colaboradores</h6>
+            </div>
+            <div class="card-body">
+                <p>Gerencie todos os colaboradores da empresa.</p>
+                <a href="/rh/colaboradores" class="btn btn-primary">Acessar Colaboradores</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-6 col-md-12 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">Ponto Eletrônico</h6>
+            </div>
+            <div class="card-body">
+                <p>Controle de ponto e frequência dos colaboradores.</p>
+                <button class="btn btn-info" onclick="alert('Em desenvolvimento')">Em Breve</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
