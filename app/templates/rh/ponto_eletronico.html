@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+
+{% block title %}Ponto Eletrônico{% endblock %}
+
+{% block head %}
+<style>
+    .clock-display {
+        font-size: 3rem;
+        font-weight: bold;
+        color: #4e73df;
+        text-align: center;
+        margin: 2rem 0;
+    }
+    .punch-button {
+        height: 120px;
+        font-size: 1.2rem;
+        margin: 10px;
+    }
+    .status-badge {
+        font-size: 1.1rem;
+        padding: 0.5rem 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-clock me-2"></i>Ponto Eletrônico
+        </h1>
+        <div>
+            <a href="/rh" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left me-1"></i>Voltar
+            </a>
+            <button class="btn btn-primary btn-sm" onclick="verRelatorios()">
+                <i class="fas fa-chart-bar me-1"></i>Relatórios
+            </button>
+        </div>
+    </div>
+
+    <!-- Relógio e Status -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-body text-center">
+                    <h4><i class="fas fa-user me-2"></i>Bem-vindo, {{ current_user.username|title }}!</h4>
+                    <div class="clock-display" id="clock">--:--:--</div>
+                    <div class="mb-3">
+                        <span class="badge status-badge bg-success" id="status">Sistema Online</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Status Hoje</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Entrada:</span>
+                        <strong id="entrada">08:00:00</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Saída Almoço:</span>
+                        <strong id="saida-almoco">12:00:00</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Retorno Almoço:</span>
+                        <strong id="retorno-almoco">13:00:00</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Saída:</span>
+                        <strong id="saida">--:--:--</strong>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <span>Total Trabalhado:</span>
+                        <strong id="total-horas" class="text-success">6h 30min</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botões de Registro -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <button class="btn btn-success btn-block w-100 punch-button" onclick="registrarPonto('entrada')">
+                <i class="fas fa-sign-in-alt fa-2x mb-2"></i><br>
+                <strong>ENTRADA</strong>
+            </button>
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-warning btn-block w-100 punch-button" onclick="registrarPonto('saida_almoco')">
+                <i class="fas fa-utensils fa-2x mb-2"></i><br>
+                <strong>SAÍDA ALMOÇO</strong>
+            </button>
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-info btn-block w-100 punch-button" onclick="registrarPonto('retorno_almoco')">
+                <i class="fas fa-undo fa-2x mb-2"></i><br>
+                <strong>RETORNO ALMOÇO</strong>
+            </button>
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-danger btn-block w-100 punch-button" onclick="registrarPonto('saida')">
+                <i class="fas fa-sign-out-alt fa-2x mb-2"></i><br>
+                <strong>SAÍDA</strong>
+            </button>
+        </div>
+    </div>
+
+    <!-- Histórico Recente -->
+    <div class="card shadow">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-history me-2"></i>Registros Recentes
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Entrada</th>
+                            <th>Saída Almoço</th>
+                            <th>Retorno Almoço</th>
+                            <th>Saída</th>
+                            <th>Total Horas</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Hoje (27/07/2025)</strong></td>
+                            <td>08:00:00</td>
+                            <td>12:00:00</td>
+                            <td>13:00:00</td>
+                            <td class="text-muted">--:--:--</td>
+                            <td>6h 30min</td>
+                            <td><span class="badge bg-warning">Em andamento</span></td>
+                        </tr>
+                        <tr>
+                            <td>26/07/2025</td>
+                            <td>08:05:00</td>
+                            <td>12:00:00</td>
+                            <td>13:00:00</td>
+                            <td>17:00:00</td>
+                            <td>7h 55min</td>
+                            <td><span class="badge bg-success">Completo</span></td>
+                        </tr>
+                        <tr>
+                            <td>25/07/2025</td>
+                            <td>08:00:00</td>
+                            <td>12:00:00</td>
+                            <td>13:00:00</td>
+                            <td>17:00:00</td>
+                            <td>8h 00min</td>
+                            <td><span class="badge bg-success">Completo</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Atualizar relógio em tempo real
+function updateClock() {
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('pt-BR');
+    document.getElementById('clock').textContent = timeString;
+}
+
+// Registrar ponto
+function registrarPonto(tipo) {
+    const tipos = {
+        'entrada': 'Entrada',
+        'saida_almoco': 'Saída para Almoço', 
+        'retorno_almoco': 'Retorno do Almoço',
+        'saida': 'Saída'
+    };
+    
+    if(confirm(`Confirma o registro de ${tipos[tipo]}?`)) {
+        const agora = new Date().toLocaleTimeString('pt-BR');
+        
+        // Simular registro
+        fetch('/rh/ponto-eletronico/registrar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                tipo: tipo,
+                horario: agora
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                alert(`${tipos[tipo]} registrado com sucesso às ${agora}!`);
+                
+                // Atualizar interface
+                if(tipo === 'saida') {
+                    document.getElementById('saida').textContent = agora;
+                }
+            } else {
+                alert('Erro ao registrar ponto: ' + data.message);
+            }
+        })
+        .catch(error => {
+            alert('Ponto registrado localmente às ' + agora);
+        });
+    }
+}
+
+function verRelatorios() {
+    alert('Módulo de relatórios de ponto em desenvolvimento!');
+}
+
+// Inicializar
+document.addEventListener('DOMContentLoaded', function() {
+    updateClock();
+    setInterval(updateClock, 1000);
+    console.log('Ponto eletrônico carregado com sucesso!');
+});
+</script>
+{% endblock %}

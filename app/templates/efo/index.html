@@ -1,0 +1,246 @@
+{% extends "base.html" %}
+
+{% block title %}EFO - Diagnóstico Empresarial{% endblock %}
+
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-chart-radar me-2"></i>EFO - Diagnóstico Empresarial
+        </h1>
+        <div>
+            <button class="btn btn-primary btn-sm" onclick="novoDiagnostico()">
+                <i class="fas fa-plus me-1"></i>Novo Diagnóstico
+            </button>
+        </div>
+    </div>
+
+    <!-- KPIs EFO -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Score EFO Médio
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">7.2</div>
+                            <div class="text-xs text-success">+0.3 vs mês anterior</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-chart-radar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Diagnósticos Concluídos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">45</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Empresas Avaliadas
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">15</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-building fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Taxa de Melhoria
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">85%</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-arrow-up fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos EFO -->
+    <div class="row">
+        <!-- Evolução EFO -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-chart-line me-2"></i>Evolução do Score EFO
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="efoChart" style="height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Distribuição de Scores -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-chart-pie me-2"></i>Distribuição de Scores
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="distribuicaoChart" style="height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Diagnósticos Recentes -->
+    <div class="card shadow">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-list me-2"></i>Diagnósticos Recentes
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Empresa</th>
+                            <th>Eficiência</th>
+                            <th>Flexibilidade</th>
+                            <th>Organização</th>
+                            <th>Score EFO</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>25/07/2025</td>
+                            <td>Indústria ABC Ltda</td>
+                            <td><span class="badge bg-success">8.5</span></td>
+                            <td><span class="badge bg-warning">6.8</span></td>
+                            <td><span class="badge bg-info">7.2</span></td>
+                            <td><strong>7.5</strong></td>
+                            <td>
+                                <button class="btn btn-sm btn-info" onclick="verDiagnostico(1)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>20/07/2025</td>
+                            <td>Tecnologia XYZ S.A.</td>
+                            <td><span class="badge bg-success">9.1</span></td>
+                            <td><span class="badge bg-success">8.3</span></td>
+                            <td><span class="badge bg-success">8.7</span></td>
+                            <td><strong>8.7</strong></td>
+                            <td>
+                                <button class="btn btn-sm btn-info" onclick="verDiagnostico(2)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Dados dos gráficos
+const meses = ['Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul'];
+const scores = [6.8, 7.0, 7.1, 7.2, 7.3, 7.2];
+
+// Gráfico de Evolução EFO
+const ctx1 = document.getElementById('efoChart').getContext('2d');
+new Chart(ctx1, {
+    type: 'line',
+    data: {
+        labels: meses,
+        datasets: [{
+            label: 'Score EFO Médio',
+            data: scores,
+            borderColor: '#4e73df',
+            backgroundColor: 'rgba(78, 115, 223, 0.1)',
+            tension: 0.4,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: false,
+                min: 6,
+                max: 10
+            }
+        }
+    }
+});
+
+// Gráfico de Distribuição
+const ctx2 = document.getElementById('distribuicaoChart').getContext('2d');
+new Chart(ctx2, {
+    type: 'doughnut',
+    data: {
+        labels: ['Excelente (8-10)', 'Bom (6-8)', 'Regular (4-6)', 'Crítico (0-4)'],
+        datasets: [{
+            data: [12, 25, 8, 0],
+            backgroundColor: ['#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b']
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false
+    }
+});
+
+function novoDiagnostico() {
+    window.location.href = '/efo/novo-diagnostico';
+}
+
+function verDiagnostico(id) {
+    window.location.href = '/efo/diagnostico/' + id;
+}
+
+console.log('Módulo EFO carregado!');
+</script>
+{% endblock %}

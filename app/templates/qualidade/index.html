@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+
+{% block title %}Gestão da Qualidade{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-award me-2"></i>Gestão da Qualidade
+        </h1>
+        <div>
+            <button class="btn btn-warning btn-sm" onclick="novaNC()">
+                <i class="fas fa-plus me-1"></i>Nova NC
+            </button>
+            <div class="btn-group ms-2">
+                <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <i class="fas fa-download me-1"></i>Exportar
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#" onclick="exportarDados('csv')">
+                        <i class="fas fa-file-csv me-2"></i>CSV
+                    </a></li>
+                    <li><a class="dropdown-item" href="#" onclick="exportarDados('excel')">
+                        <i class="fas fa-file-excel me-2"></i>Excel
+                    </a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                NCs Abertas
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">8</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Em Tratamento
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">15</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-tools fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Fechadas (Mês)
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">42</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Eficácia
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">94%</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-chart-line fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Módulos de Qualidade -->
+    <div class="row">
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Não Conformidades
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p>Gerencie todas as não conformidades da empresa.</p>
+                    <a href="/qualidade/nao-conformidades" class="btn btn-warning">
+                        <i class="fas fa-list me-1"></i>Ver NCs
+                    </a>
+                    <button class="btn btn-success ms-2" onclick="novaNC()">
+                        <i class="fas fa-plus me-1"></i>Nova NC
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-search me-2"></i>Auditorias
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p>Controle de auditorias internas e externas.</p>
+                    <a href="/qualidade/auditorias" class="btn btn-info">
+                        <i class="fas fa-calendar me-1"></i>Ver Auditorias
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-chart-bar me-2"></i>Indicadores
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p>Acompanhe os indicadores de qualidade.</p>
+                    <a href="/qualidade/indicadores" class="btn btn-primary">
+                        <i class="fas fa-chart-line me-1"></i>Ver Indicadores
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de NCs Recentes -->
+    <div class="card shadow">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-list me-2"></i>NCs Recentes
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Número</th>
+                            <th>Título</th>
+                            <th>Origem</th>
+                            <th>Status</th>
+                            <th>Data</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>NC20250001</strong></td>
+                            <td>Produto fora de especificação</td>
+                            <td><span class="badge bg-primary">Interno</span></td>
+                            <td><span class="badge bg-warning">Em Tratamento</span></td>
+                            <td>20/01/2025</td>
+                            <td>
+                                <button class="btn btn-sm btn-info me-1" onclick="verNC(1)" title="Visualizar">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="editarNC(1)" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>NC20250002</strong></td>
+                            <td>Atraso na entrega</td>
+                            <td><span class="badge bg-success">Cliente</span></td>
+                            <td><span class="badge bg-success">Fechada</span></td>
+                            <td>18/01/2025</td>
+                            <td>
+                                <button class="btn btn-sm btn-info me-1" onclick="verNC(2)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-secondary" onclick="reabrirNC(2)">
+                                    <i class="fas fa-redo"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Função para nova NC
+function novaNC() {
+    window.location.href = '/qualidade/nao-conformidades/nova';
+}
+
+// Função para exportar dados
+function exportarDados(formato) {
+    window.open('/qualidade/nao-conformidades/exportar/' + formato, '_blank');
+}
+
+// Função para ver NC
+function verNC(id) {
+    window.location.href = '/qualidade/nao-conformidades/' + id;
+}
+
+// Função para editar NC
+function editarNC(id) {
+    window.location.href = '/qualidade/nao-conformidades/' + id + '/editar';
+}
+
+// Função para reabrir NC
+function reabrirNC(id) {
+    if(confirm('Deseja reabrir esta NC?')) {
+        alert('NC ' + id + ' reaberta com sucesso!');
+    }
+}
+
+console.log('Módulo Qualidade carregado com todas as funções!');
+</script>
+{% endblock %}

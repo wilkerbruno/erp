@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+
+{% block title %}Gerenciamento de Empresas{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-building me-2"></i>Gerenciamento de Empresas
+        </h1>
+        <div>
+            <button class="btn btn-success btn-sm me-2" onclick="novaEmpresa()">
+                <i class="fas fa-plus me-1"></i>Nova Empresa
+            </button>
+            <div class="btn-group">
+                <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <i class="fas fa-download me-1"></i>Exportar
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#" onclick="exportarEmpresas('csv')">
+                        <i class="fas fa-file-csv me-2"></i>CSV
+                    </a></li>
+                    <li><a class="dropdown-item" href="#" onclick="exportarEmpresas('excel')">
+                        <i class="fas fa-file-excel me-2"></i>Excel
+                    </a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total de Empresas
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">47</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-building fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Empresas Ativas
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">44</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Novos Cadastros (Mês)
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">5</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-plus fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Faturamento Total
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 2.8Bi</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Busca -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Buscar Empresas</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="campoBusca" 
+                               placeholder="Digite razão social, CNPJ ou cidade...">
+                        <button class="btn btn-primary" onclick="buscarEmpresas()">
+                            <i class="fas fa-search"></i> Buscar
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="filtroUF">
+                        <option value="">Todos os Estados</option>
+                        <option value="SP">São Paulo</option>
+                        <option value="RJ">Rio de Janeiro</option>
+                        <option value="MG">Minas Gerais</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="filtroSetor">
+                        <option value="">Todos os Setores</option>
+                        <option value="Industria">Indústria</option>
+                        <option value="Comercio">Comércio</option>
+                        <option value="Servicos">Serviços</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Empresas -->
+    <div class="card shadow">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Lista de Empresas</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="tabelaEmpresas">
+                    <thead>
+                        <tr>
+                            <th>CNPJ</th>
+                            <th>Razão Social</th>
+                            <th>Nome Fantasia</th>
+                            <th>Cidade/UF</th>
+                            <th>Telefone</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>12.345.678/0001-90</strong></td>
+                            <td>Indústria ABC Ltda</td>
+                            <td>ABC Indústrias</td>
+                            <td>São Paulo/SP</td>
+                            <td>(11) 3456-7890</td>
+                            <td><span class="badge bg-success">Ativo</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-info me-1" onclick="verEmpresa(1)" title="Visualizar">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning me-1" onclick="editarEmpresa(1)" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="efoEmpresa(1)" title="EFO">
+                                    <i class="fas fa-chart-radar"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>98.765.432/0001-10</strong></td>
+                            <td>Tecnologia XYZ S.A.</td>
+                            <td>XYZ Tech</td>
+                            <td>São Paulo/SP</td>
+                            <td>(11) 9876-5432</td>
+                            <td><span class="badge bg-success">Ativo</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-info me-1" onclick="verEmpresa(2)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning me-1" onclick="editarEmpresa(2)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="efoEmpresa(2)">
+                                    <i class="fas fa-chart-radar"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function novaEmpresa() {
+    window.location.href = '/empresas/nova';
+}
+
+function verEmpresa(id) {
+    window.location.href = '/empresas/empresas/' + id;
+}
+
+function editarEmpresa(id) {
+    window.location.href = '/empresas/empresas/' + id + '/editar';
+}
+
+function efoEmpresa(id) {
+    window.location.href = '/efo/novo-diagnostico?empresa_id=' + id;
+}
+
+function exportarEmpresas(formato) {
+    window.open('/empresas/exportar/' + formato, '_blank');
+}
+
+function buscarEmpresas() {
+    const termo = document.getElementById('campoBusca').value;
+    console.log('Buscando:', termo);
+    // Implementar busca
+}
+
+console.log('Módulo Empresas carregado!');
+</script>
+{% endblock %}

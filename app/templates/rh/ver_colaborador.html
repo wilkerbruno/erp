@@ -1,439 +1,59 @@
 {% extends "base.html" %}
 
-{% block title %}{{ colaborador.nome }} - Colaborador{% endblock %}
+{% block title %}Perfil do Colaborador{% endblock %}
 
 {% block content %}
-<div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">
-        <i class="fas fa-user me-2"></i>Perfil do Colaborador
-    </h1>
-    <div>
-        <a href="{{ url_for('rh.editar_colaborador', id=colaborador.id) }}" class="btn btn-warning btn-sm">
-            <i class="fas fa-edit me-1"></i>Editar
-        </a>
-        <a href="{{ url_for('rh.colaboradores') }}" class="btn btn-secondary btn-sm">
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-user me-2"></i>Perfil do Colaborador
+        </h1>
+        <a href="/rh/colaboradores" class="btn btn-secondary">
             <i class="fas fa-arrow-left me-1"></i>Voltar
         </a>
     </div>
-</div>
 
-<div class="row">
-    <!-- Profile Card -->
-    <div class="col-lg-4">
-        <div class="card shadow mb-4">
-            <div class="card-header py-3 text-center bg-primary text-white">
-                <h6 class="m-0 font-weight-bold">
-                    <i class="fas fa-user fa-2x mb-2"></i><br>
-                    {{ colaborador.nome }}
-                </h6>
-            </div>
-            <div class="card-body text-center">
-                <h5 class="card-title">{{ colaborador.cargo }}</h5>
-                <p class="card-text text-muted">{{ colaborador.departamento.title() }}</p>
-                
-                <span class="badge bg-{{ 'success' if colaborador.status == 'ativo' else 'secondary' }} mb-3">
-                    {{ colaborador.status.title() }}
-                </span>
-                
-                <div class="mt-3">
-                    <h6>Matrícula: {{ colaborador.matricula }}</h6>
-                    <p class="text-muted">Admitido em {{ colaborador.data_admissao.strftime('%d/%m/%Y') }}</p>
-                </div>
-                
-                {% if colaborador.status == 'ativo' %}
-                <button class="btn btn-danger btn-sm" onclick="desativarColaborador({{ colaborador.id }}, '{{ colaborador.nome }}')">
-                    <i class="fas fa-user-times me-1"></i>Desativar
-                </button>
-                {% endif %}
-            </div>
+    <div class="card shadow">
+        <div class="card-header">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-id-card me-2"></i>Informações do Colaborador #{{ colaborador_id }}
+            </h6>
         </div>
-
-        <!-- Quick Stats -->
-        <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Estatísticas Rápidas</h6>
-            </div>
-            <div class="card-body">
-                <div class="row text-center">
-                    <div class="col-6">
-                        <h4 class="text-primary">{{ (colaborador.created_at.date() - colaborador.data_admissao).days }}</h4>
-                        <small class="text-muted">Dias na empresa</small>
-                    </div>
-                    <div class="col-6">
-                        <h4 class="text-success">0</h4>
-                        <small class="text-muted">Planos de ação</small>
-                    </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3 text-center">
+                    <img src="https://via.placeholder.com/150x150/4e73df/fff?text={{ colaborador.nome[0] }}" 
+                         class="rounded-circle mb-3" alt="Foto">
                 </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Details Card -->
-    <div class="col-lg-8">
-        <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <ul class="nav nav-tabs card-header-tabs" id="colaboradorTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="dados-tab" data-bs-toggle="tab" data-bs-target="#dados" type="button" role="tab">
-                            <i class="fas fa-info-circle me-1"></i>Dados Pessoais
+                <div class="col-md-9">
+                    <h4>{{ colaborador.nome }}</h4>
+                    <p><strong>Cargo:</strong> {{ colaborador.cargo }}</p>
+                    <p><strong>Setor:</strong> {{ colaborador.setor }}</p>
+                    <p><strong>Status:</strong> <span class="badge bg-success">Ativo</span></p>
+                    
+                    <div class="mt-4">
+                        <button class="btn btn-warning me-2" onclick="editarColaborador({{ colaborador_id }})">
+                            <i class="fas fa-edit me-1"></i>Editar
                         </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="corporativo-tab" data-bs-toggle="tab" data-bs-target="#corporativo" type="button" role="tab">
-                            <i class="fas fa-building me-1"></i>Dados Corporativos
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="historico-tab" data-bs-toggle="tab" data-bs-target="#historico" type="button" role="tab">
+                        <button class="btn btn-info me-2" onclick="verHistorico({{ colaborador_id }})">
                             <i class="fas fa-history me-1"></i>Histórico
                         </button>
-                    </li>
-                    {% if colaborador.user_account %}
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="acesso-tab" data-bs-toggle="tab" data-bs-target="#acesso" type="button" role="tab">
-                            <i class="fas fa-key me-1"></i>Acesso ao Sistema
-                        </button>
-                    </li>
-                    {% endif %}
-                </ul>
-            </div>
-            <div class="card-body">
-                <div class="tab-content" id="colaboradorTabsContent">
-                    <!-- Dados Pessoais -->
-                    <div class="tab-pane fade show active" id="dados" role="tabpanel">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h6><i class="fas fa-user me-2"></i>Informações Pessoais</h6>
-                                <table class="table table-borderless">
-                                    <tr>
-                                        <td><strong>Nome Completo:</strong></td>
-                                        <td>{{ colaborador.nome }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>CPF:</strong></td>
-                                        <td>{{ colaborador.cpf }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Email:</strong></td>
-                                        <td>
-                                            <a href="mailto:{{ colaborador.email }}">{{ colaborador.email }}</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Telefone:</strong></td>
-                                        <td>
-                                            {% if colaborador.telefone %}
-                                                <a href="tel:{{ colaborador.telefone }}">{{ colaborador.telefone }}</a>
-                                            {% else %}
-                                                <span class="text-muted">Não informado</span>
-                                            {% endif %}
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                            <div class="col-md-6">
-                                <h6><i class="fas fa-calendar me-2"></i>Datas Importantes</h6>
-                                <table class="table table-borderless">
-                                    <tr>
-                                        <td><strong>Data de Admissão:</strong></td>
-                                        <td>{{ colaborador.data_admissao.strftime('%d/%m/%Y') }}</td>
-                                    </tr>
-                                    {% if colaborador.data_demissao %}
-                                    <tr>
-                                        <td><strong>Data de Demissão:</strong></td>
-                                        <td>{{ colaborador.data_demissao.strftime('%d/%m/%Y') }}</td>
-                                    </tr>
-                                    {% endif %}
-                                    <tr>
-                                        <td><strong>Cadastrado em:</strong></td>
-                                        <td>{{ colaborador.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Última Atualização:</strong></td>
-                                        <td>{{ colaborador.updated_at.strftime('%d/%m/%Y %H:%M') }}</td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
                     </div>
-                    
-                    <!-- Dados Corporativos -->
-                    <div class="tab-pane fade" id="corporativo" role="tabpanel">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h6><i class="fas fa-briefcase me-2"></i>Informações Profissionais</h6>
-                                <table class="table table-borderless">
-                                    <tr>
-                                        <td><strong>Matrícula:</strong></td>
-                                        <td>{{ colaborador.matricula }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Cargo:</strong></td>
-                                        <td>{{ colaborador.cargo }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Departamento:</strong></td>
-                                        <td>{{ colaborador.departamento.title() }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Status:</strong></td>
-                                        <td>
-                                            <span class="badge bg-{{ 'success' if colaborador.status == 'ativo' else 'secondary' }}">
-                                                {{ colaborador.status.title() }}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                            <div class="col-md-6">
-                                <h6><i class="fas fa-dollar-sign me-2"></i>Informações Financeiras</h6>
-                                <table class="table table-borderless">
-                                    <tr>
-                                        <td><strong>Salário:</strong></td>
-                                        <td>
-                                            {% if colaborador.salario %}
-                                                R$ {{ "%.2f"|format(colaborador.salario) }}
-                                            {% else %}
-                                                <span class="text-muted">Não informado</span>
-                                            {% endif %}
-                                        </td>
-                                    </tr>
-                                </table>
-                                
-                                {% if colaborador.status == 'demitido' and colaborador.motivo_demissao %}
-                                <h6 class="mt-4"><i class="fas fa-info-circle me-2"></i>Informações de Desligamento</h6>
-                                <table class="table table-borderless">
-                                    <tr>
-                                        <td><strong>Motivo:</strong></td>
-                                        <td>{{ colaborador.motivo_demissao }}</td>
-                                    </tr>
-                                </table>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Histórico -->
-                    <div class="tab-pane fade" id="historico" role="tabpanel">
-                        <h6><i class="fas fa-history me-2"></i>Histórico de Atividades</h6>
-                        <div class="timeline">
-                            <div class="timeline-item">
-                                <div class="timeline-marker bg-success"></div>
-                                <div class="timeline-content">
-                                    <h6 class="timeline-title">Admissão</h6>
-                                    <p class="timeline-text">Colaborador admitido na empresa</p>
-                                    <small class="text-muted">{{ colaborador.data_admissao.strftime('%d/%m/%Y') }}</small>
-                                </div>
-                            </div>
-                            
-                            {% if colaborador.status == 'demitido' %}
-                            <div class="timeline-item">
-                                <div class="timeline-marker bg-danger"></div>
-                                <div class="timeline-content">
-                                    <h6 class="timeline-title">Desligamento</h6>
-                                    <p class="timeline-text">{{ colaborador.motivo_demissao or 'Desligamento do colaborador' }}</p>
-                                    <small class="text-muted">{{ colaborador.data_demissao.strftime('%d/%m/%Y') if colaborador.data_demissao else 'Data não informada' }}</small>
-                                </div>
-                            </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    
-                    <!-- Acesso ao Sistema -->
-                    {% if colaborador.user_account %}
-                    <div class="tab-pane fade" id="acesso" role="tabpanel">
-                        <h6><i class="fas fa-key me-2"></i>Informações de Acesso</h6>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <table class="table table-borderless">
-                                    <tr>
-                                        <td><strong>Usuário:</strong></td>
-                                        <td>{{ colaborador.user_account.username }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Email:</strong></td>
-                                        <td>{{ colaborador.user_account.email }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Perfil:</strong></td>
-                                        <td>
-                                            <span class="badge bg-primary">{{ colaborador.user_account.perfil.title() }}</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Status da Conta:</strong></td>
-                                        <td>
-                                            <span class="badge bg-{{ 'success' if colaborador.user_account.ativo else 'secondary' }}">
-                                                {{ 'Ativa' if colaborador.user_account.ativo else 'Inativa' }}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                            <div class="col-md-6">
-                                <table class="table table-borderless">
-                                    <tr>
-                                        <td><strong>Conta Criada:</strong></td>
-                                        <td>{{ colaborador.user_account.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Último Login:</strong></td>
-                                        <td>
-                                            {% if colaborador.user_account.last_login %}
-                                                {{ colaborador.user_account.last_login.strftime('%d/%m/%Y %H:%M') }}
-                                            {% else %}
-                                                <span class="text-muted">Nunca fez login</span>
-                                            {% endif %}
-                                        </td>
-                                    </tr>
-                                </table>
-                                
-                                <div class="mt-3">
-                                    <button class="btn btn-warning btn-sm">
-                                        <i class="fas fa-key me-1"></i>Resetar Senha
-                                    </button>
-                                    {% if colaborador.user_account.ativo %}
-                                    <button class="btn btn-secondary btn-sm">
-                                        <i class="fas fa-ban me-1"></i>Bloquear Acesso
-                                    </button>
-                                    {% else %}
-                                    <button class="btn btn-success btn-sm">
-                                        <i class="fas fa-unlock me-1"></i>Liberar Acesso
-                                    </button>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<!-- Modal para desativação -->
-<div class="modal fade" id="desativarModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Desativar Colaborador</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p>Tem certeza que deseja desativar o colaborador <strong id="nomeColaborador"></strong>?</p>
-                <form id="desativarForm">
-                    <div class="mb-3">
-                        <label for="dataDesligamento" class="form-label">Data de Desligamento</label>
-                        <input type="date" class="form-control" id="dataDesligamento" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="motivoDesligamento" class="form-label">Motivo do Desligamento</label>
-                        <textarea class="form-control" id="motivoDesligamento" rows="3" required></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-danger" onclick="confirmarDesativacao()">Desativar</button>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
-
-{% block head %}
-<style>
-.timeline {
-    position: relative;
-    padding: 20px 0;
-}
-
-.timeline-item {
-    position: relative;
-    margin-bottom: 30px;
-    padding-left: 40px;
-}
-
-.timeline-marker {
-    position: absolute;
-    left: 0;
-    top: 5px;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 3px solid #fff;
-    box-shadow: 0 0 0 3px #dee2e6;
-}
-
-.timeline-item:not(:last-child):before {
-    content: '';
-    position: absolute;
-    left: 9px;
-    top: 25px;
-    width: 2px;
-    height: calc(100% + 10px);
-    background: #dee2e6;
-}
-
-.timeline-title {
-    margin-bottom: 5px;
-    font-weight: 600;
-}
-
-.timeline-text {
-    margin-bottom: 5px;
-    color: #6c757d;
-}
-</style>
 {% endblock %}
 
 {% block scripts %}
 <script>
-let colaboradorIdParaDesativar = {{ colaborador.id }};
-
-function desativarColaborador(id, nome) {
-    colaboradorIdParaDesativar = id;
-    document.getElementById('nomeColaborador').textContent = nome;
-    document.getElementById('dataDesligamento').value = new Date().toISOString().split('T')[0];
-    new bootstrap.Modal(document.getElementById('desativarModal')).show();
+function editarColaborador(id) {
+    window.location.href = '/rh/colaboradores/' + id + '/editar';
 }
 
-function confirmarDesativacao() {
-    const dataDesligamento = document.getElementById('dataDesligamento').value;
-    const motivoDesligamento = document.getElementById('motivoDesligamento').value;
-    
-    if (!dataDesligamento || !motivoDesligamento) {
-        showNotification('Preencha todos os campos obrigatórios.', 'warning');
-        return;
-    }
-    
-    fetch(`/rh/colaborador/${colaboradorIdParaDesativar}/desativar`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('[name=csrf_token]').value
-        },
-        body: JSON.stringify({
-            data_demissao: dataDesligamento,
-            motivo_demissao: motivoDesligamento
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            showNotification('Colaborador desativado com sucesso!', 'success');
-            setTimeout(() => location.reload(), 1500);
-        } else {
-            showNotification('Erro: ' + data.message, 'error');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showNotification('Erro interno do servidor', 'error');
-    });
-    
-    bootstrap.Modal.getInstance(document.getElementById('desativarModal')).hide();
+function verHistorico(id) {
+    window.location.href = '/rh/colaboradores/' + id + '/historico';
 }
 </script>
 {% endblock %}

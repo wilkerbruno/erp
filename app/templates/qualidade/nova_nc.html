@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}Nova Não Conformidade{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-plus me-2"></i>Nova Não Conformidade
+        </h1>
+        <div>
+            <a href="/qualidade" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left me-1"></i>Voltar
+            </a>
+        </div>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-header">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-plus-circle me-2"></i>Cadastrar Nova Não Conformidade
+            </h6>
+        </div>
+        <div class="card-body">
+            <form id="formNovaNC">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="tituloNC" class="form-label">Título *</label>
+                            <input type="text" class="form-control" id="tituloNC" required>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label for="origemNC" class="form-label">Origem *</label>
+                            <select class="form-select" id="origemNC" required>
+                                <option value="">Selecione</option>
+                                <option value="Interno">Interno</option>
+                                <option value="Cliente">Cliente</option>
+                                <option value="Fornecedor">Fornecedor</option>
+                                <option value="Auditoria">Auditoria</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label for="criticidadeNC" class="form-label">Criticidade *</label>
+                            <select class="form-select" id="criticidadeNC" required>
+                                <option value="">Selecione</option>
+                                <option value="Baixa">Baixa</option>
+                                <option value="Média">Média</option>
+                                <option value="Alta">Alta</option>
+                                <option value="Crítica">Crítica</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="responsavelNC" class="form-label">Responsável *</label>
+                            <input type="text" class="form-control" id="responsavelNC" required>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label for="dataDeteccao" class="form-label">Data de Detecção *</label>
+                            <input type="date" class="form-control" id="dataDeteccao" required>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label for="prazoResolucao" class="form-label">Prazo para Resolução</label>
+                            <input type="date" class="form-control" id="prazoResolucao">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="descricaoNC" class="form-label">Descrição Detalhada *</label>
+                    <textarea class="form-control" id="descricaoNC" rows="4" required 
+                              placeholder="Descreva detalhadamente a não conformidade encontrada..."></textarea>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="acaoImediata" class="form-label">Ação Imediata</label>
+                    <textarea class="form-control" id="acaoImediata" rows="3" 
+                              placeholder="Descreva as ações imediatas tomadas..."></textarea>
+                </div>
+                
+                <div class="text-end">
+                    <button type="button" class="btn btn-secondary me-2" onclick="window.history.back()">
+                        <i class="fas fa-times me-1"></i>Cancelar
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="salvarNC()">
+                        <i class="fas fa-save me-1"></i>Salvar NC
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Definir data atual
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('dataDeteccao').value = new Date().toISOString().split('T')[0];
+});
+
+function salvarNC() {
+    const form = document.getElementById('formNovaNC');
+    
+    // Validar campos obrigatórios
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    
+    // Coletar dados
+    const dados = {
+        titulo: document.getElementById('tituloNC').value,
+        origem: document.getElementById('origemNC').value,
+        criticidade: document.getElementById('criticidadeNC').value,
+        responsavel: document.getElementById('responsavelNC').value,
+        dataDeteccao: document.getElementById('dataDeteccao').value,
+        descricao: document.getElementById('descricaoNC').value,
+        acaoImediata: document.getElementById('acaoImediata').value
+    };
+    
+    // Gerar número da NC
+    const numeroNC = 'NC' + new Date().getFullYear() + String(Math.floor(Math.random() * 9999)).padStart(4, '0');
+    
+    // Mostrar sucesso
+    alert(`NC "${numeroNC}" cadastrada com sucesso!\nTítulo: ${dados.titulo}`);
+    
+    // Redirecionar
+    window.location.href = '/qualidade';
+}
+</script>
+{% endblock %}

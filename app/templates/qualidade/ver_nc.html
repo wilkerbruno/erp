@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}NC - {{ nc.numero }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-exclamation-triangle me-2"></i>{{ nc.numero }}
+        </h1>
+        <div>
+            <a href="/qualidade" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left me-1"></i>Voltar
+            </a>
+            <button class="btn btn-warning btn-sm" onclick="editarNC({{ nc_id }})">
+                <i class="fas fa-edit me-1"></i>Editar
+            </button>
+        </div>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-header">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-info-circle me-2"></i>Detalhes da Não Conformidade
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Número:</strong> {{ nc.numero }}</p>
+                    <p><strong>Título:</strong> {{ nc.titulo }}</p>
+                    <p><strong>Origem:</strong> <span class="badge bg-primary">{{ nc.origem }}</span></p>
+                    <p><strong>Criticidade:</strong> 
+                        <span class="badge {% if nc.criticidade == 'Alta' %}bg-danger{% elif nc.criticidade == 'Média' %}bg-warning{% else %}bg-info{% endif %}">
+                            {{ nc.criticidade }}
+                        </span>
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Responsável:</strong> {{ nc.responsavel }}</p>
+                    <p><strong>Data de Abertura:</strong> {{ nc.data_abertura }}</p>
+                    <p><strong>Status:</strong> 
+                        <span class="badge {% if nc.status == 'Aberta' %}bg-danger{% elif nc.status == 'Em Tratamento' %}bg-warning{% else %}bg-success{% endif %}">
+                            {{ nc.status }}
+                        </span>
+                    </p>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-12">
+                    <p><strong>Descrição:</strong></p>
+                    <p>{{ nc.descricao }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function editarNC(id) {
+    window.location.href = '/qualidade/nao-conformidades/' + id + '/editar';
+}
+</script>
+{% endblock %}

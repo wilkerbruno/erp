@@ -1,158 +1,33 @@
 {% extends "base.html" %}
 
-{% block title %}Qualidade - Não Conformidades{% endblock %}
+{% block title %}Nao Conformidades{% endblock %}
 
 {% block content %}
-<div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">
-        <i class="fas fa-exclamation-triangle me-2"></i>Não Conformidades
-    </h1>
-    <div>
-        <button class="btn btn-primary btn-sm" onclick="novaNC()">
-            <i class="fas fa-plus me-1"></i>Nova NC
-        </button>
-        <button class="btn btn-outline-primary btn-sm" onclick="exportarNCs()">
-            <i class="fas fa-download me-1"></i>Exportar
-        </button>
-    </div>
-</div>
-
-<!-- Statistics Cards -->
-<div class="row mb-4">
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-danger shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
-                            NCs Abertas
-                        </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">8</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-exclamation-circle fa-2x text-gray-300"></i>
-                    </div>
-                </div>
-            </div>
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-exclamation-triangle me-2"></i>Nao Conformidades
+        </h1>
+        <div>
+            <a href="/qualidade" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left me-1"></i>Voltar
+            </a>
+            <button class="btn btn-warning btn-sm" onclick="novaNC()">
+                <i class="fas fa-plus me-1"></i>Nova NC
+            </button>
         </div>
     </div>
 
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-warning shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                            Em Tratamento
-                        </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">15</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-tools fa-2x text-gray-300"></i>
-                    </div>
-                </div>
-            </div>
+    <div class="card shadow">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Lista de Nao Conformidades</h6>
         </div>
-    </div>
-
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-success shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                            Fechadas (Mês)
-                        </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">42</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-check-circle fa-2x text-gray-300"></i>
-                    </div>
-                </div>
+        <div class="card-body">
+            <div class="alert alert-info" role="alert">
+                <h5><i class="fas fa-info-circle me-2"></i>Modulo em Desenvolvimento</h5>
+                <p>O sistema de gestao de nao conformidades esta sendo desenvolvido.</p>
+                <p>Em breve estara disponivel com todas as funcionalidades.</p>
             </div>
-        </div>
-    </div>
-
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-info shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                            Taxa Resolução
-                        </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">94%</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-chart-line fa-2x text-gray-300"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Lista de NCs -->
-<div class="card shadow">
-    <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Não Conformidades Recentes</h6>
-    </div>
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-bordered" width="100%" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th>Número</th>
-                        <th>Título</th>
-                        <th>Origem</th>
-                        <th>Criticidade</th>
-                        <th>Responsável</th>
-                        <th>Data Abertura</th>
-                        <th>Status</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>NC20250001</strong></td>
-                        <td>Produto fora de especificação</td>
-                        <td><span class="badge bg-primary">Interno</span></td>
-                        <td><span class="badge bg-danger">Alta</span></td>
-                        <td>João Silva</td>
-                        <td>20/01/2025</td>
-                        <td><span class="badge bg-warning">Em Tratamento</span></td>
-                        <td>
-                            <div class="btn-group" role="group">
-                                <button class="btn btn-sm btn-info" onclick="verNC(1)">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="btn btn-sm btn-warning" onclick="editarNC(1)">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>NC20250002</strong></td>
-                        <td>Atraso na entrega</td>
-                        <td><span class="badge bg-success">Cliente</span></td>
-                        <td><span class="badge bg-warning">Média</span></td>
-                        <td>Maria Santos</td>
-                        <td>18/01/2025</td>
-                        <td><span class="badge bg-success">Fechada</span></td>
-                        <td>
-                            <div class="btn-group" role="group">
-                                <button class="btn btn-sm btn-info" onclick="verNC(2)">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="btn btn-sm btn-secondary" onclick="reabrirNC(2)">
-                                    <i class="fas fa-redo"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
     </div>
 </div>
@@ -161,25 +36,7 @@
 {% block scripts %}
 <script>
 function novaNC() {
-    alert('Funcionalidade em desenvolvimento: Nova NC');
-}
-
-function verNC(id) {
-    alert('Visualizando NC ID: ' + id);
-}
-
-function editarNC(id) {
-    alert('Editando NC ID: ' + id);
-}
-
-function reabrirNC(id) {
-    if(confirm('Deseja reabrir esta NC?')) {
-        alert('NC ' + id + ' reaberta!');
-    }
-}
-
-function exportarNCs() {
-    alert('Exportando NCs...');
+    alert('Funcionalidade em desenvolvimento');
 }
 </script>
 {% endblock %}

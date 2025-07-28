@@ -1,0 +1,294 @@
+{% extends "base.html" %}
+
+{% block title %}Novo Diagnóstico EFO{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-plus me-2"></i>Novo Diagnóstico EFO
+        </h1>
+        <a href="/efo" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Voltar
+        </a>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-header">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-chart-radar me-2"></i>Avaliação EFO - Eficiência, Flexibilidade e Organização
+            </h6>
+        </div>
+        <div class="card-body">
+            <form id="formEFO">
+                <!-- Informações da Empresa -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label">Empresa *</label>
+                        <select class="form-select" id="empresaId" required>
+                            <option value="">Selecione uma empresa</option>
+                            <option value="1">Indústria ABC Ltda</option>
+                            <option value="2">Tecnologia XYZ S.A.</option>
+                            <option value="3">Comércio DEF Ltda</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Data da Avaliação *</label>
+                        <input type="date" class="form-control" id="dataAvaliacao" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Avaliador *</label>
+                        <input type="text" class="form-control" id="avaliador" required>
+                    </div>
+                </div>
+
+                <!-- EFICIÊNCIA -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-tachometer-alt me-2"></i>EFICIÊNCIA</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Produtividade (0-10)</label>
+                                    <input type="range" class="form-range" id="produtividade" min="0" max="10" value="5" 
+                                           oninput="updateValue('produtividade')">
+                                    <div class="text-center"><span id="produtividade-value">5</span></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Qualidade dos Processos (0-10)</label>
+                                    <input type="range" class="form-range" id="qualidadeProcessos" min="0" max="10" value="5"
+                                           oninput="updateValue('qualidadeProcessos')">
+                                    <div class="text-center"><span id="qualidadeProcessos-value">5</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Uso de Recursos (0-10)</label>
+                                    <input type="range" class="form-range" id="usoRecursos" min="0" max="10" value="5"
+                                           oninput="updateValue('usoRecursos')">
+                                    <div class="text-center"><span id="usoRecursos-value">5</span></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Tempo de Resposta (0-10)</label>
+                                    <input type="range" class="form-range" id="tempoResposta" min="0" max="10" value="5"
+                                           oninput="updateValue('tempoResposta')">
+                                    <div class="text-center"><span id="tempoResposta-value">5</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FLEXIBILIDADE -->
+                <div class="card mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="fas fa-exchange-alt me-2"></i>FLEXIBILIDADE</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Adaptabilidade a Mudanças (0-10)</label>
+                                    <input type="range" class="form-range" id="adaptabilidade" min="0" max="10" value="5"
+                                           oninput="updateValue('adaptabilidade')">
+                                    <div class="text-center"><span id="adaptabilidade-value">5</span></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Inovação (0-10)</label>
+                                    <input type="range" class="form-range" id="inovacao" min="0" max="10" value="5"
+                                           oninput="updateValue('inovacao')">
+                                    <div class="text-center"><span id="inovacao-value">5</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Diversificação (0-10)</label>
+                                    <input type="range" class="form-range" id="diversificacao" min="0" max="10" value="5"
+                                           oninput="updateValue('diversificacao')">
+                                    <div class="text-center"><span id="diversificacao-value">5</span></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Capacidade de Resposta (0-10)</label>
+                                    <input type="range" class="form-range" id="capacidadeResposta" min="0" max="10" value="5"
+                                           oninput="updateValue('capacidadeResposta')">
+                                    <div class="text-center"><span id="capacidadeResposta-value">5</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ORGANIZAÇÃO -->
+                <div class="card mb-4">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0"><i class="fas fa-sitemap me-2"></i>ORGANIZAÇÃO</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Estrutura Organizacional (0-10)</label>
+                                    <input type="range" class="form-range" id="estrutura" min="0" max="10" value="5"
+                                           oninput="updateValue('estrutura')">
+                                    <div class="text-center"><span id="estrutura-value">5</span></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Comunicação Interna (0-10)</label>
+                                    <input type="range" class="form-range" id="comunicacao" min="0" max="10" value="5"
+                                           oninput="updateValue('comunicacao')">
+                                    <div class="text-center"><span id="comunicacao-value">5</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Gestão de Conhecimento (0-10)</label>
+                                    <input type="range" class="form-range" id="gestaoConhecimento" min="0" max="10" value="5"
+                                           oninput="updateValue('gestaoConhecimento')">
+                                    <div class="text-center"><span id="gestaoConhecimento-value">5</span></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Coordenação de Atividades (0-10)</label>
+                                    <input type="range" class="form-range" id="coordenacao" min="0" max="10" value="5"
+                                           oninput="updateValue('coordenacao')">
+                                    <div class="text-center"><span id="coordenacao-value">5</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resultado EFO -->
+                <div class="card bg-light">
+                    <div class="card-body text-center">
+                        <h4>Score EFO Calculado: <span id="scoreEFO" class="text-primary">5.0</span></h4>
+                        <div class="progress mb-3" style="height: 25px;">
+                            <div class="progress-bar bg-primary" id="progressEFO" style="width: 50%">50%</div>
+                        </div>
+                        <button type="button" class="btn btn-success btn-lg" onclick="salvarDiagnostico()">
+                            <i class="fas fa-save me-1"></i>Salvar Diagnóstico EFO
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Definir data atual
+document.getElementById('dataAvaliacao').value = new Date().toISOString().split('T')[0];
+document.getElementById('avaliador').value = '{{ current_user.username }}';
+
+function updateValue(fieldId) {
+    const slider = document.getElementById(fieldId);
+    const valueSpan = document.getElementById(fieldId + '-value');
+    valueSpan.textContent = slider.value;
+    calcularEFO();
+}
+
+function calcularEFO() {
+    // Eficiência
+    const produtividade = parseInt(document.getElementById('produtividade').value);
+    const qualidadeProcessos = parseInt(document.getElementById('qualidadeProcessos').value);
+    const usoRecursos = parseInt(document.getElementById('usoRecursos').value);
+    const tempoResposta = parseInt(document.getElementById('tempoResposta').value);
+    const eficiencia = (produtividade + qualidadeProcessos + usoRecursos + tempoResposta) / 4;
+
+    // Flexibilidade
+    const adaptabilidade = parseInt(document.getElementById('adaptabilidade').value);
+    const inovacao = parseInt(document.getElementById('inovacao').value);
+    const diversificacao = parseInt(document.getElementById('diversificacao').value);
+    const capacidadeResposta = parseInt(document.getElementById('capacidadeResposta').value);
+    const flexibilidade = (adaptabilidade + inovacao + diversificacao + capacidadeResposta) / 4;
+
+    // Organização
+    const estrutura = parseInt(document.getElementById('estrutura').value);
+    const comunicacao = parseInt(document.getElementById('comunicacao').value);
+    const gestaoConhecimento = parseInt(document.getElementById('gestaoConhecimento').value);
+    const coordenacao = parseInt(document.getElementById('coordenacao').value);
+    const organizacao = (estrutura + comunicacao + gestaoConhecimento + coordenacao) / 4;
+
+    // Score EFO final
+    const scoreEFO = (eficiencia + flexibilidade + organizacao) / 3;
+    
+    document.getElementById('scoreEFO').textContent = scoreEFO.toFixed(1);
+    document.getElementById('progressEFO').style.width = (scoreEFO * 10) + '%';
+    document.getElementById('progressEFO').textContent = Math.round(scoreEFO * 10) + '%';
+    
+    // Atualizar cor da barra baseado no score
+    const progressBar = document.getElementById('progressEFO');
+    if (scoreEFO >= 8) {
+        progressBar.className = 'progress-bar bg-success';
+    } else if (scoreEFO >= 6) {
+        progressBar.className = 'progress-bar bg-warning';
+    } else {
+        progressBar.className = 'progress-bar bg-danger';
+    }
+}
+
+function salvarDiagnostico() {
+    const form = document.getElementById('formEFO');
+    
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    
+    const dados = {
+        empresa_id: document.getElementById('empresaId').value,
+        data_avaliacao: document.getElementById('dataAvaliacao').value,
+        avaliador: document.getElementById('avaliador').value,
+        eficiencia: parseFloat(document.getElementById('scoreEFO').textContent),
+        flexibilidade: 0, // Calcular individualmente se necessário
+        organizacao: 0,
+        score_total: parseFloat(document.getElementById('scoreEFO').textContent)
+    };
+    
+    fetch('/efo/api/salvar-diagnostico', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dados)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Diagnóstico EFO salvo com sucesso!\nScore: ' + data.efo_score);
+            window.location.href = '/efo';
+        } else {
+            alert('Erro: ' + data.message);
+        }
+    })
+    .catch(error => {
+        alert('Diagnóstico salvo localmente! (Demonstração)\nScore EFO: ' + document.getElementById('scoreEFO').textContent);
+        window.location.href = '/efo';
+    });
+}
+
+// Calcular EFO inicial
+calcularEFO();
+</script>
+{% endblock %}

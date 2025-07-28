@@ -1,0 +1,271 @@
+{% extends "base.html" %}
+
+{% block title %}Indicadores de Qualidade{% endblock %}
+
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-chart-bar me-2"></i>Indicadores de Qualidade
+        </h1>
+        <div>
+            <a href="/qualidade" class="btn btn-secondary btn-sm me-2">
+                <i class="fas fa-arrow-left me-1"></i>Voltar
+            </a>
+            <button class="btn btn-primary btn-sm" onclick="exportarRelatorio()">
+                <i class="fas fa-download me-1"></i>Exportar Relatório
+            </button>
+        </div>
+    </div>
+
+    <!-- KPIs Principais -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Taxa de Conformidade
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">96.5%</div>
+                            <div class="text-xs text-success">+2.1% vs mês anterior</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                PPM (Defeitos)
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">125</div>
+                            <div class="text-xs text-success">-15% vs mês anterior</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Satisfação Cliente
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">8.7/10</div>
+                            <div class="text-xs text-success">+0.3 vs mês anterior</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-smile fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                OEE (%)
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">87.3%</div>
+                            <div class="text-xs text-success">+1.8% vs mês anterior</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-cogs fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="row">
+        <!-- Evolução da Qualidade -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-chart-line me-2"></i>Evolução dos Indicadores (Últimos 6 Meses)
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="indicadoresChart" style="height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Distribuição de NCs -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-chart-pie me-2"></i>NCs por Origem
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="origensChart" style="height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Metas vs Realizados -->
+    <div class="card shadow">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-target me-2"></i>Metas vs Realizados
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Indicador</th>
+                            <th>Meta</th>
+                            <th>Realizado</th>
+                            <th>% Atingimento</th>
+                            <th>Tendência</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Taxa de Conformidade</td>
+                            <td>95%</td>
+                            <td>96.5%</td>
+                            <td class="text-success"><strong>101.6%</strong></td>
+                            <td><i class="fas fa-arrow-up text-success"></i></td>
+                            <td><span class="badge bg-success">Meta Atingida</span></td>
+                        </tr>
+                        <tr>
+                            <td>PPM Defeitos</td>
+                            <td>< 200</td>
+                            <td>125</td>
+                            <td class="text-success"><strong>162.5%</strong></td>
+                            <td><i class="fas fa-arrow-down text-success"></i></td>
+                            <td><span class="badge bg-success">Meta Atingida</span></td>
+                        </tr>
+                        <tr>
+                            <td>Satisfação Cliente</td>
+                            <td>8.5</td>
+                            <td>8.7</td>
+                            <td class="text-success"><strong>102.4%</strong></td>
+                            <td><i class="fas fa-arrow-up text-success"></i></td>
+                            <td><span class="badge bg-success">Meta Atingida</span></td>
+                        </tr>
+                        <tr>
+                            <td>OEE</td>
+                            <td>90%</td>
+                            <td>87.3%</td>
+                            <td class="text-warning"><strong>97.0%</strong></td>
+                            <td><i class="fas fa-arrow-up text-warning"></i></td>
+                            <td><span class="badge bg-warning">Abaixo da Meta</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Dados para gráficos
+const meses = ['Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul'];
+const conformidade = [94.2, 95.1, 94.8, 95.9, 96.1, 96.5];
+const ppm = [180, 165, 155, 140, 135, 125];
+const satisfacao = [8.2, 8.3, 8.1, 8.4, 8.6, 8.7];
+
+// Gráfico de Evolução
+const ctx1 = document.getElementById('indicadoresChart').getContext('2d');
+new Chart(ctx1, {
+    type: 'line',
+    data: {
+        labels: meses,
+        datasets: [
+            {
+                label: 'Conformidade (%)',
+                data: conformidade,
+                borderColor: '#1cc88a',
+                backgroundColor: 'rgba(28, 200, 138, 0.1)',
+                tension: 0.4
+            },
+            {
+                label: 'Satisfação Cliente',
+                data: satisfacao,
+                borderColor: '#36b9cc',
+                backgroundColor: 'rgba(54, 185, 204, 0.1)',
+                tension: 0.4,
+                yAxisID: 'y1'
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: false,
+                min: 90,
+                max: 100
+            },
+            y1: {
+                type: 'linear',
+                display: true,
+                position: 'right',
+                min: 7,
+                max: 10
+            }
+        }
+    }
+});
+
+// Gráfico de Pizza
+const ctx2 = document.getElementById('origensChart').getContext('2d');
+new Chart(ctx2, {
+    type: 'doughnut',
+    data: {
+        labels: ['Interno', 'Cliente', 'Fornecedor', 'Auditoria'],
+        datasets: [{
+            data: [45, 30, 15, 10],
+            backgroundColor: ['#4e73df', '#1cc88a', '#f6c23e', '#e74a3b']
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false
+    }
+});
+
+function exportarRelatorio() {
+    alert('Exportando relatório de indicadores...');
+}
+
+console.log('Módulo Indicadores carregado!');
+</script>
+{% endblock %}

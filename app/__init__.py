@@ -43,7 +43,9 @@ def create_app(config_name='development'):
         ('financeiro', '/financeiro'),
         ('manutencao', '/manutencao'),
         ('projetos', '/projetos'),
-        ('relatorios', '/relatorios'),
+                    ('relatorios', '/relatorios'),
+            ('empresas', '/empresas'),
+            ('efo', '/efo'),
         ('configuracoes', '/configuracoes')
     ]
     

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Diagnóstico EFO #{{ diagnostico_id }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-chart-radar me-2"></i>Diagnóstico EFO #{{ diagnostico_id }}
+        </h1>
+        <a href="/efo" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Voltar
+        </a>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-header">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-info-circle me-2"></i>Resultados do Diagnóstico EFO
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info" role="alert">
+                <h5><i class="fas fa-chart-radar me-2"></i>Diagnóstico EFO Completo</h5>
+                <p>Visualização detalhada dos resultados de Eficiência, Flexibilidade e Organização.</p>
+                <p><strong>ID do Diagnóstico:</strong> {{ diagnostico_id }}</p>
+                <p><strong>Data:</strong> {{ "hoje" }}</p>
+                <p><strong>Score EFO:</strong> <span class="badge bg-primary fs-6">7.5</span></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

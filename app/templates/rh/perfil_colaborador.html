@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}Perfil do Colaborador{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-user me-2"></i>Perfil do Colaborador
+        </h1>
+        <div>
+            <a href="/rh/colaboradores" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left me-1"></i>Voltar
+            </a>
+            <button class="btn btn-warning btn-sm" onclick="editarColaborador({{ colaborador_id }})">
+                <i class="fas fa-edit me-1"></i>Editar
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Informações Básicas -->
+        <div class="col-lg-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Informações Básicas</h6>
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <img src="https://via.placeholder.com/120x120/4e73df/fff?text=Foto" 
+                             class="rounded-circle" alt="Foto do Colaborador" style="width: 120px; height: 120px;">
+                    </div>
+                    <h5 id="nomeColaborador">Carregando...</h5>
+                    <p class="text-muted" id="cargoColaborador">Carregando...</p>
+                    <div class="row text-start">
+                        <div class="col-12 mb-2">
+                            <strong>Matrícula:</strong> <span id="matriculaColaborador">-</span>
+                        </div>
+                        <div class="col-12 mb-2">
+                            <strong>E-mail:</strong> <span id="emailColaborador">-</span>
+                        </div>
+                        <div class="col-12 mb-2">
+                            <strong>Telefone:</strong> <span id="telefoneColaborador">-</span>
+                        </div>
+                        <div class="col-12 mb-2">
+                            <strong>Status:</strong> <span id="statusColaborador" class="badge bg-success">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dados Profissionais -->
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Dados Profissionais</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><strong>Cargo:</strong></label>
+                            <p id="cargoDetalhado">Carregando...</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><strong>Setor:</strong></label>
+                            <p id="setorColaborador">Carregando...</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><strong>Data de Admissão:</strong></label>
+                            <p id="admissaoColaborador">Carregando...</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><strong>Tempo de Empresa:</strong></label>
+                            <p id="tempoEmpresa">Carregando...</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><strong>Salário:</strong></label>
+                            <p id="salarioColaborador">Carregando...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dados Pessoais -->
+            <div class="card shadow mt-4">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Dados Pessoais</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><strong>CPF:</strong></label>
+                            <p id="cpfColaborador">Carregando...</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><strong>RG:</strong></label>
+                            <p id="rgColaborador">Carregando...</p>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label"><strong>Endereço:</strong></label>
+                            <p id="enderecoColaborador">Carregando...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Carregar dados do colaborador
+function carregarDados() {
+    const colaboradorId = {{ colaborador_id }};
+    
+    fetch(`/rh/api/colaborador/${colaboradorId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert('Erro: ' + data.error);
+                return;
+            }
+            
+            // Preencher dados
+            document.getElementById('nomeColaborador').textContent = data.nome;
+            document.getElementById('cargoColaborador').textContent = data.cargo;
+            document.getElementById('matriculaColaborador').textContent = data.matricula;
+            document.getElementById('emailColaborador').textContent = data.email;
+            document.getElementById('telefoneColaborador').textContent = data.telefone;
+            document.getElementById('cargoDetalhado').textContent = data.cargo;
+            document.getElementById('setorColaborador').textContent = data.setor;
+            document.getElementById('admissaoColaborador').textContent = data.admissao;
+            document.getElementById('salarioColaborador').textContent = `R$ ${data.salario.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            document.getElementById('cpfColaborador').textContent = data.cpf;
+            document.getElementById('rgColaborador').textContent = data.rg;
+            document.getElementById('enderecoColaborador').textContent = data.endereco;
+            
+            // Status
+            const statusElement = document.getElementById('statusColaborador');
+            statusElement.textContent = data.status;
+            statusElement.className = `badge ${data.status === 'Ativo' ? 'bg-success' : data.status === 'Férias' ? 'bg-info' : 'bg-warning'}`;
+            
+            // Calcular tempo de empresa
+            const admissao = new Date(data.admissao.split('/').reverse().join('-'));
+            const hoje = new Date();
+            const diffTime = Math.abs(hoje - admissao);
+            const diffYears = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 365));
+            const diffMonths = Math.floor((diffTime % (1000 * 60 * 60 * 24 * 365)) / (1000 * 60 * 60 * 24 * 30));
+            
+            document.getElementById('tempoEmpresa').textContent = `${diffYears} anos e ${diffMonths} meses`;
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Erro ao carregar dados do colaborador');
+        });
+}
+
+function editarColaborador(id) {
+    window.location.href = `/rh/colaboradores/${id}/editar`;
+}
+
+// Carregar dados ao iniciar
+document.addEventListener('DOMContentLoaded', carregarDados);
+</script>
+{% endblock %}
