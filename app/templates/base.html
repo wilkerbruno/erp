@@ -3,125 +3,867 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}ERP Corrigindo à Rota{% endblock %}</title>
+    <title>{% block title %}ERP Sistema{% endblock %} - Corrigindo à Rota</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
-        body { font-family: 'Nunito', sans-serif; }
+        /* CSS Responsivo Personalizado */
+        :root {
+            --sidebar-width: 250px;
+            --header-height: 60px;
+            --primary-color: #4e73df;
+            --sidebar-bg: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            font-size: 14px;
+            background-color: #f8f9fc;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Styles */
         .sidebar {
             position: fixed;
             top: 0;
             left: 0;
-            width: 250px;
             height: 100vh;
-            background: #4e73df;
-            color: white;
-            padding-top: 1rem;
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+            scrollbar-width: thin;
         }
+
+        .sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 2px;
+        }
+
+        /* Sidebar Hidden State for Mobile */
+        .sidebar.collapsed {
+            left: -var(--sidebar-width);
+        }
+
+        /* Main Content */
         .main-content {
-            margin-left: 250px;
-            padding: 2rem;
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            transition: all 0.3s ease;
+            padding-top: var(--header-height);
         }
-        .sidebar .nav-link {
-            color: rgba(255,255,255,0.8);
+
+        .main-content.expanded {
+            margin-left: 0;
+        }
+
+        /* Top Header */
+        .top-header {
+            position: fixed;
+            top: 0;
+            left: var(--sidebar-width);
+            right: 0;
+            height: var(--header-height);
+            background: white;
+            border-bottom: 1px solid #e3e6f0;
+            z-index: 999;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+        }
+
+        .top-header.expanded {
+            left: 0;
+        }
+
+        /* Mobile Toggle Button */
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: #5a5c69;
+            cursor: pointer;
+            margin-right: 1rem;
+        }
+
+        /* Sidebar Brand */
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: var(--header-height);
+            text-decoration: none;
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .sidebar-brand-icon {
+            margin-right: 0.5rem;
+            font-size: 1.5rem;
+        }
+
+        /* Navigation Items */
+        .nav-item {
+            margin: 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
             padding: 0.75rem 1rem;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.15s ease;
+            border-radius: 0;
         }
-        .sidebar .nav-link:hover {
+
+        .nav-link:hover {
             color: white;
             background: rgba(255,255,255,0.1);
         }
-        .border-left-primary { border-left: 0.25rem solid #4e73df !important; }
-        .border-left-success { border-left: 0.25rem solid #1cc88a !important; }
-        .border-left-info { border-left: 0.25rem solid #36b9cc !important; }
-        .border-left-warning { border-left: 0.25rem solid #f6c23e !important; }
-    </style>
+
+        .nav-link.active {
+            color: white;
+            background: rgba(255,255,255,0.2);
+        }
+
+        .nav-link i {
+            margin-right: 0.75rem;
+            font-size: 0.9rem;
+            width: 1.2rem;
+            text-align: center;
+        }
+
+        /* Dividers */
+        .sidebar-divider {
+            border-top: 1px solid rgba(255,255,255,0.15);
+            margin: 1rem 0;
+        }
+
+        .sidebar-heading {
+            color: rgba(255,255,255,0.4);
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1rem;
+            padding: 0 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Content Area */
+        .content-wrapper {
+            padding: 1.5rem;
+        }
+
+        /* Cards Responsivos */
+        .card {
+            border: 0;
+            border-radius: 0.35rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            background-color: #f8f9fc;
+            border-bottom: 1px solid #e3e6f0;
+        }
+
+        /* Tabelas Responsivas */
+        .table-responsive {
+            border-radius: 0.35rem;
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table th {
+            border-top: none;
+            font-weight: 600;
+            background-color: #f8f9fc;
+        }
+
+        /* Botões Responsivos */
+        .btn {
+            border-radius: 0.35rem;
+        }
+
+        .btn-group .btn {
+            border-radius: 0;
+        }
+
+        .btn-group .btn:first-child {
+            border-top-left-radius: 0.35rem;
+            border-bottom-left-radius: 0.35rem;
+        }
+
+        .btn-group .btn:last-child {
+            border-top-right-radius: 0.35rem;
+            border-bottom-right-radius: 0.35rem;
+        }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            .sidebar {
+                left: -var(--sidebar-width);
+            }
+
+            .sidebar.show {
+                left: 0;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .top-header {
+                left: 0;
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+
+            .content-wrapper {
+                padding: 1rem;
+            }
+
+            /* Stack cards vertically on mobile */
+            .row > .col-xl-3,
+            .row > .col-lg-3,
+            .row > .col-md-6 {
+                margin-bottom: 1rem;
+            }
+
+            /* Make buttons full width on mobile */
+            .btn-group {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .btn-group .btn {
+                border-radius: 0.35rem;
+                margin-bottom: 0.25rem;
+            }
+
+            /* Improve table readability */
+            .table-responsive table {
+                font-size: 0.8rem;
+            }
+
+            .table th,
+            .table td {
+                padding: 0.5rem 0.25rem;
+            }
+
+            /* Modal improvements */
+            .modal-dialog {
+                margin: 0.5rem;
+            }
+
+            /* Form improvements */
+            .form-control,
+            .form-select {
+                font-size: 16px; /* Prevent zoom on iOS */
+            }
+        }
+
+        @media (max-width: 576px) {
+            .content-wrapper {
+                padding: 0.75rem;
+            }
+
+            .card-body {
+                padding: 1rem;
+            }
+
+            .btn-sm {
+                font-size: 0.7rem;
+                padding: 0.25rem 0.5rem;
+            }
+
+            /* Hide some columns on very small screens */
+            .table .d-none-mobile {
+                display: none !important;
+            }
+        }
+
+        /* Tablet Specific */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .main-content {
+                margin-left: 200px;
+            }
+
+            .top-header {
+                left: 200px;
+            }
+
+            .sidebar-brand-text {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Large Desktop */
+        @media (min-width: 1400px) {
+            .content-wrapper {
+                padding: 2rem;
+            }
+
+            .container-fluid {
+                max-width: 1600px;
+            }
+        }
+
+        /* Overlay for mobile menu */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .sidebar-overlay.show {
+            display: block;
+        }
+
+        /* Animation classes */
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Loading states */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        /* Print styles */
+        @media print {
+            .sidebar,
+            .top-header,
+            .btn,
+            .mobile-toggle {
+                display: none !important;
+            }
+
+            .main-content {
+                margin-left: 0 !important;
+                padding-top: 0 !important;
+            }
+
+            .content-wrapper {
+                padding: 0 !important;
+            }
+        }
     
+        /* MENU HAMBURGUER - CSS ESPECÍFICO */
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.4rem;
+            color: #5a5c69;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-toggle:hover {
+            background: #f8f9fc;
+            color: #4e73df;
+        }
+
+        .mobile-toggle:focus {
+            outline: 2px solid #4e73df;
+            outline-offset: 2px;
+        }
+
+        /* Sidebar para mobile */
+        .sidebar {
+            transform: translateX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.hidden {
+            transform: translateX(-100%);
+        }
+
+        /* Overlay para fechar menu */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Ajustes responsivos para hamburger */
+        @media (max-width: 768px) {
+            .mobile-toggle {
+                display: block;
+            }
+
+            .sidebar {
+                position: fixed;
+                z-index: 999;
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0 !important;
+            }
+
+            .top-header {
+                left: 0 !important;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .mobile-toggle {
+                font-size: 1.2rem;
+                padding: 0.375rem;
+            }
+
+            .sidebar {
+                width: 280px;
+            }
+        }
+
+        </style>
+
     {% block head %}{% endblock %}
 </head>
 <body>
+    <!-- Sidebar Overlay for Mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <!-- Sidebar -->
-    {% if current_user.is_authenticated %}
-    <div class="sidebar">
-        <div class="sidebar-brand px-3 mb-4">
-            <h5><i class="fas fa-route me-2"></i>CR ERP</h5>
+    <nav class="sidebar" id="sidebar">
+        <!-- Sidebar Brand -->
+        <a class="sidebar-brand" href="/">
+            <div class="sidebar-brand-icon">
+                <i class="fas fa-route"></i>
+            </div>
+            <div class="sidebar-brand-text">ERP Sistema</div>
+        </a>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider my-0">
+
+        <!-- Nav Item - Dashboard -->
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="/">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">Módulos Principais</div>
+
+            <!-- Nav Items -->
+            <li class="nav-item">
+                <a class="nav-link" href="/rh">
+                    <i class="fas fa-users"></i>
+                    <span>Recursos Humanos</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/qualidade">
+                    <i class="fas fa-award"></i>
+                    <span>Qualidade</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/producao">
+                    <i class="fas fa-industry"></i>
+                    <span>Produção (PCP)</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/financeiro">
+                    <i class="fas fa-dollar-sign"></i>
+                    <span>Financeiro</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/empresas">
+                    <i class="fas fa-building"></i>
+                    <span>Gerenciamento de Empresas</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/efo">
+                    <i class="fas fa-chart-radar"></i>
+                    <span>EFO - Diagnóstico</span>
+                </a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">Ferramentas</div>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/planos-acao">
+                    <i class="fas fa-tasks"></i>
+                    <span>Planos de Ação</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/relatorios">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Relatórios</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/configuracoes">
+                    <i class="fas fa-cogs"></i>
+                    <span>Configurações</span>
+                </a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
+        </ul>
+    </nav>
+
+    <!-- Top Header -->
+    <div class="top-header" id="topHeader">
+        <button class="mobile-toggle" id="mobileToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <div class="d-flex align-items-center ms-auto">
+            <!-- User Info Dropdown -->
+            <div class="dropdown">
+                <button class="btn btn-link dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <i class="fas fa-user-circle fa-lg text-gray-600"></i>
+                    <span class="d-none d-sm-inline text-gray-600 small ms-1">
+                        {% if current_user.is_authenticated %}
+                            {{ current_user.username|title }}
+                        {% else %}
+                            Usuário
+                        {% endif %}
+                    </span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-user fa-sm me-2"></i>Perfil</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-cogs fa-sm me-2"></i>Configurações</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="/auth/logout"><i class="fas fa-sign-out-alt fa-sm me-2"></i>Sair</a></li>
+                </ul>
+            </div>
         </div>
-        
-        <nav class="nav flex-column">
-            <a class="nav-link" href="/">
-                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
-            </a>
-            <a class="nav-link" href="/rh">
-                <i class="fas fa-users me-2"></i>RH
-            </a>
-            <a class="nav-link" href="/qualidade">
-                <i class="fas fa-award me-2"></i>Qualidade
-            </a>
-            <a class="nav-link" href="/producao">
-                <i class="fas fa-industry me-2"></i>Produção
-            </a>
-            <a class="nav-link" href="/planos-acao">
-                <i class="fas fa-tasks me-2"></i>Planos de Ação
-            </a>
-            <a class="nav-link" href="/relatorios">
-                <i class="fas fa-chart-bar me-2"></i>Relatórios
-            </a>
-            <a class="nav-link" href="/empresas">
-                            <i class="fas fa-building"></i>
-                            <span>Gerenciamento de Empresas</span>
-            </a>
-            <a class="nav-link" href="/efo">
-                            <i class="fas fa-chart-radar"></i>
-                            <span>EFO - Diagnóstico</span>
-            </a>
-            
-            
-            <hr class="my-3">
-            <a class="nav-link" href="/auth/logout">
-                <i class="fas fa-sign-out-alt me-2"></i>Sair
-            </a>
-        
-                </nav>
     </div>
-    {% endif %}
-    
+
     <!-- Main Content -->
-    <div class="{% if current_user.is_authenticated %}main-content{% else %}container-fluid{% endif %}">
-        <!-- Flash Messages -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <div class="main-content" id="mainContent">
+        <div class="content-wrapper">
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="alert-container">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
                     </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-        
-        <!-- Page Content -->
-        {% block content %}{% endblock %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- Page Content -->
+            {% block content %}{% endblock %}
+        </div>
     </div>
-    
-    <!-- Scripts -->
+
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    
+
+    <!-- Custom Responsive JS -->
     <script>
-        // Auto-hide alerts
-        setTimeout(function() {
-            var alerts = document.querySelectorAll('.alert-dismissible');
-            alerts.forEach(function(alert) {
-                var alertInstance = bootstrap.Alert.getOrCreateInstance(alert);
-                alertInstance.close();
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            const topHeader = document.getElementById('topHeader');
+            const mobileToggle = document.getElementById('mobileToggle');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+            // Mobile menu toggle
+            mobileToggle.addEventListener('click', function() {
+                toggleSidebar();
             });
-        }, 5000);
+
+            // Overlay click to close sidebar
+            sidebarOverlay.addEventListener('click', function() {
+                closeSidebar();
+            });
+
+            // Close sidebar when clicking on nav links on mobile
+            const navLinks = sidebar.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (window.innerWidth <= 768) {
+                        closeSidebar();
+                    }
+                });
+            });
+
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768) {
+                    closeSidebar();
+                    sidebar.classList.remove('collapsed');
+                    mainContent.classList.remove('expanded');
+                    topHeader.classList.remove('expanded');
+                }
+            });
+
+            function toggleSidebar() {
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.toggle('show');
+                    sidebarOverlay.classList.toggle('show');
+                } else {
+                    sidebar.classList.toggle('collapsed');
+                    mainContent.classList.toggle('expanded');
+                    topHeader.classList.toggle('expanded');
+                }
+            }
+
+            function closeSidebar() {
+                sidebar.classList.remove('show');
+                sidebarOverlay.classList.remove('show');
+            }
+
+            // Set active nav item
+            const currentPath = window.location.pathname;
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Auto-dismiss alerts
+            setTimeout(function() {
+                const alerts = document.querySelectorAll('.alert-dismissible');
+                alerts.forEach(alert => {
+                    const alertInstance = bootstrap.Alert.getOrCreateInstance(alert);
+                    alertInstance.close();
+                });
+            }, 5000);
+
+            // Smooth scrolling for internal links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // Loading states for buttons
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (this.type === 'submit' || this.getAttribute('data-loading') === 'true') {
+                        this.classList.add('loading');
+                        const originalText = this.innerHTML;
+                        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Carregando...';
+                        
+                        setTimeout(() => {
+                            this.classList.remove('loading');
+                            this.innerHTML = originalText;
+                        }, 2000);
+                    }
+                });
+            });
+
+            
+        // MENU HAMBURGUER - JavaScript
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('sidebar');
+            const mobileToggle = document.getElementById('mobileToggle');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            const navLinks = sidebar.querySelectorAll('.nav-link');
+
+            // Função para alternar menu
+            function toggleMenu() {
+                const isShowing = sidebar.classList.contains('show');
+                
+                if (isShowing) {
+                    closeMenu();
+                } else {
+                    openMenu();
+                }
+            }
+
+            // Função para abrir menu
+            function openMenu() {
+                sidebar.classList.add('show');
+                sidebar.classList.remove('hidden');
+                sidebarOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden'; // Previne scroll
+                
+                // Adicionar aria-expanded
+                mobileToggle.setAttribute('aria-expanded', 'true');
+            }
+
+            // Função para fechar menu
+            function closeMenu() {
+                sidebar.classList.remove('show');
+                sidebar.classList.add('hidden');
+                sidebarOverlay.classList.remove('active');
+                document.body.style.overflow = ''; // Restaura scroll
+                
+                // Adicionar aria-expanded
+                mobileToggle.setAttribute('aria-expanded', 'false');
+            }
+
+            // Event listeners
+            if (mobileToggle) {
+                mobileToggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleMenu();
+                });
+            }
+
+            // Fechar menu ao clicar no overlay
+            if (sidebarOverlay) {
+                sidebarOverlay.addEventListener('click', closeMenu);
+            }
+
+            // Fechar menu ao clicar em links (mobile)
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (window.innerWidth <= 768) {
+                        setTimeout(closeMenu, 150); // Pequeno delay para UX
+                    }
+                });
+            });
+
+            // Fechar menu ao redimensionar tela
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768) {
+                    closeMenu();
+                    sidebar.classList.remove('hidden', 'show');
+                    document.body.style.overflow = '';
+                }
+            });
+
+            // Fechar menu com tecla ESC
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && sidebar.classList.contains('show')) {
+                    closeMenu();
+                }
+            });
+
+            // Inicializar estado do menu
+            if (window.innerWidth <= 768) {
+                sidebar.classList.add('hidden');
+                mobileToggle.setAttribute('aria-expanded', 'false');
+            }
+
+            console.log('Menu hamburguer inicializado!');
+        });
+
+            console.log('Sistema responsivo inicializado!');
+        });
+
+        // Global utility functions
+        window.showAlert = function(message, type = 'info') {
+            const alertHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            
+            let alertContainer = document.querySelector('.alert-container');
+            if (!alertContainer) {
+                alertContainer = document.createElement('div');
+                alertContainer.className = 'alert-container';
+                document.querySelector('.content-wrapper').insertBefore(
+                    alertContainer, 
+                    document.querySelector('.content-wrapper').firstChild
+                );
+            }
+            
+            alertContainer.insertAdjacentHTML('beforeend', alertHTML);
+        };
+
+        window.toggleLoading = function(element, loading = true) {
+            if (loading) {
+                element.classList.add('loading');
+                element.disabled = true;
+            } else {
+                element.classList.remove('loading');
+                element.disabled = false;
+            }
+        };
     </script>
-    
+
     {% block scripts %}{% endblock %}
 </body>
 </html>

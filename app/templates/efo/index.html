@@ -21,7 +21,7 @@
 
     <!-- KPIs EFO -->
     <div class="row mb-4">
-        <div class="col-xl-3 col-md-6 mb-4">
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -40,7 +40,7 @@
             </div>
         </div>
 
-        <div class="col-xl-3 col-md-6 mb-4">
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4">
             <div class="card border-left-success shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -58,7 +58,7 @@
             </div>
         </div>
 
-        <div class="col-xl-3 col-md-6 mb-4">
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4">
             <div class="card border-left-warning shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -76,7 +76,7 @@
             </div>
         </div>
 
-        <div class="col-xl-3 col-md-6 mb-4">
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4">
             <div class="card border-left-info shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -98,8 +98,8 @@
     <!-- Gráficos EFO -->
     <div class="row">
         <!-- Evolução EFO -->
-        <div class="col-lg-8 mb-4">
-            <div class="card shadow">
+        <div class="col-lg-8 col-md-12 mb-4">
+            <div class="card shadow mb-3">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">
                         <i class="fas fa-chart-line me-2"></i>Evolução do Score EFO
@@ -112,8 +112,8 @@
         </div>
 
         <!-- Distribuição de Scores -->
-        <div class="col-lg-4 mb-4">
-            <div class="card shadow">
+        <div class="col-lg-4 col-md-12 mb-4">
+            <div class="card shadow mb-3">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">
                         <i class="fas fa-chart-pie me-2"></i>Distribuição de Scores
@@ -127,7 +127,7 @@
     </div>
 
     <!-- Diagnósticos Recentes -->
-    <div class="card shadow">
+    <div class="card shadow mb-3">
         <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-primary">
                 <i class="fas fa-list me-2"></i>Diagnósticos Recentes
@@ -135,7 +135,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered">
+                <table class="table table-responsive-sm table-bordered">
                     <thead>
                         <tr>
                             <th>Data</th>
@@ -144,31 +144,31 @@
                             <th>Flexibilidade</th>
                             <th>Organização</th>
                             <th>Score EFO</th>
-                            <th>Ações</th>
+                            <th class="d-none d-md-table-cell">Ações</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>25/07/2025</td>
-                            <td>Indústria ABC Ltda</td>
-                            <td><span class="badge bg-success">8.5</span></td>
-                            <td><span class="badge bg-warning">6.8</span></td>
-                            <td><span class="badge bg-info">7.2</span></td>
-                            <td><strong>7.5</strong></td>
-                            <td>
+                            <td class="d-none d-md-table-cell">25/07/2025</td>
+                            <td class="d-none d-md-table-cell">Indústria ABC Ltda</td>
+                            <td class="d-none d-md-table-cell"><span class="badge bg-success">8.5</span></td>
+                            <td class="d-none d-md-table-cell"><span class="badge bg-warning">6.8</span></td>
+                            <td class="d-none d-md-table-cell"><span class="badge bg-info">7.2</span></td>
+                            <td class="d-none d-md-table-cell"><strong>7.5</strong></td>
+                            <td class="d-none d-md-table-cell">
                                 <button class="btn btn-sm btn-info" onclick="verDiagnostico(1)">
                                     <i class="fas fa-eye"></i>
                                 </button>
                             </td>
                         </tr>
                         <tr>
-                            <td>20/07/2025</td>
-                            <td>Tecnologia XYZ S.A.</td>
-                            <td><span class="badge bg-success">9.1</span></td>
-                            <td><span class="badge bg-success">8.3</span></td>
-                            <td><span class="badge bg-success">8.7</span></td>
-                            <td><strong>8.7</strong></td>
-                            <td>
+                            <td class="d-none d-md-table-cell">20/07/2025</td>
+                            <td class="d-none d-md-table-cell">Tecnologia XYZ S.A.</td>
+                            <td class="d-none d-md-table-cell"><span class="badge bg-success">9.1</span></td>
+                            <td class="d-none d-md-table-cell"><span class="badge bg-success">8.3</span></td>
+                            <td class="d-none d-md-table-cell"><span class="badge bg-success">8.7</span></td>
+                            <td class="d-none d-md-table-cell"><strong>8.7</strong></td>
+                            <td class="d-none d-md-table-cell">
                                 <button class="btn btn-sm btn-info" onclick="verDiagnostico(2)">
                                     <i class="fas fa-eye"></i>
                                 </button>

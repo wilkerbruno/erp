@@ -1,3 +1,49 @@
+
+{% block head %}
+<style>
+    @media (max-width: 768px) {
+        .btn-group-responsive .btn {
+            margin-bottom: 0.25rem;
+            flex: 1 1 auto;
+        }
+        
+        .table-responsive-sm {
+            font-size: 0.8rem;
+        }
+        
+        .table-responsive-sm th,
+        .table-responsive-sm td {
+            padding: 0.5rem 0.25rem;
+            white-space: nowrap;
+        }
+        
+        .card-body {
+            padding: 1rem 0.75rem;
+        }
+        
+        .btn-sm {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .d-none-mobile {
+            display: none !important;
+        }
+        
+        .btn-group-responsive {
+            flex-direction: column;
+        }
+        
+        .btn-group-responsive .btn {
+            border-radius: 0.375rem !important;
+            margin-bottom: 0.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
 {% extends "base.html" %}
 
 {% block title %}Gerenciamento de Empresas{% endblock %}
@@ -12,7 +58,7 @@
             <button class="btn btn-success btn-sm me-2" onclick="novaEmpresa()">
                 <i class="fas fa-plus me-1"></i>Nova Empresa
             </button>
-            <div class="btn-group">
+            <div class="btn-group btn-group-responsive d-flex flex-wrap">
                 <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
                     <i class="fas fa-download me-1"></i>Exportar
                 </button>
@@ -30,7 +76,7 @@
 
     <!-- Status Cards -->
     <div class="row mb-4">
-        <div class="col-xl-3 col-md-6 mb-4">
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -48,7 +94,7 @@
             </div>
         </div>
 
-        <div class="col-xl-3 col-md-6 mb-4">
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4">
             <div class="card border-left-success shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -66,7 +112,7 @@
             </div>
         </div>
 
-        <div class="col-xl-3 col-md-6 mb-4">
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4">
             <div class="card border-left-warning shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -84,7 +130,7 @@
             </div>
         </div>
 
-        <div class="col-xl-3 col-md-6 mb-4">
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4">
             <div class="card border-left-info shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -110,7 +156,7 @@
         </div>
         <div class="card-body">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-lg-6 col-md-12">
                     <div class="input-group">
                         <input type="text" class="form-control" id="campoBusca" 
                                placeholder="Digite razão social, CNPJ ou cidade...">
@@ -119,7 +165,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-lg-3 col-md-4 col-sm-6">
                     <select class="form-select" id="filtroUF">
                         <option value="">Todos os Estados</option>
                         <option value="SP">São Paulo</option>
@@ -127,7 +173,7 @@
                         <option value="MG">Minas Gerais</option>
                     </select>
                 </div>
-                <div class="col-md-3">
+                <div class="col-lg-3 col-md-4 col-sm-6">
                     <select class="form-select" id="filtroSetor">
                         <option value="">Todos os Setores</option>
                         <option value="Industria">Indústria</option>
@@ -140,13 +186,13 @@
     </div>
 
     <!-- Lista de Empresas -->
-    <div class="card shadow">
+    <div class="card shadow mb-3">
         <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-primary">Lista de Empresas</h6>
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered" id="tabelaEmpresas">
+                <table class="table table-responsive-sm table-bordered" id="tabelaEmpresas">
                     <thead>
                         <tr>
                             <th>CNPJ</th>
@@ -155,18 +201,18 @@
                             <th>Cidade/UF</th>
                             <th>Telefone</th>
                             <th>Status</th>
-                            <th>Ações</th>
+                            <th class="d-none d-md-table-cell">Ações</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td><strong>12.345.678/0001-90</strong></td>
-                            <td>Indústria ABC Ltda</td>
-                            <td>ABC Indústrias</td>
-                            <td>São Paulo/SP</td>
-                            <td>(11) 3456-7890</td>
-                            <td><span class="badge bg-success">Ativo</span></td>
-                            <td>
+                            <td class="d-none d-md-table-cell"><strong>12.345.678/0001-90</strong></td>
+                            <td class="d-none d-md-table-cell">Indústria ABC Ltda</td>
+                            <td class="d-none d-md-table-cell">ABC Indústrias</td>
+                            <td class="d-none d-md-table-cell">São Paulo/SP</td>
+                            <td class="d-none d-md-table-cell">(11) 3456-7890</td>
+                            <td class="d-none d-md-table-cell"><span class="badge bg-success">Ativo</span></td>
+                            <td class="d-none d-md-table-cell">
                                 <button class="btn btn-sm btn-info me-1" onclick="verEmpresa(1)" title="Visualizar">
                                     <i class="fas fa-eye"></i>
                                 </button>
@@ -179,13 +225,13 @@
                             </td>
                         </tr>
                         <tr>
-                            <td><strong>98.765.432/0001-10</strong></td>
-                            <td>Tecnologia XYZ S.A.</td>
-                            <td>XYZ Tech</td>
-                            <td>São Paulo/SP</td>
-                            <td>(11) 9876-5432</td>
-                            <td><span class="badge bg-success">Ativo</span></td>
-                            <td>
+                            <td class="d-none d-md-table-cell"><strong>98.765.432/0001-10</strong></td>
+                            <td class="d-none d-md-table-cell">Tecnologia XYZ S.A.</td>
+                            <td class="d-none d-md-table-cell">XYZ Tech</td>
+                            <td class="d-none d-md-table-cell">São Paulo/SP</td>
+                            <td class="d-none d-md-table-cell">(11) 9876-5432</td>
+                            <td class="d-none d-md-table-cell"><span class="badge bg-success">Ativo</span></td>
+                            <td class="d-none d-md-table-cell">
                                 <button class="btn btn-sm btn-info me-1" onclick="verEmpresa(2)">
                                     <i class="fas fa-eye"></i>
                                 </button>

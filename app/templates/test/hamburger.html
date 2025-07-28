@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+
+{% block title %}Teste Menu Hamburguer{% endblock %}
+
+{% block head %}
+<style>
+    .test-info {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 1rem;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .device-indicator {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #4e73df;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 2rem;
+        font-size: 0.8rem;
+        z-index: 1001;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    
+    .test-card {
+        border-left: 4px solid #4e73df;
+        margin-bottom: 1rem;
+    }
+    
+    @media (max-width: 768px) {
+        .test-info {
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .test-info h2 {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Info do Teste -->
+    <div class="test-info">
+        <h2><i class="fas fa-hamburger me-2"></i>Teste do Menu Hamburguer</h2>
+        <p class="mb-2">Esta página testa a funcionalidade do menu hamburguer em diferentes tamanhos de tela.</p>
+        <p class="mb-0">
+            <strong>Mobile/Tablet:</strong> Botão hamburguer deve aparecer no topo 
+            <strong>Desktop:</strong> Menu lateral fixo
+        </p>
+    </div>
+
+    <!-- Instruções -->
+    <div class="row">
+        <div class="col-lg-4 mb-4">
+            <div class="card test-card">
+                <div class="card-body">
+                    <h5><i class="fas fa-mobile-alt text-primary me-2"></i>Mobile (≤768px)</h5>
+                    <ul class="list-unstyled">
+                        <li>✅ Botão hamburguer visível</li>
+                        <li>✅ Menu desliza da esquerda</li>
+                        <li>✅ Overlay escuro aparece</li>
+                        <li>✅ Clique fora fecha menu</li>
+                        <li>✅ ESC fecha menu</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 mb-4">
+            <div class="card test-card">
+                <div class="card-body">
+                    <h5><i class="fas fa-tablet-alt text-warning me-2"></i>Tablet (768-1024px)</h5>
+                    <ul class="list-unstyled">
+                        <li>✅ Botão hamburguer visível</li>
+                        <li>✅ Menu se adapta</li>
+                        <li>✅ Transições suaves</li>
+                        <li>✅ Touch-friendly</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 mb-4">
+            <div class="card test-card">
+                <div class="card-body">
+                    <h5><i class="fas fa-desktop text-success me-2"></i>Desktop (>1024px)</h5>
+                    <ul class="list-unstyled">
+                        <li>✅ Menu lateral fixo</li>
+                        <li>✅ Botão hamburguer oculto</li>
+                        <li>✅ Layout completo</li>
+                        <li>✅ Navegação normal</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Área de Teste -->
+    <div class="card shadow">
+        <div class="card-header">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-vial me-2"></i>Área de Teste Interativo
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Informações da Tela:</h6>
+                    <ul>
+                        <li><strong>Largura:</strong> <span id="screenWidth">-</span>px</li>
+                        <li><strong>Altura:</strong> <span id="screenHeight">-</span>px</li>
+                        <li><strong>Tipo:</strong> <span id="deviceType">-</span></li>
+                        <li><strong>Menu:</strong> <span id="menuStatus">-</span></li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h6>Ações de Teste:</h6>
+                    <div class="btn-group-vertical w-100">
+                        <button class="btn btn-outline-primary mb-2" onclick="forceToggleMenu()">
+                            <i class="fas fa-bars me-1"></i>Alternar Menu (Força)
+                        </button>
+                        <button class="btn btn-outline-secondary mb-2" onclick="checkMenuState()">
+                            <i class="fas fa-info me-1"></i>Verificar Estado
+                        </button>
+                        <button class="btn btn-outline-success" onclick="testResponsive()">
+                            <i class="fas fa-mobile me-1"></i>Simular Resize
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Status do Menu -->
+            <div class="alert alert-info mt-3" id="statusAlert">
+                <strong>Status:</strong> Aguardando teste...
+            </div>
+        </div>
+    </div>
+
+    <!-- Indicador de Dispositivo -->
+    <div class="device-indicator" id="deviceIndicator">
+        Desktop
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function updateScreenInfo() {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    
+    document.getElementById('screenWidth').textContent = width;
+    document.getElementById('screenHeight').textContent = height;
+    
+    let deviceType = 'Desktop';
+    let indicator = 'Desktop 💻';
+    let menuStatus = 'Lateral Fixo';
+    
+    if (width <= 768) {
+        deviceType = 'Mobile';
+        indicator = 'Mobile 📱';
+        menuStatus = 'Hamburguer';
+    } else if (width <= 1024) {
+        deviceType = 'Tablet';
+        indicator = 'Tablet 📟';
+        menuStatus = 'Hamburguer';
+    }
+    
+    document.getElementById('deviceType').textContent = deviceType;
+    document.getElementById('deviceIndicator').textContent = indicator;
+    document.getElementById('menuStatus').textContent = menuStatus;
+}
+
+function forceToggleMenu() {
+    const mobileToggle = document.getElementById('mobileToggle');
+    if (mobileToggle) {
+        mobileToggle.click();
+        updateStatus('Menu alternado via JavaScript');
+    } else {
+        updateStatus('Botão hamburguer não encontrado');
+    }
+}
+
+function checkMenuState() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    const toggle = document.getElementById('mobileToggle');
+    
+    let status = 'Estado do Menu:\n';
+    status += `- Sidebar classe: ${sidebar ? sidebar.className : 'não encontrado'}\n`;
+    status += `- Overlay ativo: ${overlay ? overlay.classList.contains('active') : 'não encontrado'}\n`;
+    status += `- Toggle visível: ${toggle ? (getComputedStyle(toggle).display !== 'none') : 'não encontrado'}`;
+    
+    updateStatus(status);
+    alert(status);
+}
+
+function testResponsive() {
+    updateStatus('Redimensione a janela para testar responsividade');
+    
+    // Simular diferentes tamanhos
+    const sizes = [
+        { width: 320, name: 'Mobile Pequeno' },
+        { width: 768, name: 'Mobile/Tablet' },
+        { width: 1024, name: 'Tablet/Desktop' },
+        { width: 1200, name: 'Desktop' }
+    ];
+    
+    let currentSize = 0;
+    const interval = setInterval(() => {
+        if (currentSize < sizes.length) {
+            const size = sizes[currentSize];
+            updateStatus(`Simulando: ${size.name} (${size.width}px)`);
+            currentSize++;
+        } else {
+            clearInterval(interval);
+            updateStatus('Teste de simulação concluído!');
+        }
+    }, 1500);
+}
+
+function updateStatus(message) {
+    const statusAlert = document.getElementById('statusAlert');
+    statusAlert.innerHTML = `<strong>Status:</strong> ${message}`;
+    
+    // Adicionar timestamp
+    const now = new Date().toLocaleTimeString();
+    statusAlert.innerHTML += `<br><small class="text-muted">Atualizado às ${now}</small>`;
+}
+
+// Monitorar mudanças de tamanho
+let resizeTimer;
+window.addEventListener('resize', function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function() {
+        updateScreenInfo();
+        updateStatus('Tela redimensionada - informações atualizadas');
+    }, 250);
+});
+
+// Monitorar cliques no menu
+document.addEventListener('click', function(e) {
+    if (e.target.closest('#mobileToggle')) {
+        updateStatus('Botão hamburguer clicado');
+    } else if (e.target.closest('#sidebarOverlay')) {
+        updateStatus('Overlay clicado - menu fechando');
+    } else if (e.target.closest('.nav-link')) {
+        updateStatus('Link do menu clicado');
+    }
+});
+
+// Inicializar
+updateScreenInfo();
+updateStatus('Página de teste carregada - pronto para testes!');
+
+console.log('Teste do menu hamburguer inicializado!');
+</script>
+{% endblock %}

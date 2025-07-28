@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block title %}Teste de Responsividade{% endblock %}
+
+{% block head %}
+<link href="{{ url_for('static', filename='css/responsive.css') }}" rel="stylesheet">
+<style>
+    .device-frame {
+        border: 2px solid #dee2e6;
+        border-radius: 1rem;
+        padding: 1rem;
+        margin: 1rem 0;
+        background: white;
+    }
+    
+    .screen-size {
+        font-weight: bold;
+        color: #4e73df;
+        margin-bottom: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="h3 mb-4 text-gray-800">
+        <i class="fas fa-mobile-alt me-2"></i>Teste de Responsividade
+    </h1>
+    
+    <!-- Screen Size Indicator -->
+    <div class="alert alert-info">
+        <h5><i class="fas fa-info-circle me-2"></i>Informações da Tela</h5>
+        <p class="mb-0">
+            <strong>Largura atual:</strong> <span id="screenWidth">-</span>px |
+            <strong>Altura:</strong> <span id="screenHeight">-</span>px |
+            <strong>Dispositivo:</strong> <span id="deviceType">-</span>
+        </p>
+    </div>
+    
+    <!-- Test Grid -->
+    <div class="row">
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-3">
+            <div class="card card-responsive">
+                <div class="card-body">
+                    <h5>Card Responsivo 1</h5>
+                    <p>Este card se adapta a diferentes tamanhos de tela.</p>
+                    <button class="btn btn-primary btn-responsive">Botão Responsivo</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-3">
+            <div class="card card-responsive">
+                <div class="card-body">
+                    <h5>Card Responsivo 2</h5>
+                    <p>Testando layout em diferentes dispositivos.</p>
+                    <div class="btn-group btn-group-responsive w-100">
+                        <button class="btn btn-outline-primary">Ação 1</button>
+                        <button class="btn btn-outline-primary">Ação 2</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-3">
+            <div class="card card-responsive">
+                <div class="card-body">
+                    <h5 class="show-desktop">Desktop</h5>
+                    <h5 class="show-tablet">Tablet</h5>
+                    <h5 class="show-mobile">Mobile</h5>
+                    <p>Este texto muda baseado no dispositivo.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-3">
+            <div class="card card-responsive">
+                <div class="card-body">
+                    <h5>Formulário Teste</h5>
+                    <form class="form-responsive">
+                        <div class="mb-2">
+                            <input type="text" class="form-control" placeholder="Campo de teste">
+                        </div>
+                        <div class="mb-2">
+                            <select class="form-select">
+                                <option>Opção 1</option>
+                                <option>Opção 2</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">Enviar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Responsive Table Test -->
+    <div class="card shadow mb-4">
+        <div class="card-header">
+            <h6 class="m-0 font-weight-bold text-primary">Tabela Responsiva de Teste</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-mobile table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th class="hide-mobile">E-mail</th>
+                            <th class="hide-mobile">Telefone</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>João Silva</td>
+                            <td class="hide-mobile">joao@email.com</td>
+                            <td class="hide-mobile">(11) 99999-9999</td>
+                            <td><span class="badge bg-success">Ativo</span></td>
+                            <td>
+                                <div class="btn-group btn-group-responsive">
+                                    <button class="btn btn-sm btn-info">Ver</button>
+                                    <button class="btn btn-sm btn-warning hide-mobile">Editar</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Maria Santos</td>
+                            <td class="hide-mobile">maria@email.com</td>
+                            <td class="hide-mobile">(11) 88888-8888</td>
+                            <td><span class="badge bg-warning">Pendente</span></td>
+                            <td>
+                                <div class="btn-group btn-group-responsive">
+                                    <button class="btn btn-sm btn-info">Ver</button>
+                                    <button class="btn btn-sm btn-warning hide-mobile">Editar</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Chart Test -->
+    <div class="card shadow">
+        <div class="card-header">
+            <h6 class="m-0 font-weight-bold text-primary">Gráfico Responsivo</h6>
+        </div>
+        <div class="card-body">
+            <div class="chart-responsive">
+                <canvas id="testChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Update screen info
+function updateScreenInfo() {
+    document.getElementById('screenWidth').textContent = window.innerWidth;
+    document.getElementById('screenHeight').textContent = window.innerHeight;
+    
+    let deviceType = 'Desktop';
+    if (window.innerWidth <= 768) {
+        deviceType = 'Mobile';
+    } else if (window.innerWidth <= 1024) {
+        deviceType = 'Tablet';
+    }
+    
+    document.getElementById('deviceType').textContent = deviceType;
+}
+
+// Create test chart
+const ctx = document.getElementById('testChart').getContext('2d');
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai'],
+        datasets: [{
+            label: 'Vendas',
+            data: [12, 19, 3, 5, 2],
+            backgroundColor: '#4e73df'
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false
+    }
+});
+
+// Initialize
+updateScreenInfo();
+window.addEventListener('resize', updateScreenInfo);
+
+console.log('Teste de responsividade carregado!');
+</script>
+{% endblock %}
