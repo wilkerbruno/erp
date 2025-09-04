@@ -1,13 +1,11 @@
 [build]
-builder = "heroku/python"
+builder = "python"
 
 [phases.setup]
-nixPkgs = ["python311", "pip"]
+nixPkgs = ["python311", "gcc"]
 
 [phases.install]
-cmds = [
-  "pip install -r requirements.txt"
-]
+cmds = ["python3 -m pip install --no-cache-dir -r requirements.txt"]
 
 [start]
 cmd = "python run.py"
