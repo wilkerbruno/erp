@@ -1,21 +1,14 @@
-FROM python:3.11-slim
+[build]
+builder = "python"
 
-WORKDIR /app
+[variables]
+PYTHON_VERSION = "3.11"
 
-# Instalar dependências do sistema se necessário
-RUN apt-get update && apt-get install -y gcc && rm -rf /var/lib/apt/lists/*
+[phases.setup]
+nixPkgs = ["python311", "gcc"]
 
-# Copiar arquivo de requirements
-COPY requirements.txt .
+[phases.install]
+cmds = ["pip install --no-cache-dir -r requirements.txt"]
 
-# Instalar dependências Python
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copiar código da aplicação
-COPY . .
-
-# Expor porta (ajuste conforme necessário)
-EXPOSE 5000
-
-# Comando para iniciar a aplicação
-CMD ["python", "run.py"]
+[start]
+cmd = "python run.py"
