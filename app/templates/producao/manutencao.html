@@ -1,0 +1,623 @@
+{% extends "base.html" %}
+
+{% block title %}Manutenção Preventiva{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-tools me-2"></i>Manutenção Preventiva
+        </h1>
+        <button class="btn btn-success" onclick="agendarManutencao()">
+            <i class="fas fa-calendar-plus me-1"></i>Agendar Manutenção
+        </button>
+    </div>
+
+    <!-- Cards de Status -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Manutenções Agendadas
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">15</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Em Andamento
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">3</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-wrench fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Concluídas (Mês)
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">42</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                Atrasadas
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">2</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calendário de Manutenções -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 font-weight-bold text-primary">Calendário de Manutenções - Agosto 2025</h6>
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-outline-primary">Semana</button>
+                            <button class="btn btn-primary">Mês</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered calendario-manutencao">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 14.2%;">Dom</th>
+                                    <th style="width: 14.2%;">Seg</th>
+                                    <th style="width: 14.2%;">Ter</th>
+                                    <th style="width: 14.2%;">Qua</th>
+                                    <th style="width: 14.2%;">Qui</th>
+                                    <th style="width: 14.2%;">Sex</th>
+                                    <th style="width: 14.2%;">Sáb</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="text-muted">27</td>
+                                    <td class="text-muted">28</td>
+                                    <td class="text-muted">29</td>
+                                    <td class="text-muted">30</td>
+                                    <td class="text-muted">31</td>
+                                    <td>1</td>
+                                    <td>2</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>4</td>
+                                    <td>5
+                                        <div class="badge bg-warning d-block">Máq. 1</div>
+                                    </td>
+                                    <td>6</td>
+                                    <td class="bg-light">7
+                                        <div class="badge bg-success d-block">Linha 2</div>
+                                        <div class="badge bg-info d-block">Prensa</div>
+                                    </td>
+                                    <td>8</td>
+                                    <td>9</td>
+                                </tr>
+                                <tr>
+                                    <td>10
+                                        <div class="badge bg-danger d-block">Torno</div>
+                                    </td>
+                                    <td>11</td>
+                                    <td>12
+                                        <div class="badge bg-primary d-block">Linha 1</div>
+                                    </td>
+                                    <td>13</td>
+                                    <td>14</td>
+                                    <td>15</td>
+                                    <td>16</td>
+                                </tr>
+                                <tr>
+                                    <td>17</td>
+                                    <td>18</td>
+                                    <td>19
+                                        <div class="badge bg-warning d-block">Máq. 2</div>
+                                    </td>
+                                    <td>20</td>
+                                    <td>21</td>
+                                    <td>22</td>
+                                    <td>23</td>
+                                </tr>
+                                <tr>
+                                    <td>24</td>
+                                    <td>25
+                                        <div class="badge bg-success d-block">Esteira</div>
+                                    </td>
+                                    <td>26</td>
+                                    <td>27</td>
+                                    <td>28</td>
+                                    <td>29</td>
+                                    <td>30</td>
+                                </tr>
+                                <tr>
+                                    <td>31</td>
+                                    <td class="text-muted">1</td>
+                                    <td class="text-muted">2</td>
+                                    <td class="text-muted">3</td>
+                                    <td class="text-muted">4</td>
+                                    <td class="text-muted">5</td>
+                                    <td class="text-muted">6</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card shadow mb-3">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Próximas Manutenções</h6>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold">Linha 2</div>
+                                <small class="text-muted">07/08 - Preventiva</small>
+                            </div>
+                            <span class="badge bg-success rounded-pill">Hoje</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold">Prensa 1</div>
+                                <small class="text-muted">07/08 - Lubrificação</small>
+                            </div>
+                            <span class="badge bg-info rounded-pill">Hoje</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold">Torno CNC</div>
+                                <small class="text-muted">10/08 - Calibração</small>
+                            </div>
+                            <span class="badge bg-danger rounded-pill">3 dias</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold">Linha 1</div>
+                                <small class="text-muted">12/08 - Preventiva</small>
+                            </div>
+                            <span class="badge bg-primary rounded-pill">5 dias</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Legenda</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-2">
+                        <span class="badge bg-success me-2"></span>Preventiva
+                    </div>
+                    <div class="mb-2">
+                        <span class="badge bg-warning me-2"></span>Corretiva
+                    </div>
+                    <div class="mb-2">
+                        <span class="badge bg-info me-2"></span>Lubrificação
+                    </div>
+                    <div class="mb-2">
+                        <span class="badge bg-primary me-2"></span>Calibração
+                    </div>
+                    <div class="mb-2">
+                        <span class="badge bg-danger me-2"></span>Urgente
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Manutenções -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h6 class="m-0 font-weight-bold text-primary">Lista de Manutenções</h6>
+                <div class="btn-group btn-group-sm">
+                    <button class="btn btn-outline-primary active">Todas</button>
+                    <button class="btn btn-outline-warning">Pendentes</button>
+                    <button class="btn btn-outline-success">Em Andamento</button>
+                    <button class="btn btn-outline-info">Concluídas</button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Máquina/Equipamento</th>
+                            <th>Tipo</th>
+                            <th>Data Programada</th>
+                            <th>Técnico</th>
+                            <th>Status</th>
+                            <th>Prioridade</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="table-warning">
+                            <td><strong>MAN-001</strong></td>
+                            <td>
+                                <div>Linha 2</div>
+                                <small class="text-muted">Linha de Produção</small>
+                            </td>
+                            <td>Preventiva</td>
+                            <td>
+                                <div>07/08/2025</div>
+                                <small class="text-muted">08:00</small>
+                            </td>
+                            <td>João Técnico</td>
+                            <td><span class="badge bg-warning">Em Andamento</span></td>
+                            <td><span class="badge bg-info">Normal</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-info me-1" onclick="verManutencao(1)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="finalizarManutencao(1)">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="table-info">
+                            <td><strong>MAN-002</strong></td>
+                            <td>
+                                <div>Prensa 1</div>
+                                <small class="text-muted">Equipamento de Prensagem</small>
+                            </td>
+                            <td>Lubrificação</td>
+                            <td>
+                                <div>07/08/2025</div>
+                                <small class="text-muted">14:00</small>
+                            </td>
+                            <td>Maria Mecânica</td>
+                            <td><span class="badge bg-info">Programada</span></td>
+                            <td><span class="badge bg-success">Baixa</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-info me-1" onclick="verManutencao(2)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-primary" onclick="iniciarManutencao(2)">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="table-danger">
+                            <td><strong>MAN-003</strong></td>
+                            <td>
+                                <div>Torno CNC</div>
+                                <small class="text-muted">Equipamento de Usinagem</small>
+                            </td>
+                            <td>Calibração</td>
+                            <td>
+                                <div>05/08/2025</div>
+                                <small class="text-muted">10:00</small>
+                            </td>
+                            <td>Pedro Eletrônica</td>
+                            <td><span class="badge bg-danger">Atrasada</span></td>
+                            <td><span class="badge bg-danger">Alta</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-info me-1" onclick="verManutencao(3)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="reagendarManutencao(3)">
+                                    <i class="fas fa-calendar"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="table-success">
+                            <td><strong>MAN-004</strong></td>
+                            <td>
+                                <div>Máquina 1</div>
+                                <small class="text-muted">Equipamento Geral</small>
+                            </td>
+                            <td>Preventiva</td>
+                            <td>
+                                <div>06/08/2025</div>
+                                <small class="text-muted">16:00</small>
+                            </td>
+                            <td>Carlos Manutenção</td>
+                            <td><span class="badge bg-success">Concluída</span></td>
+                            <td><span class="badge bg-info">Normal</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-info me-1" onclick="verManutencao(4)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-secondary" onclick="imprimirRelatorio(4)">
+                                    <i class="fas fa-print"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estatísticas -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Estatísticas de Manutenção</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="graficoManutencao" width="600" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Custos de Manutenção</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Este Mês:</span>
+                            <strong>R$ 12.450,00</strong>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Mês Anterior:</span>
+                            <strong>R$ 9.800,00</strong>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Média Mensal:</span>
+                            <strong>R$ 11.200,00</strong>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="mb-3">
+                        <strong>Breakdown por Tipo:</strong>
+                    </div>
+                    <div class="mb-2">
+                        <div class="d-flex justify-content-between">
+                            <span>Preventiva:</span>
+                            <span>65%</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-success" style="width: 65%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <div class="d-flex justify-content-between">
+                            <span>Corretiva:</span>
+                            <span>25%</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-warning" style="width: 25%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <div class="d-flex justify-content-between">
+                            <span>Emergencial:</span>
+                            <span>10%</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-danger" style="width: 10%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Agendar Manutenção -->
+<div class="modal fade" id="modalAgendarManutencao" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-calendar-plus me-2"></i>Agendar Manutenção
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formAgendarManutencao">
+                    <div class="mb-3">
+                        <label class="form-label">Máquina/Equipamento *</label>
+                        <select class="form-select" required>
+                            <option value="">Selecione</option>
+                            <option value="linha1">Linha 1</option>
+                            <option value="linha2">Linha 2</option>
+                            <option value="maquina1">Máquina 1</option>
+                            <option value="prensa1">Prensa 1</option>
+                            <option value="torno1">Torno CNC</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tipo de Manutenção *</label>
+                        <select class="form-select" required>
+                            <option value="">Selecione</option>
+                            <option value="preventiva">Preventiva</option>
+                            <option value="corretiva">Corretiva</option>
+                            <option value="preditiva">Preditiva</option>
+                            <option value="lubrificacao">Lubrificação</option>
+                            <option value="calibracao">Calibração</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Data *</label>
+                                <input type="date" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Horário *</label>
+                                <input type="time" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Técnico Responsável *</label>
+                        <select class="form-select" required>
+                            <option value="">Selecione</option>
+                            <option value="joao">João Técnico</option>
+                            <option value="maria">Maria Mecânica</option>
+                            <option value="pedro">Pedro Eletrônica</option>
+                            <option value="carlos">Carlos Manutenção</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Prioridade</label>
+                        <select class="form-select">
+                            <option value="baixa">Baixa</option>
+                            <option value="normal" selected>Normal</option>
+                            <option value="alta">Alta</option>
+                            <option value="urgente">Urgente</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Observações</label>
+                        <textarea class="form-control" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="salvarAgendamentoManutencao()">Agendar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+.calendario-manutencao td {
+    height: 80px;
+    vertical-align: top;
+    padding: 5px;
+}
+.calendario-manutencao .badge {
+    font-size: 0.7rem;
+    margin-bottom: 2px;
+}
+</style>
+
+<script>
+// Gráfico de Manutenção
+const ctx4 = document.getElementById('graficoManutencao').getContext('2d');
+const graficoManutencao = new Chart(ctx4, {
+    type: 'line',
+    data: {
+        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago'],
+        datasets: [{
+            label: 'Preventiva',
+            data: [15, 18, 12, 20, 16, 22, 19, 15],
+            borderColor: '#28a745',
+            backgroundColor: 'rgba(40, 167, 69, 0.1)'
+        }, {
+            label: 'Corretiva',
+            data: [8, 6, 10, 4, 7, 5, 9, 3],
+            borderColor: '#ffc107',
+            backgroundColor: 'rgba(255, 193, 7, 0.1)'
+        }, {
+            label: 'Emergencial',
+            data: [2, 1, 3, 0, 2, 1, 2, 2],
+            borderColor: '#dc3545',
+            backgroundColor: 'rgba(220, 53, 69, 0.1)'
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+function agendarManutencao() {
+    var modal = new bootstrap.Modal(document.getElementById('modalAgendarManutencao'));
+    modal.show();
+}
+
+function salvarAgendamentoManutencao() {
+    alert('Manutenção agendada com sucesso!');
+    var modal = bootstrap.Modal.getInstance(document.getElementById('modalAgendarManutencao'));
+    modal.hide();
+}
+
+function verManutencao(id) {
+    alert('Ver detalhes da manutenção ID: ' + id);
+}
+
+function iniciarManutencao(id) {
+    alert('Iniciar manutenção ID: ' + id);
+}
+
+function finalizarManutencao(id) {
+    if(confirm('Finalizar esta manutenção?')) {
+        alert('Manutenção finalizada com sucesso!');
+    }
+}
+
+function reagendarManutencao(id) {
+    alert('Reagendar manutenção ID: ' + id);
+}
+
+function imprimirRelatorio(id) {
+    alert('Imprimir relatório da manutenção ID: ' + id);
+}
+
+console.log('Manutenção carregado!');
+</script>
+{% endblock %}

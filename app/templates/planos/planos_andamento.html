@@ -1,0 +1,479 @@
+{% extends "base.html" %}
+
+{% block title %}Planos em Andamento{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-running me-2"></i>Planos em Andamento
+        </h1>
+        <div class="btn-group">
+            <button class="btn btn-success" onclick="window.location.href='/planos/novo'">
+                <i class="fas fa-plus me-1"></i>Novo Plano
+            </button>
+            <button class="btn btn-info" onclick="gerarRelatorio()">
+                <i class="fas fa-chart-bar me-1"></i>Relatório
+            </button>
+        </div>
+    </div>
+
+    <!-- Cards de Progress -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Planos Ativos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">12</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-play-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Com Atraso
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">3</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Progress Médio
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">68%</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-chart-pie fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Concluídos no Mês
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">8</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-2">
+                    <label class="form-label">Status</label>
+                    <select class="form-select">
+                        <option value="">Todos</option>
+                        <option value="iniciado">Iniciado</option>
+                        <option value="andamento">Em Andamento</option>
+                        <option value="pausado">Pausado</option>
+                        <option value="atrasado">Atrasado</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Departamento</label>
+                    <select class="form-select">
+                        <option value="">Todos</option>
+                        <option value="vendas">Vendas</option>
+                        <option value="marketing">Marketing</option>
+                        <option value="rh">Recursos Humanos</option>
+                        <option value="ti">Tecnologia</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Progress</label>
+                    <select class="form-select">
+                        <option value="">Todos</option>
+                        <option value="0-25">0% - 25%</option>
+                        <option value="26-50">26% - 50%</option>
+                        <option value="51-75">51% - 75%</option>
+                        <option value="76-100">76% - 100%</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Responsável</label>
+                    <select class="form-select">
+                        <option value="">Todos</option>
+                        <option value="1">João Silva</option>
+                        <option value="2">Maria Santos</option>
+                        <option value="3">Pedro Oliveira</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Vencimento</label>
+                    <select class="form-select">
+                        <option value="">Todos</option>
+                        <option value="hoje">Hoje</option>
+                        <option value="semana">Esta Semana</option>
+                        <option value="mes">Este Mês</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button class="btn btn-primary w-100">
+                        <i class="fas fa-filter me-1"></i>Filtrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Planos em Andamento -->
+    <div class="row">
+        <!-- Card 1 - Implementação CRM -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="m-0 font-weight-bold text-primary">Implementação CRM 2025</h6>
+                        <small class="text-muted">Iniciado em 15/07/2025</small>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-link" data-bs-toggle="dropdown">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="editarPlano(1)">Editar</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="pausarPlano(1)">Pausar</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="finalizarPlano(1)">Finalizar</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <span class="badge bg-primary">Vendas</span>
+                            <span class="badge bg-warning">Em Andamento</span>
+                        </div>
+                        <div class="text-end">
+                            <strong class="text-success">75%</strong>
+                            <small class="text-muted d-block">Concluído</small>
+                        </div>
+                    </div>
+                    
+                    <div class="progress mb-3" style="height: 8px;">
+                        <div class="progress-bar bg-success" style="width: 75%"></div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <small class="text-muted">Responsável:</small>
+                            <div><strong>João Silva</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Prazo:</small>
+                            <div><strong>30/08/2025</strong></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <small class="text-muted">Próximas Atividades:</small>
+                        <ul class="list-unstyled mt-1">
+                            <li><i class="fas fa-circle text-primary me-2" style="font-size: 8px;"></i>Treinamento equipe (25/08)</li>
+                            <li><i class="fas fa-circle text-warning me-2" style="font-size: 8px;"></i>Migração de dados (28/08)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <button class="btn btn-sm btn-info" onclick="verDetalhes(1)">
+                            <i class="fas fa-eye me-1"></i>Detalhes
+                        </button>
+                        <button class="btn btn-sm btn-primary" onclick="atualizarProgress(1)">
+                            <i class="fas fa-edit me-1"></i>Atualizar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 2 - Campanha Marketing -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="m-0 font-weight-bold text-success">Campanha Marketing Digital Q3</h6>
+                        <small class="text-muted">Iniciado em 01/08/2025</small>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-link" data-bs-toggle="dropdown">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="editarPlano(2)">Editar</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="pausarPlano(2)">Pausar</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="finalizarPlano(2)">Finalizar</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <span class="badge bg-success">Marketing</span>
+                            <span class="badge bg-success">Em Andamento</span>
+                        </div>
+                        <div class="text-end">
+                            <strong class="text-success">92%</strong>
+                            <small class="text-muted d-block">Concluído</small>
+                        </div>
+                    </div>
+                    
+                    <div class="progress mb-3" style="height: 8px;">
+                        <div class="progress-bar bg-success" style="width: 92%"></div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <small class="text-muted">Responsável:</small>
+                            <div><strong>Maria Santos</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Prazo:</small>
+                            <div><strong>15/08/2025</strong></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <small class="text-muted">Próximas Atividades:</small>
+                        <ul class="list-unstyled mt-1">
+                            <li><i class="fas fa-circle text-success me-2" style="font-size: 8px;"></i>Relatório final (10/08)</li>
+                            <li><i class="fas fa-circle text-info me-2" style="font-size: 8px;"></i>Apresentação resultados (12/08)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <button class="btn btn-sm btn-info" onclick="verDetalhes(2)">
+                            <i class="fas fa-eye me-1"></i>Detalhes
+                        </button>
+                        <button class="btn btn-sm btn-success" onclick="finalizarPlano(2)">
+                            <i class="fas fa-check me-1"></i>Finalizar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 3 - Reestruturação -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow h-100 border-left-danger">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="m-0 font-weight-bold text-danger">Reestruturação Organizacional</h6>
+                        <small class="text-danger">⚠️ Atrasado - Iniciado em 10/07/2025</small>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-link" data-bs-toggle="dropdown">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="editarPlano(3)">Editar</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="reprogramar(3)">Reprogramar</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="cancelarPlano(3)">Cancelar</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <span class="badge bg-warning">RH</span>
+                            <span class="badge bg-danger">Atrasado</span>
+                        </div>
+                        <div class="text-end">
+                            <strong class="text-danger">45%</strong>
+                            <small class="text-muted d-block">Concluído</small>
+                        </div>
+                    </div>
+                    
+                    <div class="progress mb-3" style="height: 8px;">
+                        <div class="progress-bar bg-danger" style="width: 45%"></div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <small class="text-muted">Responsável:</small>
+                            <div><strong>Ana Costa</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Prazo:</small>
+                            <div><strong class="text-danger">05/08/2025</strong></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <small class="text-muted">Atividades Pendentes:</small>
+                        <ul class="list-unstyled mt-1">
+                            <li><i class="fas fa-circle text-danger me-2" style="font-size: 8px;"></i>Aprovação diretoria (atrasada)</li>
+                            <li><i class="fas fa-circle text-warning me-2" style="font-size: 8px;"></i>Comunicação interna</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <button class="btn btn-sm btn-info" onclick="verDetalhes(3)">
+                            <i class="fas fa-eye me-1"></i>Detalhes
+                        </button>
+                        <button class="btn btn-sm btn-warning" onclick="reprogramar(3)">
+                            <i class="fas fa-calendar me-1"></i>Reprogramar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 4 - Treinamento TI -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="m-0 font-weight-bold text-info">Treinamento Equipe TI</h6>
+                        <small class="text-muted">Iniciado em 05/08/2025</small>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-link" data-bs-toggle="dropdown">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="editarPlano(4)">Editar</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="pausarPlano(4)">Pausar</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="finalizarPlano(4)">Finalizar</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <span class="badge bg-info">Tecnologia</span>
+                            <span class="badge bg-primary">Em Andamento</span>
+                        </div>
+                        <div class="text-end">
+                            <strong class="text-primary">30%</strong>
+                            <small class="text-muted d-block">Concluído</small>
+                        </div>
+                    </div>
+                    
+                    <div class="progress mb-3" style="height: 8px;">
+                        <div class="progress-bar bg-info" style="width: 30%"></div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <small class="text-muted">Responsável:</small>
+                            <div><strong>Pedro Oliveira</strong></div>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Prazo:</small>
+                            <div><strong>20/08/2025</strong></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <small class="text-muted">Próximas Atividades:</small>
+                        <ul class="list-unstyled mt-1">
+                            <li><i class="fas fa-circle text-primary me-2" style="font-size: 8px;"></i>Módulo 2 - DevOps (12/08)</li>
+                            <li><i class="fas fa-circle text-info me-2" style="font-size: 8px;"></i>Avaliação prática (18/08)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <button class="btn btn-sm btn-info" onclick="verDetalhes(4)">
+                            <i class="fas fa-eye me-1"></i>Detalhes
+                        </button>
+                        <button class="btn btn-sm btn-primary" onclick="atualizarProgress(4)">
+                            <i class="fas fa-edit me-1"></i>Atualizar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function verDetalhes(id) {
+    alert('Ver detalhes do plano ID: ' + id);
+}
+
+function editarPlano(id) {
+    window.location.href = '/planos/editar/' + id;
+}
+
+function pausarPlano(id) {
+    if(confirm('Pausar este plano de ação?')) {
+        alert('Plano pausado com sucesso!');
+        location.reload();
+    }
+}
+
+function finalizarPlano(id) {
+    if(confirm('Finalizar este plano de ação?')) {
+        alert('Plano finalizado com sucesso!');
+        location.reload();
+    }
+}
+
+function cancelarPlano(id) {
+    if(confirm('Cancelar este plano de ação? Esta ação não pode ser desfeita.')) {
+        alert('Plano cancelado!');
+        location.reload();
+    }
+}
+
+function reprogramar(id) {
+    const novaData = prompt('Nova data de conclusão (DD/MM/AAAA):');
+    if(novaData) {
+        alert('Plano reprogramado para: ' + novaData);
+        location.reload();
+    }
+}
+
+function atualizarProgress(id) {
+    const progress = prompt('Novo percentual de conclusão (0-100):');
+    if(progress && progress >= 0 && progress <= 100) {
+        alert('Progress atualizado para: ' + progress + '%');
+        location.reload();
+    }
+}
+
+function gerarRelatorio() {
+    alert('Gerar relatório de planos em andamento');
+}
+
+console.log('Planos em Andamento carregado!');
+</script>
+{% endblock %}

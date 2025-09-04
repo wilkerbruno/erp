@@ -1,0 +1,470 @@
+{% extends "base.html" %}
+
+{% block title %}Configurações Financeiras{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-cog me-2"></i>Configurações Financeiras
+        </h1>
+        <div class="btn-group">
+            <button class="btn btn-success" onclick="salvarConfiguracoes()">
+                <i class="fas fa-save me-1"></i>Salvar Configurações
+            </button>
+            <button class="btn btn-warning" onclick="restaurarPadrao()">
+                <i class="fas fa-undo me-1"></i>Restaurar Padrão
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Configurações Gerais -->
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Configurações Gerais</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Moeda Padrão</label>
+                                <select class="form-select">
+                                    <option value="BRL" selected>Real Brasileiro (R$)</option>
+                                    <option value="USD">Dólar Americano ($)</option>
+                                    <option value="EUR">Euro (€)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Formato de Data</label>
+                                <select class="form-select">
+                                    <option value="dd/mm/yyyy" selected>DD/MM/AAAA</option>
+                                    <option value="mm/dd/yyyy">MM/DD/AAAA</option>
+                                    <option value="yyyy-mm-dd">AAAA-MM-DD</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Casas Decimais</label>
+                                <select class="form-select">
+                                    <option value="2" selected>2 casas decimais</option>
+                                    <option value="3">3 casas decimais</option>
+                                    <option value="4">4 casas decimais</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Separador de Milhares</label>
+                                <select class="form-select">
+                                    <option value="." selected>Ponto (.)</option>
+                                    <option value=",">Vírgula (,)</option>
+                                    <option value=" ">Espaço ( )</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Ano Fiscal</label>
+                                <select class="form-select">
+                                    <option value="janeiro" selected>Janeiro a Dezembro</option>
+                                    <option value="julho">Julho a Junho</option>
+                                    <option value="abril">Abril a Março</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Fuso Horário</label>
+                                <select class="form-select">
+                                    <option value="America/Sao_Paulo" selected>Brasília (GMT-3)</option>
+                                    <option value="America/New_York">Nova York (GMT-5)</option>
+                                    <option value="Europe/London">Londres (GMT+0)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configurações de Contas -->
+            <div class="card shadow mb-4">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Configurações de Contas a Pagar/Receber</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Numeração Automática</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="numeroAutomatico" checked>
+                                    <label class="form-check-label" for="numeroAutomatico">
+                                        Gerar número automaticamente
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Próximo Número</label>
+                                <input type="number" class="form-control" value="1001">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Dias para Vencimento (Padrão)</label>
+                                <input type="number" class="form-control" value="30">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Juros de Mora (%)</label>
+                                <input type="number" class="form-control" step="0.01" value="2.00">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Multa por Atraso (%)</label>
+                                <input type="number" class="form-control" step="0.01" value="10.00">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Desconto por Antecipação (%)</label>
+                                <input type="number" class="form-control" step="0.01" value="2.00">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configurações de Relatórios -->
+            <div class="card shadow mb-4">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Configurações de Relatórios</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Logotipo da Empresa</label>
+                                <input type="file" class="form-control" accept="image/*">
+                                <small class="text-muted">Formatos: PNG, JPG (máx. 2MB)</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Formato Padrão</label>
+                                <select class="form-select">
+                                    <option value="pdf" selected>PDF</option>
+                                    <option value="excel">Excel</option>
+                                    <option value="csv">CSV</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Rodapé dos Relatórios</label>
+                        <textarea class="form-control" rows="3" placeholder="Texto que aparecerá no rodapé de todos os relatórios...">Este relatório foi gerado automaticamente pelo Sistema ERP - Confidencial</textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="incluirLogo" checked>
+                                <label class="form-check-label" for="incluirLogo">
+                                    Incluir logo nos relatórios
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="numerarPaginas" checked>
+                                <label class="form-check-label" for="numerarPaginas">
+                                    Numerar páginas
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configurações de E-mail -->
+            <div class="card shadow mb-4">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Configurações de E-mail</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Servidor SMTP</label>
+                                <input type="text" class="form-control" value="smtp.gmail.com">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Porta</label>
+                                <input type="number" class="form-control" value="587">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">E-mail Remetente</label>
+                                <input type="email" class="form-control" placeholder="financeiro@empresa.com">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Senha</label>
+                                <input type="password" class="form-control" placeholder="••••••••">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="usarTLS" checked>
+                                <label class="form-check-label" for="usarTLS">
+                                    Usar TLS/SSL
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="enviarCobranca" checked>
+                                <label class="form-check-label" for="enviarCobranca">
+                                    Enviar cobrança automática
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-end">
+                        <button class="btn btn-outline-primary" onclick="testarEmail()">
+                            <i class="fas fa-paper-plane me-1"></i>Testar Configuração
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Painel Lateral -->
+        <div class="col-lg-4">
+            <!-- Notificações -->
+            <div class="card shadow mb-4">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Notificações</h6>
+                </div>
+                <div class="card-body">
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="notifVencimento" checked>
+                        <label class="form-check-label" for="notifVencimento">
+                            Títulos vencendo
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="notifVencidos" checked>
+                        <label class="form-check-label" for="notifVencidos">
+                            Títulos vencidos
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="notifConciliacao">
+                        <label class="form-check-label" for="notifConciliacao">
+                            Conciliação pendente
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="notifRelatorios" checked>
+                        <label class="form-check-label" for="notifRelatorios">
+                            Relatórios prontos
+                        </label>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Antecedência (dias)</label>
+                        <input type="number" class="form-control" value="3">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Horário das Notificações</label>
+                        <input type="time" class="form-control" value="08:00">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Integrações -->
+            <div class="card shadow mb-4">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Integrações</h6>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>Open Banking</strong>
+                                <br><small class="text-muted">Integração bancária</small>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="openBanking" checked>
+                            </div>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>PIX</strong>
+                                <br><small class="text-muted">Pagamentos instantâneos</small>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="pix" checked>
+                            </div>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>CNAB</strong>
+                                <br><small class="text-muted">Remessa/Retorno</small>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="cnab">
+                            </div>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>API Contábil</strong>
+                                <br><small class="text-muted">Integração contabilidade</small>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="apiContabil">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Backup -->
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Backup e Segurança</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Backup Automático</label>
+                        <select class="form-select">
+                            <option value="diario" selected>Diário</option>
+                            <option value="semanal">Semanal</option>
+                            <option value="mensal">Mensal</option>
+                            <option value="desabilitado">Desabilitado</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Horário do Backup</label>
+                        <input type="time" class="form-control" value="02:00">
+                    </div>
+                    
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="criptografia" checked>
+                        <label class="form-check-label" for="criptografia">
+                            Criptografar backups
+                        </label>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary" onclick="fazerBackup()">
+                            <i class="fas fa-download me-1"></i>Backup Manual
+                        </button>
+                        <button class="btn btn-outline-warning" onclick="restaurarBackup()">
+                            <i class="fas fa-upload me-1"></i>Restaurar
+                        </button>
+                    </div>
+                    
+                    <hr>
+                    
+                    <small class="text-muted">
+                        <strong>Último backup:</strong><br>
+                        07/08/2025 às 02:00<br>
+                        Status: ✅ Sucesso
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function salvarConfiguracoes() {
+    if(confirm('Salvar todas as configurações?')) {
+        // Simular salvamento
+        setTimeout(() => {
+            alert('Configurações salvas com sucesso!');
+        }, 500);
+    }
+}
+
+function restaurarPadrao() {
+    if(confirm('Restaurar todas as configurações para o padrão? Esta ação não pode ser desfeita.')) {
+        alert('Configurações restauradas para o padrão!');
+        location.reload();
+    }
+}
+
+function testarEmail() {
+    alert('Enviando e-mail de teste...');
+    setTimeout(() => {
+        alert('E-mail de teste enviado com sucesso!');
+    }, 2000);
+}
+
+function fazerBackup() {
+    if(confirm('Iniciar backup manual?')) {
+        alert('Backup iniciado... Você será notificado quando concluído.');
+    }
+}
+
+function restaurarBackup() {
+    if(confirm('Restaurar backup? Todos os dados atuais serão substituídos!')) {
+        alert('Funcionalidade de restauração disponível apenas para administradores.');
+    }
+}
+
+// Validação de formulários
+document.addEventListener('DOMContentLoaded', function() {
+    // Validar configurações em tempo real
+    const inputs = document.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+        input.addEventListener('change', function() {
+            // Marcar como modificado
+            this.classList.add('border-warning');
+        });
+    });
+});
+
+console.log('Configurações Financeiras carregadas!');
+</script>
+{% endblock %}

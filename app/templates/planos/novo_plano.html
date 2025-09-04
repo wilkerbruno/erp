@@ -1,0 +1,773 @@
+{% extends "base.html" %}
+
+{% block title %}Novo Plano de Ação{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-plus me-2"></i>Criar Novo Plano de Ação
+        </h1>
+        <div class="btn-group">
+            <button class="btn btn-secondary" onclick="history.back()">
+                <i class="fas fa-arrow-left me-1"></i>Voltar
+            </button>
+            <button class="btn btn-info" onclick="salvarRascunho()">
+                <i class="fas fa-save me-1"></i>Salvar Rascunho
+            </button>
+        </div>
+    </div>
+
+    <form id="formNovoPlano">
+        <div class="row">
+            <!-- Formulário Principal -->
+            <div class="col-lg-8">
+                <!-- Informações Básicas -->
+                <div class="card shadow mb-4">
+                    <div class="card-header">
+                        <h6 class="m-0 font-weight-bold text-primary">Informações Básicas</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <label class="form-label">Título do Plano *</label>
+                                    <input type="text" class="form-control" id="titulo" required placeholder="Ex: Implementação do novo sistema CRM">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Código/ID</label>
+                                    <input type="text" class="form-control" id="codigo" placeholder="AUTO" readonly>
+                                    <small class="text-muted">Gerado automaticamente</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Descrição *</label>
+                            <textarea class="form-control" id="descricao" rows="3" required placeholder="Descreva detalhadamente o objetivo e escopo do plano de ação..."></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Departamento *</label>
+                                    <select class="form-select" id="departamento" required>
+                                        <option value="">Selecione</option>
+                                        <option value="vendas">Vendas</option>
+                                        <option value="marketing">Marketing</option>
+                                        <option value="rh">Recursos Humanos</option>
+                                        <option value="ti">Tecnologia</option>
+                                        <option value="financeiro">Financeiro</option>
+                                        <option value="operacoes">Operações</option>
+                                        <option value="juridico">Jurídico</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Prioridade *</label>
+                                    <select class="form-select" id="prioridade" required>
+                                        <option value="">Selecione</option>
+                                        <option value="baixa">🟢 Baixa</option>
+                                        <option value="media">🟡 Média</option>
+                                        <option value="alta">🟠 Alta</option>
+                                        <option value="critica">🔴 Crítica</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Categoria</label>
+                                    <select class="form-select" id="categoria">
+                                        <option value="">Selecione</option>
+                                        <option value="processo">Melhoria de Processo</option>
+                                        <option value="tecnologia">Projeto Tecnológico</option>
+                                        <option value="marketing">Ação de Marketing</option>
+                                        <option value="treinamento">Treinamento/Capacitação</option>
+                                        <option value="qualidade">Qualidade</option>
+                                        <option value="estrategico">Projeto Estratégico</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Responsáveis e Prazos -->
+                <div class="card shadow mb-4">
+                    <div class="card-header">
+                        <h6 class="m-0 font-weight-bold text-primary">Responsáveis e Prazos</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Responsável Principal *</label>
+                                    <select class="form-select" id="responsavel" required>
+                                        <option value="">Selecione</option>
+                                        <option value="1">João Silva - Gerente de Vendas</option>
+                                        <option value="2">Maria Santos - Coordenadora de Marketing</option>
+                                        <option value="3">Pedro Oliveira - CTO</option>
+                                        <option value="4">Ana Costa - Gerente de RH</option>
+                                        <option value="5">Carlos Mendes - Diretor Financeiro</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Supervisor/Aprovador</label>
+                                    <select class="form-select" id="supervisor">
+                                        <option value="">Selecione</option>
+                                        <option value="1">CEO - Roberto Silva</option>
+                                        <option value="2">COO - Fernanda Lima</option>
+                                        <option value="3">CMO - Ricardo Santos</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Data de Início *</label>
+                                    <input type="date" class="form-control" id="dataInicio" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Data de Conclusão *</label>
+                                    <input type="date" class="form-control" id="dataConclusao" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Duração Estimada</label>
+                                    <input type="text" class="form-control" id="duracao" readonly placeholder="Calculado automaticamente">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Equipe Participante</label>
+                            <select class="form-select" id="equipe" multiple>
+                                <option value="1">João Silva</option>
+                                <option value="2">Maria Santos</option>
+                                <option value="3">Pedro Oliveira</option>
+                                <option value="4">Ana Costa</option>
+                                <option value="5">Carlos Mendes</option>
+                                <option value="6">Lucia Ferreira</option>
+                            </select>
+                            <small class="text-muted">Segure Ctrl para selecionar múltiplos colaboradores</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Objetivos e Metas -->
+                <div class="card shadow mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 font-weight-bold text-primary">Objetivos e Metas</h6>
+                        <button type="button" class="btn btn-sm btn-success" onclick="adicionarObjetivo()">
+                            <i class="fas fa-plus me-1"></i>Adicionar Objetivo
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="objetivos">
+                            <div class="objetivo-item border rounded p-3 mb-3">
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <div class="mb-2">
+                                            <label class="form-label">Objetivo</label>
+                                            <input type="text" class="form-control" placeholder="Ex: Aumentar vendas online em 25%">
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label class="form-label">Métrica</label>
+                                                <input type="text" class="form-control" placeholder="Ex: Percentual de crescimento">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Meta</label>
+                                                <input type="text" class="form-control" placeholder="Ex: 25%">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 d-flex align-items-end">
+                                        <button type="button" class="btn btn-danger btn-sm w-100" onclick="removerObjetivo(this)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Atividades/Tarefas -->
+                <div class="card shadow mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 font-weight-bold text-primary">Atividades e Tarefas</h6>
+                        <button type="button" class="btn btn-sm btn-success" onclick="adicionarAtividade()">
+                            <i class="fas fa-plus me-1"></i>Adicionar Atividade
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="atividades">
+                            <div class="atividade-item border rounded p-3 mb-3">
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-2">
+                                                    <label class="form-label">Atividade</label>
+                                                    <input type="text" class="form-control" placeholder="Ex: Análise de requisitos">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-2">
+                                                    <label class="form-label">Responsável</label>
+                                                    <select class="form-select">
+                                                        <option value="">Selecione</option>
+                                                        <option value="1">João Silva</option>
+                                                        <option value="2">Maria Santos</option>
+                                                        <option value="3">Pedro Oliveira</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <label class="form-label">Data Início</label>
+                                                <input type="date" class="form-control">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Data Fim</label>
+                                                <input type="date" class="form-control">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Status</label>
+                                                <select class="form-select">
+                                                    <option value="planejada">Planejada</option>
+                                                    <option value="andamento">Em Andamento</option>
+                                                    <option value="concluida">Concluída</option>
+                                                    <option value="pausada">Pausada</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 d-flex align-items-end">
+                                        <button type="button" class="btn btn-danger btn-sm w-100" onclick="removerAtividade(this)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recursos e Orçamento -->
+                <div class="card shadow mb-4">
+                    <div class="card-header">
+                        <h6 class="m-0 font-weight-bold text-primary">Recursos e Orçamento</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Orçamento Total</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">R$</span>
+                                        <input type="number" class="form-control" id="orcamento" step="0.01" placeholder="0,00">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Centro de Custo</label>
+                                    <select class="form-select" id="centroCusto">
+                                        <option value="">Selecione</option>
+                                        <option value="administrativo">Administrativo</option>
+                                        <option value="vendas">Vendas</option>
+                                        <option value="marketing">Marketing</option>
+                                        <option value="ti">Tecnologia</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Recursos Necessários</label>
+                            <textarea class="form-control" id="recursos" rows="3" placeholder="Descreva os recursos humanos, materiais, tecnológicos, etc. necessários para execução do plano..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Observações -->
+                <div class="card shadow mb-4">
+                    <div class="card-header">
+                        <h6 class="m-0 font-weight-bold text-primary">Observações Adicionais</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Observações</label>
+                            <textarea class="form-control" id="observacoes" rows="4" placeholder="Informações adicionais, dependências, riscos identificados, etc..."></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Anexos</label>
+                            <input type="file" class="form-control" id="anexos" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg">
+                            <small class="text-muted">Formatos aceitos: PDF, Word, Excel, Imagens (máx. 10MB cada)</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Painel Lateral -->
+            <div class="col-lg-4">
+                <!-- Status do Formulário -->
+                <div class="card shadow mb-4">
+                    <div class="card-header">
+                        <h6 class="m-0 font-weight-bold text-primary">Status do Plano</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Status Atual</label>
+                            <select class="form-select" id="status">
+                                <option value="rascunho" selected>📝 Rascunho</option>
+                                <option value="revisao">🔍 Em Revisão</option>
+                                <option value="aprovado">✅ Aprovado</option>
+                                <option value="rejeitado">❌ Rejeitado</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Progresso do Formulário</label>
+                            <div class="progress mb-2">
+                                <div class="progress-bar" id="progressBar" style="width: 20%"></div>
+                            </div>
+                            <small class="text-muted" id="progressText">2 de 10 campos obrigatórios preenchidos</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preview -->
+                <div class="card shadow mb-4">
+                    <div class="card-header">
+                        <h6 class="m-0 font-weight-bold text-primary">Preview do Plano</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-2">
+                            <strong>Título:</strong>
+                            <div id="previewTitulo" class="text-muted">Não informado</div>
+                        </div>
+                        <div class="mb-2">
+                            <strong>Departamento:</strong>
+                            <div id="previewDepartamento" class="text-muted">Não informado</div>
+                        </div>
+                        <div class="mb-2">
+                            <strong>Responsável:</strong>
+                            <div id="previewResponsavel" class="text-muted">Não informado</div>
+                        </div>
+                        <div class="mb-2">
+                            <strong>Prioridade:</strong>
+                            <div id="previewPrioridade" class="text-muted">Não informado</div>
+                        </div>
+                        <div class="mb-2">
+                            <strong>Prazo:</strong>
+                            <div id="previewPrazo" class="text-muted">Não informado</div>
+                        </div>
+                        <div class="mb-2">
+                            <strong>Orçamento:</strong>
+                            <div id="previewOrcamento" class="text-muted">Não informado</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dicas -->
+                <div class="card shadow mb-4">
+                    <div class="card-header">
+                        <h6 class="m-0 font-weight-bold text-success">💡 Dicas para um Bom Plano</h6>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Defina objetivos SMART (específicos, mensuráveis, atingíveis, relevantes, temporais)</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Estabeleça marcos e entregas intermediárias</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Identifique todos os recursos necessários</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Considere possíveis riscos e dependências</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Defina responsabilidades claras</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Templates -->
+                <div class="card shadow">
+                    <div class="card-header">
+                        <h6 class="m-0 font-weight-bold text-info">📋 Templates Disponíveis</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <button type="button" class="btn btn-outline-info btn-sm" onclick="carregarTemplate('marketing')">
+                                Template Marketing
+                            </button>
+                            <button type="button" class="btn btn-outline-info btn-sm" onclick="carregarTemplate('ti')">
+                                Template TI/Tecnologia
+                            </button>
+                            <button type="button" class="btn btn-outline-info btn-sm" onclick="carregarTemplate('rh')">
+                                Template RH
+                            </button>
+                            <button type="button" class="btn btn-outline-info btn-sm" onclick="carregarTemplate('vendas')">
+                                Template Vendas
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botões de Ação -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow">
+                    <div class="card-body text-center">
+                        <button type="button" class="btn btn-secondary me-2" onclick="limparFormulario()">
+                            <i class="fas fa-eraser me-1"></i>Limpar Formulário
+                        </button>
+                        <button type="button" class="btn btn-info me-2" onclick="salvarRascunho()">
+                            <i class="fas fa-save me-1"></i>Salvar como Rascunho
+                        </button>
+                        <button type="button" class="btn btn-warning me-2" onclick="enviarRevisao()">
+                            <i class="fas fa-paper-plane me-1"></i>Enviar para Revisão
+                        </button>
+                        <button type="button" class="btn btn-success" onclick="criarPlano()">
+                            <i class="fas fa-check me-1"></i>Criar Plano de Ação
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Geração automática de código
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('codigo').value = 'PLANO-' + Date.now().toString().slice(-6);
+    
+    // Event listeners para atualizar preview
+    setupPreviewUpdates();
+    
+    // Calcular duração automaticamente
+    setupDateCalculation();
+    
+    // Atualizar progress do formulário
+    updateFormProgress();
+});
+
+function setupPreviewUpdates() {
+    document.getElementById('titulo').addEventListener('input', function() {
+        document.getElementById('previewTitulo').textContent = this.value || 'Não informado';
+    });
+    
+    document.getElementById('departamento').addEventListener('change', function() {
+        const text = this.options[this.selectedIndex].text;
+        document.getElementById('previewDepartamento').textContent = text || 'Não informado';
+    });
+    
+    document.getElementById('responsavel').addEventListener('change', function() {
+        const text = this.options[this.selectedIndex].text;
+        document.getElementById('previewResponsavel').textContent = text || 'Não informado';
+    });
+    
+    document.getElementById('prioridade').addEventListener('change', function() {
+        const text = this.options[this.selectedIndex].text;
+        document.getElementById('previewPrioridade').textContent = text || 'Não informado';
+    });
+    
+    document.getElementById('orcamento').addEventListener('input', function() {
+        const value = this.value ? 'R$ ' + parseFloat(this.value).toLocaleString('pt-BR', {minimumFractionDigits: 2}) : 'Não informado';
+        document.getElementById('previewOrcamento').textContent = value;
+    });
+}
+
+function setupDateCalculation() {
+    const dataInicio = document.getElementById('dataInicio');
+    const dataConclusao = document.getElementById('dataConclusao');
+    const duracao = document.getElementById('duracao');
+    const previewPrazo = document.getElementById('previewPrazo');
+    
+    function calcularDuracao() {
+        if (dataInicio.value && dataConclusao.value) {
+            const inicio = new Date(dataInicio.value);
+            const conclusao = new Date(dataConclusao.value);
+            const diffTime = Math.abs(conclusao - inicio);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            duracao.value = diffDays + ' dias';
+            previewPrazo.textContent = dataInicio.value + ' até ' + dataConclusao.value + ' (' + diffDays + ' dias)';
+        } else {
+            duracao.value = '';
+            previewPrazo.textContent = 'Não informado';
+        }
+    }
+    
+    dataInicio.addEventListener('change', calcularDuracao);
+    dataConclusao.addEventListener('change', calcularDuracao);
+}
+
+function updateFormProgress() {
+    const requiredFields = ['titulo', 'descricao', 'departamento', 'prioridade', 'responsavel', 'dataInicio', 'dataConclusao'];
+    let filledFields = 0;
+    
+    requiredFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field && field.value.trim() !== '') {
+            filledFields++;
+        }
+        
+        // Adicionar event listener para atualizar em tempo real
+        if (field) {
+            field.addEventListener('input', updateFormProgress);
+            field.addEventListener('change', updateFormProgress);
+        }
+    });
+    
+    const progress = (filledFields / requiredFields.length) * 100;
+    document.getElementById('progressBar').style.width = progress + '%';
+    document.getElementById('progressText').textContent = filledFields + ' de ' + requiredFields.length + ' campos obrigatórios preenchidos';
+    
+    // Mudar cor da barra conforme progresso
+    const progressBar = document.getElementById('progressBar');
+    progressBar.className = 'progress-bar';
+    if (progress < 30) {
+        progressBar.classList.add('bg-danger');
+    } else if (progress < 70) {
+        progressBar.classList.add('bg-warning');
+    } else {
+        progressBar.classList.add('bg-success');
+    }
+}
+
+function adicionarObjetivo() {
+    const container = document.getElementById('objetivos');
+    const novoObjetivo = document.createElement('div');
+    novoObjetivo.className = 'objetivo-item border rounded p-3 mb-3';
+    novoObjetivo.innerHTML = `
+        <div class="row">
+            <div class="col-md-10">
+                <div class="mb-2">
+                    <label class="form-label">Objetivo</label>
+                    <input type="text" class="form-control" placeholder="Ex: Aumentar vendas online em 25%">
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-label">Métrica</label>
+                        <input type="text" class="form-control" placeholder="Ex: Percentual de crescimento">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Meta</label>
+                        <input type="text" class="form-control" placeholder="Ex: 25%">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="button" class="btn btn-danger btn-sm w-100" onclick="removerObjetivo(this)">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+    `;
+    container.appendChild(novoObjetivo);
+}
+
+function removerObjetivo(button) {
+    if (confirm('Remover este objetivo?')) {
+        button.closest('.objetivo-item').remove();
+    }
+}
+
+function adicionarAtividade() {
+    const container = document.getElementById('atividades');
+    const novaAtividade = document.createElement('div');
+    novaAtividade.className = 'atividade-item border rounded p-3 mb-3';
+    novaAtividade.innerHTML = `
+        <div class="row">
+            <div class="col-md-10">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-2">
+                            <label class="form-label">Atividade</label>
+                            <input type="text" class="form-control" placeholder="Ex: Análise de requisitos">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-2">
+                            <label class="form-label">Responsável</label>
+                            <select class="form-select">
+                                <option value="">Selecione</option>
+                                <option value="1">João Silva</option>
+                                <option value="2">Maria Santos</option>
+                                <option value="3">Pedro Oliveira</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="form-label">Data Início</label>
+                        <input type="date" class="form-control">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Data Fim</label>
+                        <input type="date" class="form-control">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Status</label>
+                        <select class="form-select">
+                            <option value="planejada">Planejada</option>
+                            <option value="andamento">Em Andamento</option>
+                            <option value="concluida">Concluída</option>
+                            <option value="pausada">Pausada</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="button" class="btn btn-danger btn-sm w-100" onclick="removerAtividade(this)">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+    `;
+    container.appendChild(novaAtividade);
+}
+
+function removerAtividade(button) {
+    if (confirm('Remover esta atividade?')) {
+        button.closest('.atividade-item').remove();
+    }
+}
+
+function carregarTemplate(tipo) {
+    if (confirm('Carregar template de ' + tipo.toUpperCase() + '? Os dados atuais serão substituídos.')) {
+        switch(tipo) {
+            case 'marketing':
+                document.getElementById('titulo').value = 'Campanha de Marketing Digital';
+                document.getElementById('descricao').value = 'Desenvolver e executar uma campanha completa de marketing digital para aumentar o reconhecimento da marca e gerar leads qualificados.';
+                document.getElementById('departamento').value = 'marketing';
+                document.getElementById('prioridade').value = 'alta';
+                document.getElementById('categoria').value = 'marketing';
+                break;
+            case 'ti':
+                document.getElementById('titulo').value = 'Implementação de Sistema';
+                document.getElementById('descricao').value = 'Implementar novo sistema para modernizar a infraestrutura tecnológica da empresa e melhorar a eficiência operacional.';
+                document.getElementById('departamento').value = 'ti';
+                document.getElementById('prioridade').value = 'alta';
+                document.getElementById('categoria').value = 'tecnologia';
+                break;
+            case 'rh':
+                document.getElementById('titulo').value = 'Programa de Treinamento e Desenvolvimento';
+                document.getElementById('descricao').value = 'Criar programa abrangente de capacitação para desenvolver competências dos colaboradores e melhorar o clima organizacional.';
+                document.getElementById('departamento').value = 'rh';
+                document.getElementById('prioridade').value = 'media';
+                document.getElementById('categoria').value = 'treinamento';
+                break;
+            case 'vendas':
+                document.getElementById('titulo').value = 'Estratégia de Expansão de Vendas';
+                document.getElementById('descricao').value = 'Desenvolver estratégia para aumentar o volume de vendas e expandir a base de clientes através de novos canais e territórios.';
+                document.getElementById('departamento').value = 'vendas';
+                document.getElementById('prioridade').value = 'alta';
+                document.getElementById('categoria').value = 'estrategico';
+                break;
+        }
+        
+        // Trigger events para atualizar preview
+        document.getElementById('titulo').dispatchEvent(new Event('input'));
+        document.getElementById('departamento').dispatchEvent(new Event('change'));
+        document.getElementById('prioridade').dispatchEvent(new Event('change'));
+        
+        updateFormProgress();
+        alert('Template de ' + tipo.toUpperCase() + ' carregado com sucesso!');
+    }
+}
+
+function limparFormulario() {
+    if (confirm('Limpar todos os campos do formulário? Esta ação não pode ser desfeita.')) {
+        document.getElementById('formNovoPlano').reset();
+        document.getElementById('codigo').value = 'PLANO-' + Date.now().toString().slice(-6);
+        
+        // Limpar objetivos e atividades extras
+        const objetivos = document.getElementById('objetivos');
+        const atividades = document.getElementById('atividades');
+        
+        objetivos.innerHTML = objetivos.children[0].outerHTML;
+        atividades.innerHTML = atividades.children[0].outerHTML;
+        
+        // Resetar preview
+        ['previewTitulo', 'previewDepartamento', 'previewResponsavel', 'previewPrioridade', 'previewPrazo', 'previewOrcamento'].forEach(id => {
+            document.getElementById(id).textContent = 'Não informado';
+        });
+        
+        updateFormProgress();
+        alert('Formulário limpo com sucesso!');
+    }
+}
+
+function salvarRascunho() {
+    if (document.getElementById('titulo').value.trim() === '') {
+        alert('Digite pelo menos o título do plano para salvar como rascunho.');
+        return;
+    }
+    
+    alert('Plano salvo como rascunho com sucesso!');
+}
+
+function enviarRevisao() {
+    const requiredFields = ['titulo', 'descricao', 'departamento', 'prioridade', 'responsavel', 'dataInicio', 'dataConclusao'];
+    const missingFields = [];
+    
+    requiredFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (!field || field.value.trim() === '') {
+            missingFields.push(fieldId);
+        }
+    });
+    
+    if (missingFields.length > 0) {
+        alert('Preencha todos os campos obrigatórios antes de enviar para revisão.');
+        return;
+    }
+    
+    if (confirm('Enviar plano para revisão? Após enviar, não será possível editar até a aprovação.')) {
+        alert('Plano enviado para revisão com sucesso!');
+        window.location.href = '/planos/novos';
+    }
+}
+
+function criarPlano() {
+    const requiredFields = ['titulo', 'descricao', 'departamento', 'prioridade', 'responsavel', 'dataInicio', 'dataConclusao'];
+    const missingFields = [];
+    
+    requiredFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (!field || field.value.trim() === '') {
+            missingFields.push(fieldId);
+        }
+    });
+    
+    if (missingFields.length > 0) {
+        alert('Preencha todos os campos obrigatórios antes de criar o plano.');
+        return;
+    }
+    
+    if (confirm('Criar plano de ação? O plano será salvo e ficará disponível para execução.')) {
+        alert('Plano de ação criado com sucesso!');
+        window.location.href = '/planos/andamento';
+    }
+}
+
+console.log('Novo Plano carregado!');
+</script>
+{% endblock %}

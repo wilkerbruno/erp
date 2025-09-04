@@ -1,0 +1,424 @@
+{% extends "base.html" %}
+
+{% block title %}Planos de Ação{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-tasks me-2"></i>Dashboard - Planos de Ação
+        </h1>
+        <div class="btn-group">
+            <button class="btn btn-success" id="btnNovoPlano">
+                <i class="fas fa-plus me-1"></i>Novo Plano
+            </button>
+            <button class="btn btn-outline-primary" id="btnAtualizar">
+                <i class="fas fa-sync me-1"></i>Atualizar
+            </button>
+        </div>
+    </div>
+
+    <!-- Teste de Navegação -->
+    <div class="alert alert-info mb-4">
+        <h5><i class="fas fa-info-circle me-2"></i>Teste de Navegação</h5>
+        <p>Clique nos botões abaixo para testar se todas as páginas estão funcionando:</p>
+        <div class="btn-group-sm" role="group">
+            <button class="btn btn-outline-primary me-2" data-url="{{ url_for('planos.novos_planos') }}" data-nome="Novos Planos">
+                📝 Novos Planos
+            </button>
+            <button class="btn btn-outline-success me-2" data-url="{{ url_for('planos.planos_andamento') }}" data-nome="Em Andamento">
+                ⏳ Em Andamento
+            </button>
+            <button class="btn btn-outline-info me-2" data-url="{{ url_for('planos.kanban_planos') }}" data-nome="Kanban">
+                📋 Kanban
+            </button>
+            <button class="btn btn-outline-warning" data-url="{{ url_for('planos.novo_plano') }}" data-nome="Novo Plano">
+                ➕ Novo Plano
+            </button>
+        </div>
+    </div>
+
+    <!-- Cards de Resumo -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2 cursor-pointer" data-url="{{ url_for('planos.novos_planos') }}">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Planos Criados
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">24</div>
+                            <div class="small text-primary">
+                                <i class="fas fa-arrow-up me-1"></i>+3 esta semana
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2 cursor-pointer" data-url="{{ url_for('planos.planos_andamento') }}">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Em Andamento
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">12</div>
+                            <div class="small text-success">
+                                <i class="fas fa-play me-1"></i>68% progress médio
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-running fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2 cursor-pointer" data-url="{{ url_for('planos.planos_andamento') }}">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Com Atraso
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">3</div>
+                            <div class="small text-warning">
+                                <i class="fas fa-exclamation-triangle me-1"></i>Requer atenção
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clock fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2 cursor-pointer" data-url="{{ url_for('planos.kanban_planos') }}">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Visão Kanban
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">4</div>
+                            <div class="small text-info">
+                                <i class="fas fa-columns me-1"></i>Colunas ativas
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-columns fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navegação Principal -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-tachometer-alt me-2"></i>Acesso às Funcionalidades
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow">
+                        <div class="card-body text-center">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-clipboard-list fa-3x text-primary"></i>
+                            </div>
+                            <h5 class="card-title">Novos Planos</h5>
+                            <p class="card-text text-muted">Visualizar, aprovar e gerenciar novos planos criados pela equipe</p>
+                            <a href="{{ url_for('planos.novos_planos') }}" class="btn btn-primary w-100">
+                                <i class="fas fa-arrow-right me-1"></i>Acessar Novos Planos
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow">
+                        <div class="card-body text-center">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-running fa-3x text-success"></i>
+                            </div>
+                            <h5 class="card-title">Em Andamento</h5>
+                            <p class="card-text text-muted">Acompanhar execução e progress dos planos ativos e em desenvolvimento</p>
+                            <a href="{{ url_for('planos.planos_andamento') }}" class="btn btn-success w-100">
+                                <i class="fas fa-arrow-right me-1"></i>Ver Andamento
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow">
+                        <div class="card-body text-center">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-columns fa-3x text-info"></i>
+                            </div>
+                            <h5 class="card-title">Visão Kanban</h5>
+                            <p class="card-text text-muted">Visualização em quadros com funcionalidade drag-and-drop</p>
+                            <a href="{{ url_for('planos.kanban_planos') }}" class="btn btn-info w-100">
+                                <i class="fas fa-arrow-right me-1"></i>Abrir Kanban
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow">
+                        <div class="card-body text-center">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-plus-circle fa-3x text-warning"></i>
+                            </div>
+                            <h5 class="card-title">Criar Novo</h5>
+                            <p class="card-text text-muted">Criar novo plano de ação com formulário completo e templates</p>
+                            <a href="{{ url_for('planos.novo_plano') }}" class="btn btn-warning w-100">
+                                <i class="fas fa-plus me-1"></i>Criar Plano
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status das Páginas -->
+    <div class="card shadow mb-4">
+        <div class="card-header">
+            <h6 class="m-0 font-weight-bold text-success">✅ Status das Páginas</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <div>
+                            <strong>Novos Planos</strong>
+                            <div class="small text-muted">Lista e aprovação</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <div>
+                            <strong>Em Andamento</strong>
+                            <div class="small text-muted">Acompanhamento</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <div>
+                            <strong>Visão Kanban</strong>
+                            <div class="small text-muted">Quadros interativos</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <div>
+                            <strong>Novo Plano</strong>
+                            <div class="small text-muted">Formulário completo</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ações Rápidas -->
+    <div class="card shadow">
+        <div class="card-header">
+            <h6 class="m-0 font-weight-bold text-primary">Ações Rápidas</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-2 mb-3">
+                    <a href="{{ url_for('planos.novo_plano') }}" class="btn btn-outline-success w-100">
+                        <i class="fas fa-plus-circle d-block mb-2"></i>
+                        Criar Plano
+                    </a>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <a href="{{ url_for('planos.novos_planos') }}" class="btn btn-outline-primary w-100">
+                        <i class="fas fa-list d-block mb-2"></i>
+                        Listar Novos
+                    </a>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <a href="{{ url_for('planos.kanban_planos') }}" class="btn btn-outline-info w-100">
+                        <i class="fas fa-columns d-block mb-2"></i>
+                        Visão Kanban
+                    </a>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <a href="{{ url_for('planos.planos_andamento') }}" class="btn btn-outline-warning w-100">
+                        <i class="fas fa-running d-block mb-2"></i>
+                        Em Andamento
+                    </a>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <button class="btn btn-outline-secondary w-100" id="btnRelatorio">
+                        <i class="fas fa-chart-bar d-block mb-2"></i>
+                        Relatórios
+                    </button>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <button class="btn btn-outline-dark w-100" id="btnConfiguracoes">
+                        <i class="fas fa-cog d-block mb-2"></i>
+                        Configurações
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden URLs for JavaScript -->
+<div id="urls" style="display: none;">
+    <span data-novo-plano="{{ url_for('planos.novo_plano') }}"></span>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+function testarPagina(url, nome) {
+    console.log("Testando página:", nome, "URL:", url);
+    if (url && url !== "#") {
+        window.location.href = url;
+    } else {
+        alert("Erro: URL não definida para " + nome);
+    }
+}
+
+function atualizarDados() {
+    alert("Dados atualizados!");
+    location.reload();
+}
+
+function gerarRelatorio() {
+    alert("Funcionalidade de Relatórios será implementada em breve");
+}
+
+function configuracoes() {
+    alert("Funcionalidade de Configurações será implementada em breve");
+}
+
+// Inicialização quando o DOM estiver pronto
+document.addEventListener("DOMContentLoaded", function() {
+    // URLs
+    const novoPlanoUrl = document.querySelector('[data-novo-plano]').getAttribute('data-novo-plano');
+    
+    // Event listeners para botões do header
+    const btnNovoPlano = document.getElementById('btnNovoPlano');
+    const btnAtualizar = document.getElementById('btnAtualizar');
+    
+    if (btnNovoPlano) {
+        btnNovoPlano.addEventListener('click', function() {
+            window.location.href = novoPlanoUrl;
+        });
+    }
+    
+    if (btnAtualizar) {
+        btnAtualizar.addEventListener('click', atualizarDados);
+    }
+    
+    // Event listeners para botões de ações rápidas
+    const btnRelatorio = document.getElementById('btnRelatorio');
+    const btnConfiguracoes = document.getElementById('btnConfiguracoes');
+    
+    if (btnRelatorio) {
+        btnRelatorio.addEventListener('click', gerarRelatorio);
+    }
+    
+    if (btnConfiguracoes) {
+        btnConfiguracoes.addEventListener('click', configuracoes);
+    }
+    
+    // Event listeners para botões de teste de navegação
+    const testButtons = document.querySelectorAll("[data-url][data-nome]");
+    testButtons.forEach(button => {
+        button.addEventListener("click", function() {
+            const url = this.getAttribute("data-url");
+            const nome = this.getAttribute("data-nome");
+            testarPagina(url, nome);
+        });
+    });
+    
+    // Event listeners para cards clicáveis
+    const clickableCards = document.querySelectorAll(".cursor-pointer[data-url]");
+    clickableCards.forEach(card => {
+        card.addEventListener("click", function() {
+            const url = this.getAttribute("data-url");
+            if (url) {
+                window.location.href = url;
+            }
+        });
+    });
+    
+    // Efeitos hover nos cards
+    const cards = document.querySelectorAll(".hover-shadow");
+    cards.forEach(card => {
+        card.addEventListener("mouseenter", function() {
+            this.style.transform = "translateY(-5px)";
+            this.style.transition = "transform 0.2s ease-in-out";
+        });
+        
+        card.addEventListener("mouseleave", function() {
+            this.style.transform = "translateY(0)";
+        });
+    });
+    
+    // Adicionar cursor pointer aos cards clicáveis
+    clickableCards.forEach(card => {
+        card.style.cursor = "pointer";
+    });
+});
+
+console.log("Dashboard Planos de Ação carregado com navegação funcional!");
+</script>
+
+<style>
+.hover-shadow {
+    transition: all 0.2s ease-in-out;
+}
+
+.hover-shadow:hover {
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+    transform: translateY(-2px);
+}
+
+.cursor-pointer {
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.cursor-pointer:hover {
+    transform: translateY(-2px);
+}
+
+.feature-icon {
+    margin-bottom: 1rem;
+}
+</style>
+{% endblock %}

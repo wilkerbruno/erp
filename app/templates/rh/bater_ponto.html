@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Bater Ponto{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-clock me-2"></i>Bater Ponto
+        </h1>
+        <a href="/rh" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Voltar
+        </a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-body text-center">
+                    <div class="relogio mb-4">
+                        <div id="relogio" class="display-1 text-primary fw-bold">00:00:00</div>
+                        <div id="data" class="h4 text-muted">Carregando...</div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <button class="btn btn-success btn-lg w-100" onclick="registrarPonto('Entrada')">
+                                <i class="fas fa-sign-in-alt me-2"></i>Entrada
+                            </button>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <button class="btn btn-warning btn-lg w-100" onclick="registrarPonto('Saída Almoço')">
+                                <i class="fas fa-utensils me-2"></i>Saída Almoço
+                            </button>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <button class="btn btn-info btn-lg w-100" onclick="registrarPonto('Volta Almoço')">
+                                <i class="fas fa-coffee me-2"></i>Volta Almoço
+                            </button>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <button class="btn btn-danger btn-lg w-100" onclick="registrarPonto('Saída')">
+                                <i class="fas fa-sign-out-alt me-2"></i>Saída
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h6 class="m-0">Registros de Hoje</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-start">
+                                <div class="col-md-6">
+                                    <p><strong>Entrada:</strong> 08:00</p>
+                                    <p><strong>Saída Almoço:</strong> --:--</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Volta Almoço:</strong> --:--</p>
+                                    <p><strong>Saída:</strong> --:--</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function atualizarRelogio() {
+    const agora = new Date();
+    const horas = String(agora.getHours()).padStart(2, '0');
+    const minutos = String(agora.getMinutes()).padStart(2, '0');
+    const segundos = String(agora.getSeconds()).padStart(2, '0');
+    
+    document.getElementById('relogio').textContent = horas + ':' + minutos + ':' + segundos;
+    
+    const opcoes = { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+    };
+    
+    document.getElementById('data').textContent = agora.toLocaleDateString('pt-BR', opcoes);
+}
+
+function registrarPonto(tipo) {
+    const agora = new Date();
+    const horario = String(agora.getHours()).padStart(2, '0') + ':' + String(agora.getMinutes()).padStart(2, '0');
+    
+    alert('✅ Ponto Registrado!\n\nTipo: ' + tipo + '\nHorário: ' + horario + '\nData: ' + agora.toLocaleDateString('pt-BR'));
+}
+
+setInterval(atualizarRelogio, 1000);
+atualizarRelogio();
+</script>
+{% endblock %}

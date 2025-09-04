@@ -1,0 +1,418 @@
+{% extends "base.html" %}
+
+{% block title %}Controle de Qualidade{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-award me-2"></i>Controle de Qualidade
+        </h1>
+        <button class="btn btn-success" onclick="novaInspecao()">
+            <i class="fas fa-plus me-1"></i>Nova Inspeção
+        </button>
+    </div>
+
+    <!-- Cards de KPIs -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Taxa de Conformidade
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">97.8%</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                Não Conformidades
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">12</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-times-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Inspeções Hoje
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">24</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-search fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Aguardando Ação
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">5</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-hourglass-half fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inspeções Recentes -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h6 class="m-0 font-weight-bold text-primary">Inspeções Recentes</h6>
+                <div class="btn-group btn-group-sm">
+                    <button class="btn btn-outline-primary active">Todas</button>
+                    <button class="btn btn-outline-primary">Aprovadas</button>
+                    <button class="btn btn-outline-primary">Rejeitadas</button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Produto/Lote</th>
+                            <th>Tipo Inspeção</th>
+                            <th>Inspetor</th>
+                            <th>Data/Hora</th>
+                            <th>Resultado</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>INS-001</strong></td>
+                            <td>
+                                <div>Produto A</div>
+                                <small class="text-muted">Lote: L20250807-01</small>
+                            </td>
+                            <td>Inspeção Final</td>
+                            <td>João Silva</td>
+                            <td>
+                                <div>07/08/2025</div>
+                                <small class="text-muted">14:30</small>
+                            </td>
+                            <td><span class="badge bg-success">Aprovado</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-info me-1" onclick="verInspecao(1)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-primary" onclick="imprimirCertificado(1)">
+                                    <i class="fas fa-print"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>INS-002</strong></td>
+                            <td>
+                                <div>Produto B</div>
+                                <small class="text-muted">Lote: L20250807-02</small>
+                            </td>
+                            <td>Inspeção Recebimento</td>
+                            <td>Maria Santos</td>
+                            <td>
+                                <div>07/08/2025</div>
+                                <small class="text-muted">13:15</small>
+                            </td>
+                            <td><span class="badge bg-danger">Rejeitado</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-info me-1" onclick="verInspecao(2)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="criarNC(2)">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>INS-003</strong></td>
+                            <td>
+                                <div>Produto C</div>
+                                <small class="text-muted">Lote: L20250807-03</small>
+                            </td>
+                            <td>Inspeção Processo</td>
+                            <td>Pedro Costa</td>
+                            <td>
+                                <div>07/08/2025</div>
+                                <small class="text-muted">11:45</small>
+                            </td>
+                            <td><span class="badge bg-warning">Condicional</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-info me-1" onclick="verInspecao(3)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-secondary" onclick="reavaliar(3)">
+                                    <i class="fas fa-redo"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Não Conformidades Ativas -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Não Conformidades Ativas</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>NC</th>
+                                    <th>Descrição</th>
+                                    <th>Produto</th>
+                                    <th>Criticidade</th>
+                                    <th>Status</th>
+                                    <th>Prazo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>NC-001</strong></td>
+                                    <td>Dimensão fora do especificado</td>
+                                    <td>Produto B</td>
+                                    <td><span class="badge bg-danger">Alta</span></td>
+                                    <td>Em análise</td>
+                                    <td class="text-danger">08/08/2025</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>NC-002</strong></td>
+                                    <td>Acabamento superficial irregular</td>
+                                    <td>Produto A</td>
+                                    <td><span class="badge bg-warning">Média</span></td>
+                                    <td>Aguardando ação</td>
+                                    <td>10/08/2025</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>NC-003</strong></td>
+                                    <td>Cor fora do padrão</td>
+                                    <td>Produto C</td>
+                                    <td><span class="badge bg-info">Baixa</span></td>
+                                    <td>Em correção</td>
+                                    <td>12/08/2025</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card shadow mb-3">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Gráfico de Qualidade</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="graficoQualidade" width="300" height="200"></canvas>
+                </div>
+            </div>
+            
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Próximas Inspeções</h6>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="fw-bold">Produto D</div>
+                                <small class="text-muted">Lote: L20250808-01</small>
+                            </div>
+                            <span class="badge bg-primary rounded-pill">15:30</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="fw-bold">Produto E</div>
+                                <small class="text-muted">Lote: L20250808-02</small>
+                            </div>
+                            <span class="badge bg-primary rounded-pill">16:00</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="fw-bold">Produto A</div>
+                                <small class="text-muted">Lote: L20250808-03</small>
+                            </div>
+                            <span class="badge bg-primary rounded-pill">16:30</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Nova Inspeção -->
+<div class="modal fade" id="modalNovaInspecao" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-search me-2"></i>Nova Inspeção
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formNovaInspecao">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Produto/Lote *</label>
+                                <select class="form-select" required>
+                                    <option value="">Selecione</option>
+                                    <option value="prod-a">Produto A - L20250808-01</option>
+                                    <option value="prod-b">Produto B - L20250808-02</option>
+                                    <option value="prod-c">Produto C - L20250808-03</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Tipo de Inspeção *</label>
+                                <select class="form-select" required>
+                                    <option value="">Selecione</option>
+                                    <option value="recebimento">Inspeção de Recebimento</option>
+                                    <option value="processo">Inspeção de Processo</option>
+                                    <option value="final">Inspeção Final</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Inspetor *</label>
+                                <select class="form-select" required>
+                                    <option value="">Selecione</option>
+                                    <option value="joao">João Silva</option>
+                                    <option value="maria">Maria Santos</option>
+                                    <option value="pedro">Pedro Costa</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Prioridade</label>
+                                <select class="form-select">
+                                    <option value="normal">Normal</option>
+                                    <option value="alta">Alta</option>
+                                    <option value="urgente">Urgente</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Observações</label>
+                        <textarea class="form-control" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="salvarInspecao()">Criar Inspeção</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Gráfico de Qualidade
+const ctx2 = document.getElementById('graficoQualidade').getContext('2d');
+const graficoQualidade = new Chart(ctx2, {
+    type: 'doughnut',
+    data: {
+        labels: ['Aprovado', 'Rejeitado', 'Condicional'],
+        datasets: [{
+            data: [85, 10, 5],
+            backgroundColor: [
+                '#28a745',
+                '#dc3545',
+                '#ffc107'
+            ],
+            borderWidth: 0
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+function novaInspecao() {
+    var modal = new bootstrap.Modal(document.getElementById('modalNovaInspecao'));
+    modal.show();
+}
+
+function salvarInspecao() {
+    alert('Inspeção criada com sucesso!');
+    var modal = bootstrap.Modal.getInstance(document.getElementById('modalNovaInspecao'));
+    modal.hide();
+}
+
+function verInspecao(id) {
+    alert('Ver detalhes da inspeção ID: ' + id);
+}
+
+function imprimirCertificado(id) {
+    alert('Imprimir certificado da inspeção ID: ' + id);
+}
+
+function criarNC(id) {
+    alert('Criar não conformidade para inspeção ID: ' + id);
+}
+
+function reavaliar(id) {
+    alert('Reavaliar inspeção ID: ' + id);
+}
+
+console.log('Controle de Qualidade carregado!');
+</script>
+{% endblock %}

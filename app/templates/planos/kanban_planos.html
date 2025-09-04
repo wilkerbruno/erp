@@ -1,0 +1,552 @@
+{% extends "base.html" %}
+
+{% block title %}Kanban - Planos de Ação{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-columns me-2"></i>Kanban - Planos de Ação
+        </h1>
+        <div class="btn-group">
+            <button class="btn btn-success" onclick="window.location.href='/planos/novo'">
+                <i class="fas fa-plus me-1"></i>Novo Plano
+            </button>
+            <button class="btn btn-outline-primary" onclick="window.location.href='/planos/novos'">
+                <i class="fas fa-list me-1"></i>Visão Lista
+            </button>
+        </div>
+    </div>
+
+    <!-- Filtros Rápidos -->
+    <div class="card shadow mb-4">
+        <div class="card-body py-2">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="d-flex">
+                        <button class="btn btn-sm btn-outline-primary me-2 active" onclick="filtrarTodos()">
+                            Todos <span class="badge bg-secondary">15</span>
+                        </button>
+                        <button class="btn btn-sm btn-outline-success me-2" onclick="filtrarDepartamento('vendas')">
+                            Vendas <span class="badge bg-success">4</span>
+                        </button>
+                        <button class="btn btn-sm btn-outline-info me-2" onclick="filtrarDepartamento('marketing')">
+                            Marketing <span class="badge bg-info">3</span>
+                        </button>
+                        <button class="btn btn-sm btn-outline-warning me-2" onclick="filtrarDepartamento('rh')">
+                            RH <span class="badge bg-warning">5</span>
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="filtrarDepartamento('ti')">
+                            TI <span class="badge bg-secondary">3</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" placeholder="Buscar planos..." id="searchInput">
+                        <button class="btn btn-outline-secondary" onclick="buscarPlanos()">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Board Kanban -->
+    <div class="row kanban-board">
+        <!-- Coluna: Novo / Planejamento -->
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-secondary text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-lightbulb me-2"></i>Planejamento
+                        <span class="badge bg-light text-dark float-end">4</span>
+                    </h6>
+                </div>
+                <div class="card-body p-2 kanban-column" data-status="planejamento" style="min-height: 600px;">
+                    <!-- Card do Plano -->
+                    <div class="kanban-item mb-3" draggable="true" data-id="1">
+                        <div class="card border-left-primary">
+                            <div class="card-body p-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="card-title mb-1">Sistema de Vendas Online</h6>
+                                    <div class="dropdown">
+                                        <button class="btn btn-link btn-sm p-0" data-bs-toggle="dropdown">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item" href="#" onclick="editarPlano(1)">Editar</a></li>
+                                            <li><a class="dropdown-item" href="#" onclick="duplicarPlano(1)">Duplicar</a></li>
+                                            <li><a class="dropdown-item text-danger" href="#" onclick="excluirPlano(1)">Excluir</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <p class="card-text small text-muted mb-2">Desenvolvimento de plataforma e-commerce</p>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="badge bg-primary">Vendas</span>
+                                    <span class="badge bg-warning">Alta</span>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <img src="https://via.placeholder.com/24" class="rounded-circle me-2" width="24">
+                                    <small class="text-muted">João Silva</small>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar me-1"></i>15/09/2025
+                                    </small>
+                                    <small class="text-muted">
+                                        <i class="fas fa-tasks me-1"></i>0/8
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kanban-item mb-3" draggable="true" data-id="2">
+                        <div class="card border-left-info">
+                            <div class="card-body p-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="card-title mb-1">Campanha Redes Sociais</h6>
+                                    <div class="dropdown">
+                                        <button class="btn btn-link btn-sm p-0" data-bs-toggle="dropdown">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item" href="#" onclick="editarPlano(2)">Editar</a></li>
+                                            <li><a class="dropdown-item" href="#" onclick="duplicarPlano(2)">Duplicar</a></li>
+                                            <li><a class="dropdown-item text-danger" href="#" onclick="excluirPlano(2)">Excluir</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <p class="card-text small text-muted mb-2">Estratégia de marketing digital Q4</p>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="badge bg-info">Marketing</span>
+                                    <span class="badge bg-success">Média</span>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <img src="https://via.placeholder.com/24" class="rounded-circle me-2" width="24">
+                                    <small class="text-muted">Maria Santos</small>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar me-1"></i>30/08/2025
+                                    </small>
+                                    <small class="text-muted">
+                                        <i class="fas fa-tasks me-1"></i>1/5
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Adicionar nova tarefa -->
+                    <div class="text-center">
+                        <button class="btn btn-outline-secondary btn-sm w-100" onclick="adicionarPlano('planejamento')">
+                            <i class="fas fa-plus me-1"></i>Adicionar Plano
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coluna: Em Andamento -->
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-play me-2"></i>Em Andamento
+                        <span class="badge bg-light text-dark float-end">5</span>
+                    </h6>
+                </div>
+                <div class="card-body p-2 kanban-column" data-status="andamento" style="min-height: 600px;">
+                    <div class="kanban-item mb-3" draggable="true" data-id="3">
+                        <div class="card border-left-success">
+                            <div class="card-body p-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="card-title mb-1">Implementação CRM</h6>
+                                    <div class="dropdown">
+                                        <button class="btn btn-link btn-sm p-0" data-bs-toggle="dropdown">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item" href="#" onclick="editarPlano(3)">Editar</a></li>
+                                            <li><a class="dropdown-item" href="#" onclick="pausarPlano(3)">Pausar</a></li>
+                                            <li><a class="dropdown-item text-danger" href="#" onclick="cancelarPlano(3)">Cancelar</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <p class="card-text small text-muted mb-2">Modernização sistema vendas</p>
+                                
+                                <!-- Progress Bar -->
+                                <div class="progress mb-2" style="height: 4px;">
+                                    <div class="progress-bar bg-success" style="width: 75%"></div>
+                                </div>
+                                <small class="text-success mb-2 d-block">75% concluído</small>
+                                
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="badge bg-success">Vendas</span>
+                                    <span class="badge bg-danger">Alta</span>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <img src="https://via.placeholder.com/24" class="rounded-circle me-2" width="24">
+                                    <small class="text-muted">João Silva</small>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar me-1"></i>30/08/2025
+                                    </small>
+                                    <small class="text-muted">
+                                        <i class="fas fa-tasks me-1"></i>6/8
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kanban-item mb-3" draggable="true" data-id="4">
+                        <div class="card border-left-warning">
+                            <div class="card-body p-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="card-title mb-1">Reestruturação RH</h6>
+                                    <div class="dropdown">
+                                        <button class="btn btn-link btn-sm p-0" data-bs-toggle="dropdown">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item" href="#" onclick="editarPlano(4)">Editar</a></li>
+                                            <li><a class="dropdown-item" href="#" onclick="pausarPlano(4)">Pausar</a></li>
+                                            <li><a class="dropdown-item text-danger" href="#" onclick="cancelarPlano(4)">Cancelar</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <p class="card-text small text-muted mb-2">Reorganização departamento</p>
+                                
+                                <div class="progress mb-2" style="height: 4px;">
+                                    <div class="progress-bar bg-warning" style="width: 45%"></div>
+                                </div>
+                                <small class="text-warning mb-2 d-block">45% concluído - Atrasado</small>
+                                
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="badge bg-warning">RH</span>
+                                    <span class="badge bg-dark">Crítica</span>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <img src="https://via.placeholder.com/24" class="rounded-circle me-2" width="24">
+                                    <small class="text-muted">Ana Costa</small>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-danger">
+                                        <i class="fas fa-exclamation-triangle me-1"></i>05/08/2025
+                                    </small>
+                                    <small class="text-muted">
+                                        <i class="fas fa-tasks me-1"></i>3/7
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <button class="btn btn-outline-primary btn-sm w-100" onclick="adicionarPlano('andamento')">
+                            <i class="fas fa-plus me-1"></i>Mover para Andamento
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coluna: Em Revisão -->
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-search me-2"></i>Em Revisão
+                        <span class="badge bg-dark text-light float-end">3</span>
+                    </h6>
+                </div>
+                <div class="card-body p-2 kanban-column" data-status="revisao" style="min-height: 600px;">
+                    <div class="kanban-item mb-3" draggable="true" data-id="5">
+                        <div class="card border-left-info">
+                            <div class="card-body p-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="card-title mb-1">Treinamento DevOps</h6>
+                                    <div class="dropdown">
+                                        <button class="btn btn-link btn-sm p-0" data-bs-toggle="dropdown">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item" href="#" onclick="aprovarPlano(5)">Aprovar</a></li>
+                                            <li><a class="dropdown-item" href="#" onclick="rejeitarPlano(5)">Rejeitar</a></li>
+                                            <li><a class="dropdown-item" href="#" onclick="editarPlano(5)">Editar</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <p class="card-text small text-muted mb-2">Capacitação equipe técnica</p>
+                                
+                                <div class="progress mb-2" style="height: 4px;">
+                                    <div class="progress-bar bg-info" style="width: 95%"></div>
+                                </div>
+                                <small class="text-info mb-2 d-block">95% concluído - Aguardando aprovação</small>
+                                
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="badge bg-info">TI</span>
+                                    <span class="badge bg-success">Baixa</span>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <img src="https://via.placeholder.com/24" class="rounded-circle me-2" width="24">
+                                    <small class="text-muted">Pedro Oliveira</small>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar me-1"></i>20/08/2025
+                                    </small>
+                                    <small class="text-muted">
+                                        <i class="fas fa-tasks me-1"></i>9/10
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <button class="btn btn-outline-warning btn-sm w-100" onclick="adicionarPlano('revisao')">
+                            <i class="fas fa-plus me-1"></i>Enviar p/ Revisão
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coluna: Concluído -->
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-check me-2"></i>Concluído
+                        <span class="badge bg-light text-dark float-end">3</span>
+                    </h6>
+                </div>
+                <div class="card-body p-2 kanban-column" data-status="concluido" style="min-height: 600px;">
+                    <div class="kanban-item mb-3" draggable="true" data-id="6">
+                        <div class="card border-left-success">
+                            <div class="card-body p-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="card-title mb-1">Campanha Digital Q2</h6>
+                                    <div class="dropdown">
+                                        <button class="btn btn-link btn-sm p-0" data-bs-toggle="dropdown">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item" href="#" onclick="verRelatorio(6)">Ver Relatório</a></li>
+                                            <li><a class="dropdown-item" href="#" onclick="duplicarPlano(6)">Duplicar</a></li>
+                                            <li><a class="dropdown-item" href="#" onclick="arquivarPlano(6)">Arquivar</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <p class="card-text small text-muted mb-2">Marketing digital segundo trimestre</p>
+                                
+                                <div class="progress mb-2" style="height: 4px;">
+                                    <div class="progress-bar bg-success" style="width: 100%"></div>
+                                </div>
+                                <small class="text-success mb-2 d-block">
+                                    <i class="fas fa-check-circle me-1"></i>100% concluído
+                                </small>
+                                
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="badge bg-success">Marketing</span>
+                                    <span class="badge bg-primary">Média</span>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <img src="https://via.placeholder.com/24" class="rounded-circle me-2" width="24">
+                                    <small class="text-muted">Maria Santos</small>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-success">
+                                        <i class="fas fa-check me-1"></i>Concluído em 01/08
+                                    </small>
+                                    <small class="text-muted">
+                                        <i class="fas fa-tasks me-1"></i>5/5
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <button class="btn btn-outline-success btn-sm w-100" onclick="adicionarPlano('concluido')">
+                            <i class="fas fa-plus me-1"></i>Marcar como Concluído
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Drag and Drop functionality
+let draggedElement = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    initializeDragAndDrop();
+});
+
+function initializeDragAndDrop() {
+    const kanbanItems = document.querySelectorAll('.kanban-item');
+    const kanbanColumns = document.querySelectorAll('.kanban-column');
+
+    kanbanItems.forEach(item => {
+        item.addEventListener('dragstart', handleDragStart);
+        item.addEventListener('dragend', handleDragEnd);
+    });
+
+    kanbanColumns.forEach(column => {
+        column.addEventListener('dragover', handleDragOver);
+        column.addEventListener('drop', handleDrop);
+    });
+}
+
+function handleDragStart(e) {
+    draggedElement = this;
+    this.style.opacity = '0.5';
+}
+
+function handleDragEnd(e) {
+    this.style.opacity = '';
+    draggedElement = null;
+}
+
+function handleDragOver(e) {
+    e.preventDefault();
+}
+
+function handleDrop(e) {
+    e.preventDefault();
+    
+    if (draggedElement && this !== draggedElement.parentElement) {
+        const newStatus = this.dataset.status;
+        const planoId = draggedElement.dataset.id;
+        
+        // Move the element
+        this.appendChild(draggedElement);
+        
+        // Update status
+        atualizarStatusPlano(planoId, newStatus);
+    }
+}
+
+function atualizarStatusPlano(planoId, novoStatus) {
+    console.log('Atualizando plano', planoId, 'para status:', novoStatus);
+    // Aqui seria feita a chamada para a API para atualizar o status
+    alert('Plano ' + planoId + ' movido para: ' + novoStatus);
+}
+
+// Outras funções
+function filtrarTodos() {
+    document.querySelectorAll('.kanban-item').forEach(item => {
+        item.style.display = 'block';
+    });
+    updateFilterButtons('todos');
+}
+
+function filtrarDepartamento(dept) {
+    document.querySelectorAll('.kanban-item').forEach(item => {
+        const badge = item.querySelector('.badge');
+        if (badge && badge.textContent.toLowerCase().includes(dept)) {
+            item.style.display = 'block';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+    updateFilterButtons(dept);
+}
+
+function updateFilterButtons(active) {
+    document.querySelectorAll('.btn-outline-primary, .btn-outline-success, .btn-outline-info, .btn-outline-warning, .btn-outline-secondary').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+}
+
+function buscarPlanos() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    document.querySelectorAll('.kanban-item').forEach(item => {
+        const title = item.querySelector('.card-title').textContent.toLowerCase();
+        const description = item.querySelector('.card-text').textContent.toLowerCase();
+        
+        if (title.includes(searchTerm) || description.includes(searchTerm)) {
+            item.style.display = 'block';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+}
+
+function editarPlano(id) {
+    window.location.href = '/planos/editar/' + id;
+}
+
+function duplicarPlano(id) {
+    if(confirm('Duplicar este plano de ação?')) {
+        alert('Plano duplicado com sucesso!');
+        location.reload();
+    }
+}
+
+function excluirPlano(id) {
+    if(confirm('Excluir este plano? Esta ação não pode ser desfeita.')) {
+        alert('Plano excluído!');
+        location.reload();
+    }
+}
+
+function pausarPlano(id) {
+    if(confirm('Pausar este plano de ação?')) {
+        alert('Plano pausado!');
+        location.reload();
+    }
+}
+
+function cancelarPlano(id) {
+    if(confirm('Cancelar este plano de ação?')) {
+        alert('Plano cancelado!');
+        location.reload();
+    }
+}
+
+function aprovarPlano(id) {
+    if(confirm('Aprovar este plano de ação?')) {
+        alert('Plano aprovado!');
+        location.reload();
+    }
+}
+
+function rejeitarPlano(id) {
+    const motivo = prompt('Motivo da rejeição:');
+    if(motivo) {
+        alert('Plano rejeitado: ' + motivo);
+        location.reload();
+    }
+}
+
+function verRelatorio(id) {
+    alert('Visualizar relatório do plano ID: ' + id);
+}
+
+function arquivarPlano(id) {
+    if(confirm('Arquivar este plano concluído?')) {
+        alert('Plano arquivado!');
+        location.reload();
+    }
+}
+
+function adicionarPlano(status) {
+    window.location.href = '/planos/novo?status=' + status;
+}
+
+console.log('Kanban de Planos carregado!');
+</script>
+{% endblock %}

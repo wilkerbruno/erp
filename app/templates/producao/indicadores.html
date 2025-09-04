@@ -1,0 +1,510 @@
+{% extends "base.html" %}
+
+{% block title %}Indicadores de Performance{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-tachometer-alt me-2"></i>Indicadores de Performance
+        </h1>
+        <div class="btn-group">
+            <button class="btn btn-outline-primary" onclick="configurarKPIs()">
+                <i class="fas fa-cog me-1"></i>Configurar
+            </button>
+            <button class="btn btn-success" onclick="exportarDashboard()">
+                <i class="fas fa-download me-1"></i>Exportar
+            </button>
+        </div>
+    </div>
+
+    <!-- Filtros de Período -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <label class="form-label">Período</label>
+                    <select class="form-select" id="periodoIndicadores" onchange="atualizarIndicadores()">
+                        <option value="hoje">Hoje</option>
+                        <option value="semana" selected>Esta Semana</option>
+                        <option value="mes">Este Mês</option>
+                        <option value="trimestre">Este Trimestre</option>
+                        <option value="ano">Este Ano</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Linha/Setor</label>
+                    <select class="form-select" onchange="atualizarIndicadores()">
+                        <option value="todos">Todos</option>
+                        <option value="linha1">Linha 1</option>
+                        <option value="linha2">Linha 2</option>
+                        <option value="maquinas">Máquinas</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Comparação</label>
+                    <select class="form-select">
+                        <option value="periodo-anterior">Período Anterior</option>
+                        <option value="meta">Meta Estabelecida</option>
+                        <option value="ano-anterior">Ano Anterior</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button class="btn btn-primary w-100" onclick="atualizarIndicadores()">
+                        <i class="fas fa-sync me-1"></i>Atualizar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KPIs Principais -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                OEE (Overall Equipment Effectiveness)
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">82.4%</div>
+                            <div class="small text-success">
+                                <i class="fas fa-arrow-up me-1"></i>+3.2% vs período anterior
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-tachometer-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                    <div class="progress mt-2" style="height: 6px;">
+                        <div class="progress-bar bg-success" style="width: 82.4%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Disponibilidade
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">91.2%</div>
+                            <div class="small text-info">
+                                <i class="fas fa-arrow-up me-1"></i>+1.8% vs período anterior
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clock fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                    <div class="progress mt-2" style="height: 6px;">
+                        <div class="progress-bar bg-info" style="width: 91.2%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Performance
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">89.5%</div>
+                            <div class="small text-danger">
+                                <i class="fas fa-arrow-down me-1"></i>-2.1% vs período anterior
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-chart-line fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                    <div class="progress mt-2" style="height: 6px;">
+                        <div class="progress-bar bg-warning" style="width: 89.5%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Qualidade
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">97.8%</div>
+                            <div class="small text-success">
+                                <i class="fas fa-arrow-up me-1"></i>+0.8% vs período anterior
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-award fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                    <div class="progress mt-2" style="height: 6px;">
+                        <div class="progress-bar bg-primary" style="width: 97.8%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Indicadores Secundários -->
+    <div class="row mb-4">
+        <div class="col-xl-2 col-md-4 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">18.547</h5>
+                    <p class="card-text">Unidades Produzidas</p>
+                    <small class="text-muted">Meta: 20.000</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title text-success">R$ 24,50</h5>
+                    <p class="card-text">Custo por Unidade</p>
+                    <small class="text-muted">Meta: R$ 25,00</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title text-info">2.4h</h5>
+                    <p class="card-text">Tempo Médio Setup</p>
+                    <small class="text-muted">Meta: 2.0h</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title text-warning">12</h5>
+                    <p class="card-text">Não Conformidades</p>
+                    <small class="text-muted">Meta: < 10</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title text-danger">3.2h</h5>
+                    <p class="card-text">Tempo Total Paradas</p>
+                    <small class="text-muted">Meta: < 2.0h</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">96.8%</h5>
+                    <p class="card-text">On Time Delivery</p>
+                    <small class="text-muted">Meta: 98%</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos de Tendência -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Tendência dos Indicadores - Últimos 30 Dias</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="graficoTendencia" width="800" height="400"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Distribuição OEE por Setor</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="graficoSetores" width="400" height="400"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Análise Detalhada -->
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Principais Causas de Parada</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Causa</th>
+                                    <th>Frequência</th>
+                                    <th>Tempo Total</th>
+                                    <th>Impacto OEE</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Setup/Troca de Produto</td>
+                                    <td>8 vezes</td>
+                                    <td>1.2h</td>
+                                    <td class="text-warning">-2.1%</td>
+                                </tr>
+                                <tr>
+                                    <td>Falta de Materiais</td>
+                                    <td>3 vezes</td>
+                                    <td>0.8h</td>
+                                    <td class="text-warning">-1.4%</td>
+                                </tr>
+                                <tr>
+                                    <td>Manutenção Corretiva</td>
+                                    <td>2 vezes</td>
+                                    <td>0.9h</td>
+                                    <td class="text-danger">-1.6%</td>
+                                </tr>
+                                <tr>
+                                    <td>Problemas de Qualidade</td>
+                                    <td>4 vezes</td>
+                                    <td>0.3h</td>
+                                    <td class="text-warning">-0.5%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Ações Recomendadas</h6>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold text-warning">Reduzir Tempo de Setup</div>
+                                <p class="mb-1">Implementar SMED para reduzir tempo de troca</p>
+                                <small>Impacto estimado: +2.1% OEE</small>
+                            </div>
+                            <span class="badge bg-warning rounded-pill">Alta</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold text-info">Melhorar Planejamento</div>
+                                <p class="mb-1">Evitar falta de materiais com planejamento</p>
+                                <small>Impacto estimado: +1.4% OEE</small>
+                            </div>
+                            <span class="badge bg-info rounded-pill">Média</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold text-success">Manutenção Preventiva</div>
+                                <p class="mb-1">Intensificar manutenções preventivas</p>
+                                <small>Impacto estimado: +1.6% OEE</small>
+                            </div>
+                            <span class="badge bg-success rounded-pill">Baixa</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Metas vs Realizado -->
+    <div class="card shadow">
+        <div class="card-header">
+            <h6 class="m-0 font-weight-bold text-primary">Metas vs Realizado - Agosto 2025</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-8">
+                    <canvas id="graficoMetas" width="800" height="300"></canvas>
+                </div>
+                <div class="col-lg-4">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Indicador</th>
+                                    <th>Meta</th>
+                                    <th>Atual</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>OEE</td>
+                                    <td>85%</td>
+                                    <td>82.4%</td>
+                                    <td><i class="fas fa-circle text-warning"></i></td>
+                                </tr>
+                                <tr>
+                                    <td>Disponibilidade</td>
+                                    <td>90%</td>
+                                    <td>91.2%</td>
+                                    <td><i class="fas fa-circle text-success"></i></td>
+                                </tr>
+                                <tr>
+                                    <td>Performance</td>
+                                    <td>92%</td>
+                                    <td>89.5%</td>
+                                    <td><i class="fas fa-circle text-danger"></i></td>
+                                </tr>
+                                <tr>
+                                    <td>Qualidade</td>
+                                    <td>98%</td>
+                                    <td>97.8%</td>
+                                    <td><i class="fas fa-circle text-warning"></i></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Gráfico de Tendência
+const ctxTendencia = document.getElementById('graficoTendencia').getContext('2d');
+const graficoTendencia = new Chart(ctxTendencia, {
+    type: 'line',
+    data: {
+        labels: ['01/08', '02/08', '03/08', '04/08', '05/08', '06/08', '07/08'],
+        datasets: [{
+            label: 'OEE (%)',
+            data: [78, 81, 83, 80, 85, 82, 84],
+            borderColor: '#28a745',
+            backgroundColor: 'rgba(40, 167, 69, 0.1)',
+            tension: 0.4
+        }, {
+            label: 'Disponibilidade (%)',
+            data: [88, 90, 92, 89, 93, 91, 92],
+            borderColor: '#17a2b8',
+            backgroundColor: 'rgba(23, 162, 184, 0.1)',
+            tension: 0.4
+        }, {
+            label: 'Performance (%)',
+            data: [85, 87, 88, 86, 90, 89, 90],
+            borderColor: '#ffc107',
+            backgroundColor: 'rgba(255, 193, 7, 0.1)',
+            tension: 0.4
+        }, {
+            label: 'Qualidade (%)',
+            data: [96, 97, 98, 97, 99, 98, 98],
+            borderColor: '#007bff',
+            backgroundColor: 'rgba(0, 123, 255, 0.1)',
+            tension: 0.4
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: false,
+                min: 70,
+                max: 100
+            }
+        },
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+// Gráfico de Setores
+const ctxSetores = document.getElementById('graficoSetores').getContext('2d');
+const graficoSetores = new Chart(ctxSetores, {
+    type: 'doughnut',
+    data: {
+        labels: ['Linha 1', 'Linha 2', 'Máquina 1', 'Máquina 2', 'Prensa'],
+        datasets: [{
+            data: [85, 82, 78, 81, 88],
+            backgroundColor: [
+                '#28a745',
+                '#17a2b8',
+                '#ffc107',
+                '#dc3545',
+                '#6f42c1'
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+// Gráfico de Metas
+const ctxMetas = document.getElementById('graficoMetas').getContext('2d');
+const graficoMetas = new Chart(ctxMetas, {
+    type: 'bar',
+    data: {
+        labels: ['OEE', 'Disponibilidade', 'Performance', 'Qualidade'],
+        datasets: [{
+            label: 'Meta',
+            data: [85, 90, 92, 98],
+            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+            borderColor: '#36a2eb',
+            borderWidth: 2
+        }, {
+            label: 'Atual',
+            data: [82.4, 91.2, 89.5, 97.8],
+            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+            borderColor: '#ff6384',
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: false,
+                min: 70,
+                max: 100
+            }
+        }
+    }
+});
+
+function atualizarIndicadores() {
+    alert('Indicadores atualizados!');
+}
+
+function configurarKPIs() {
+    alert('Configurar KPIs');
+}
+
+function exportarDashboard() {
+    alert('Exportar dashboard');
+}
+
+console.log('Indicadores carregado!');
+</script>
+{% endblock %}

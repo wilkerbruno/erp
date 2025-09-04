@@ -1,0 +1,480 @@
+{% extends "base.html" %}
+
+{% block title %}Contas a Receber{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-hand-holding-usd me-2"></i>Contas a Receber
+        </h1>
+        <button class="btn btn-success" onclick="novoTituloReceber()">
+            <i class="fas fa-plus me-1"></i>Nova Conta a Receber
+        </button>
+    </div>
+
+    <!-- Cards de Resumo -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Total a Receber
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 324.580,00</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Recebido no Mês
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 189.420,00</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Vencendo Hoje
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 28.750,00</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clock fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                Títulos Vencidos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 45.280,00</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-2">
+                    <label class="form-label">Data Início</label>
+                    <input type="date" class="form-control" value="2025-08-01">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Data Fim</label>
+                    <input type="date" class="form-control" value="2025-08-31">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Status</label>
+                    <select class="form-select">
+                        <option value="">Todos</option>
+                        <option value="aberto">Em Aberto</option>
+                        <option value="pago">Recebido</option>
+                        <option value="vencido">Vencido</option>
+                        <option value="cancelado">Cancelado</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Cliente</label>
+                    <select class="form-select">
+                        <option value="">Todos</option>
+                        <option value="1">Cliente ABC Ltda</option>
+                        <option value="2">Cliente XYZ S/A</option>
+                        <option value="3">Cliente 123 ME</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Vendedor</label>
+                    <select class="form-select">
+                        <option value="">Todos</option>
+                        <option value="1">João Vendedor</option>
+                        <option value="2">Maria Vendas</option>
+                        <option value="3">Pedro Comercial</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button class="btn btn-primary w-100">
+                        <i class="fas fa-search me-1"></i>Filtrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de Títulos -->
+    <div class="card shadow">
+        <div class="card-header py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h6 class="m-0 font-weight-bold text-primary">Títulos a Receber</h6>
+                <div class="btn-group btn-group-sm">
+                    <button class="btn btn-outline-primary active">Todos</button>
+                    <button class="btn btn-outline-warning">Vencendo</button>
+                    <button class="btn btn-outline-danger">Vencidos</button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" onclick="selecionarTodos(this)"></th>
+                            <th>Documento</th>
+                            <th>Cliente</th>
+                            <th>Vencimento</th>
+                            <th>Valor Original</th>
+                            <th>Valor Atual</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td><strong>NF-001234</strong></td>
+                            <td>
+                                <div>Cliente ABC Ltda</div>
+                                <small class="text-muted">CNPJ: 12.345.678/0001-90</small>
+                            </td>
+                            <td>
+                                <div>10/08/2025</div>
+                                <small class="text-success">3 dias</small>
+                            </td>
+                            <td>R$ 15.200,00</td>
+                            <td>R$ 15.200,00</td>
+                            <td><span class="badge bg-success">Em Aberto</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-success me-1" onclick="receberTitulo(1)" title="Receber">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </button>
+                                <button class="btn btn-sm btn-info me-1" onclick="verDetalhes(1)" title="Detalhes">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-primary me-1" onclick="enviarCobranca(1)" title="Cobrança">
+                                    <i class="fas fa-envelope"></i>
+                                </button>
+                                <button class="btn btn-sm btn-secondary" onclick="imprimirBoleto(1)" title="Imprimir">
+                                    <i class="fas fa-print"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="table-warning">
+                            <td><input type="checkbox"></td>
+                            <td><strong>NF-001235</strong></td>
+                            <td>
+                                <div>Cliente XYZ S/A</div>
+                                <small class="text-muted">CNPJ: 98.765.432/0001-10</small>
+                            </td>
+                            <td>
+                                <div>07/08/2025</div>
+                                <small class="text-warning">Hoje</small>
+                            </td>
+                            <td>R$ 8.450,00</td>
+                            <td>R$ 8.450,00</td>
+                            <td><span class="badge bg-warning">Vencendo</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-success me-1" onclick="receberTitulo(2)">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </button>
+                                <button class="btn btn-sm btn-info me-1" onclick="verDetalhes(2)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning me-1" onclick="prorrogarVencimento(2)">
+                                    <i class="fas fa-calendar-plus"></i>
+                                </button>
+                                <button class="btn btn-sm btn-primary" onclick="ligarCliente(2)">
+                                    <i class="fas fa-phone"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="table-danger">
+                            <td><input type="checkbox"></td>
+                            <td><strong>NF-001230</strong></td>
+                            <td>
+                                <div>Cliente 123 ME</div>
+                                <small class="text-muted">CNPJ: 11.222.333/0001-44</small>
+                            </td>
+                            <td>
+                                <div>05/08/2025</div>
+                                <small class="text-danger">2 dias em atraso</small>
+                            </td>
+                            <td>R$ 5.800,00</td>
+                            <td>R$ 5.858,00</td>
+                            <td><span class="badge bg-danger">Vencido</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-success me-1" onclick="receberTitulo(3)">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </button>
+                                <button class="btn btn-sm btn-info me-1" onclick="verDetalhes(3)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger me-1" onclick="negativarCliente(3)">
+                                    <i class="fas fa-ban"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="renegociar(3)">
+                                    <i class="fas fa-handshake"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td><strong>NF-001236</strong></td>
+                            <td>
+                                <div>Cliente DEF Corp</div>
+                                <small class="text-muted">CNPJ: 55.666.777/0001-88</small>
+                            </td>
+                            <td>
+                                <div>15/08/2025</div>
+                                <small class="text-info">8 dias</small>
+                            </td>
+                            <td>R$ 22.750,00</td>
+                            <td>R$ 22.750,00</td>
+                            <td><span class="badge bg-info">Em Aberto</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-success me-1" onclick="receberTitulo(4)">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </button>
+                                <button class="btn btn-sm btn-info me-1" onclick="verDetalhes(4)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-primary me-1" onclick="anteciparRecebimento(4)">
+                                    <i class="fas fa-fast-forward"></i>
+                                </button>
+                                <button class="btn btn-sm btn-secondary" onclick="parcelar(4)">
+                                    <i class="fas fa-list"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="table-success">
+                            <td><input type="checkbox"></td>
+                            <td><strong>NF-001237</strong></td>
+                            <td>
+                                <div>Cliente GHI Ltda</div>
+                                <small class="text-muted">CNPJ: 33.444.555/0001-66</small>
+                            </td>
+                            <td>
+                                <div>03/08/2025</div>
+                                <small class="text-success">Recebido</small>
+                            </td>
+                            <td>R$ 18.900,00</td>
+                            <td>R$ 18.900,00</td>
+                            <td><span class="badge bg-success">Recebido</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-info me-1" onclick="verDetalhes(5)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-secondary me-1" onclick="imprimirRecibo(5)">
+                                    <i class="fas fa-receipt"></i>
+                                </button>
+                                <button class="btn btn-sm btn-primary" onclick="enviarRecibo(5)">
+                                    <i class="fas fa-envelope"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Ações em Lote -->
+            <div class="mt-3">
+                <button class="btn btn-success me-2" onclick="receberSelecionados()">
+                    <i class="fas fa-check me-1"></i>Receber Selecionados
+                </button>
+                <button class="btn btn-primary me-2" onclick="enviarCobrancaLote()">
+                    <i class="fas fa-envelope me-1"></i>Cobrança em Lote
+                </button>
+                <button class="btn btn-warning me-2" onclick="exportarSelecionados()">
+                    <i class="fas fa-download me-1"></i>Exportar
+                </button>
+                <button class="btn btn-info" onclick="gerarBoletoLote()">
+                    <i class="fas fa-print me-1"></i>Imprimir Boletos
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Nova Conta a Receber -->
+<div class="modal fade" id="modalNovaContaReceber" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-plus me-2"></i>Nova Conta a Receber
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formNovaContaReceber">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Cliente *</label>
+                                <select class="form-select" required>
+                                    <option value="">Selecione</option>
+                                    <option value="1">Cliente ABC Ltda</option>
+                                    <option value="2">Cliente XYZ S/A</option>
+                                    <option value="3">Cliente 123 ME</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Documento *</label>
+                                <input type="text" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Valor *</label>
+                                <input type="number" class="form-control" step="0.01" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Data Vencimento *</label>
+                                <input type="date" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Vendedor</label>
+                                <select class="form-select">
+                                    <option value="">Selecione</option>
+                                    <option value="1">João Vendedor</option>
+                                    <option value="2">Maria Vendas</option>
+                                    <option value="3">Pedro Comercial</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Centro de Custo</label>
+                                <select class="form-select">
+                                    <option value="">Selecione</option>
+                                    <option value="vendas">Vendas</option>
+                                    <option value="servicos">Serviços</option>
+                                    <option value="outros">Outros</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Forma de Recebimento</label>
+                                <select class="form-select">
+                                    <option value="">Selecione</option>
+                                    <option value="dinheiro">Dinheiro</option>
+                                    <option value="transferencia">Transferência</option>
+                                    <option value="cheque">Cheque</option>
+                                    <option value="cartao">Cartão</option>
+                                    <option value="boleto">Boleto</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Observações</label>
+                        <textarea class="form-control" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="salvarContaReceber()">Salvar Conta</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function novoTituloReceber() {
+    var modal = new bootstrap.Modal(document.getElementById('modalNovaContaReceber'));
+    modal.show();
+}
+
+function salvarContaReceber() {
+    alert('Conta a receber criada com sucesso!');
+    var modal = bootstrap.Modal.getInstance(document.getElementById('modalNovaContaReceber'));
+    modal.hide();
+}
+
+function receberTitulo(id) {
+    if(confirm('Confirmar recebimento do título?')) {
+        alert('Título recebido com sucesso!');
+    }
+}
+
+function verDetalhes(id) {
+    alert('Ver detalhes do título ID: ' + id);
+}
+
+function enviarCobranca(id) {
+    alert('Enviando cobrança para o título ID: ' + id);
+}
+
+function selecionarTodos(checkbox) {
+    var checkboxes = document.querySelectorAll('tbody input[type="checkbox"]');
+    checkboxes.forEach(function(cb) {
+        cb.checked = checkbox.checked;
+    });
+}
+
+function receberSelecionados() {
+    alert('Receber títulos selecionados');
+}
+
+function negativarCliente(id) {
+    if(confirm('Confirmar negativação do cliente?')) {
+        alert('Cliente negativado!');
+    }
+}
+
+function anteciparRecebimento(id) {
+    alert('Antecipar recebimento do título ID: ' + id);
+}
+
+console.log('Contas a Receber carregado!');
+</script>
+{% endblock %}

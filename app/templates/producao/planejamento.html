@@ -1,0 +1,388 @@
+{% extends "base.html" %}
+
+{% block title %}Planejamento da Produção{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-project-diagram me-2"></i>Planejamento da Produção
+        </h1>
+        <button class="btn btn-success" onclick="novoPlano()">
+            <i class="fas fa-plus me-1"></i>Novo Plano
+        </button>
+    </div>
+
+    <!-- Cards de Status -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Planos Ativos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">8</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Capacidade Utilizada
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">87%</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-tachometer-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Ordens Pendentes
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">12</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-hourglass-half fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Prazo Médio
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">7 dias</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de Planos -->
+    <div class="card shadow">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">Planos de Produção</h6>
+            <div class="dropdown">
+                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <i class="fas fa-filter me-1"></i>Filtrar
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#" onclick="filtrarPlanos('todos')">Todos</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="filtrarPlanos('ativo')">Ativos</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="filtrarPlanos('concluido')">Concluídos</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="tabelaPlanos">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome do Plano</th>
+                            <th>Período</th>
+                            <th>Produtos</th>
+                            <th>Status</th>
+                            <th>Progresso</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>PL-001</strong></td>
+                            <td>Plano Semanal Agosto</td>
+                            <td>05/08 - 12/08</td>
+                            <td>Produto A, B, C</td>
+                            <td><span class="badge bg-success">Ativo</span></td>
+                            <td>
+                                <div class="progress">
+                                    <div class="progress-bar bg-success" style="width: 75%">75%</div>
+                                </div>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-info me-1" onclick="verPlano(1)" title="Ver Detalhes">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning me-1" onclick="editarPlano(1)" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-primary" onclick="duplicarPlano(1)" title="Duplicar">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>PL-002</strong></td>
+                            <td>Plano Mensal Agosto</td>
+                            <td>01/08 - 31/08</td>
+                            <td>Produto D, E</td>
+                            <td><span class="badge bg-warning">Planejamento</span></td>
+                            <td>
+                                <div class="progress">
+                                    <div class="progress-bar bg-warning" style="width: 35%">35%</div>
+                                </div>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-info me-1" onclick="verPlano(2)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning me-1" onclick="editarPlano(2)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-primary" onclick="duplicarPlano(2)">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>PL-003</strong></td>
+                            <td>Plano Especial Cliente X</td>
+                            <td>10/08 - 20/08</td>
+                            <td>Produto F</td>
+                            <td><span class="badge bg-primary">Aprovado</span></td>
+                            <td>
+                                <div class="progress">
+                                    <div class="progress-bar bg-primary" style="width: 90%">90%</div>
+                                </div>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-info me-1" onclick="verPlano(3)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="iniciarPlano(3)" title="Iniciar">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráfico de Capacidade -->
+    <div class="row mt-4">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Análise de Capacidade</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="graficoCapacidade" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Resumo</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <strong>Capacidade Total:</strong><br>
+                        <span class="text-primary">2,400 unidades/dia</span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Capacidade Utilizada:</strong><br>
+                        <span class="text-success">2,088 unidades/dia</span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Capacidade Disponível:</strong><br>
+                        <span class="text-warning">312 unidades/dia</span>
+                    </div>
+                    <div>
+                        <strong>Eficiência:</strong><br>
+                        <span class="text-info">87%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Novo Plano -->
+<div class="modal fade" id="modalNovoPlano" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-plus me-2"></i>Novo Plano de Produção
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formNovoPlano">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Nome do Plano *</label>
+                                <input type="text" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Tipo *</label>
+                                <select class="form-select" required>
+                                    <option value="">Selecione</option>
+                                    <option value="semanal">Plano Semanal</option>
+                                    <option value="mensal">Plano Mensal</option>
+                                    <option value="especial">Plano Especial</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Data Início *</label>
+                                <input type="date" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Data Fim *</label>
+                                <input type="date" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Produtos Incluídos</label>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="produtoA">
+                                    <label class="form-check-label" for="produtoA">Produto A</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="produtoB">
+                                    <label class="form-check-label" for="produtoB">Produto B</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="produtoC">
+                                    <label class="form-check-label" for="produtoC">Produto C</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Observações</label>
+                        <textarea class="form-control" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="salvarPlano()">Criar Plano</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Gráfico de Capacidade
+const ctx = document.getElementById('graficoCapacidade').getContext('2d');
+const graficoCapacidade = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
+        datasets: [{
+            label: 'Capacidade Utilizada',
+            data: [2100, 2200, 1950, 2300, 2088, 1800],
+            backgroundColor: 'rgba(54, 162, 235, 0.8)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+        }, {
+            label: 'Capacidade Total',
+            data: [2400, 2400, 2400, 2400, 2400, 2400],
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 2,
+            type: 'line'
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: 2500
+            }
+        }
+    }
+});
+
+function novoPlano() {
+    var modal = new bootstrap.Modal(document.getElementById('modalNovoPlano'));
+    modal.show();
+}
+
+function salvarPlano() {
+    alert('Plano criado com sucesso!');
+    var modal = bootstrap.Modal.getInstance(document.getElementById('modalNovoPlano'));
+    modal.hide();
+}
+
+function verPlano(id) {
+    alert('Ver detalhes do plano ID: ' + id);
+}
+
+function editarPlano(id) {
+    alert('Editar plano ID: ' + id);
+}
+
+function duplicarPlano(id) {
+    if(confirm('Duplicar este plano?')) {
+        alert('Plano duplicado com sucesso!');
+    }
+}
+
+function iniciarPlano(id) {
+    if(confirm('Iniciar este plano de produção?')) {
+        alert('Plano iniciado com sucesso!');
+    }
+}
+
+function filtrarPlanos(status) {
+    alert('Filtrar planos por: ' + status);
+}
+
+console.log('Planejamento carregado!');
+</script>
+{% endblock %}

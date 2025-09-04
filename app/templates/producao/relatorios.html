@@ -1,0 +1,505 @@
+{% extends "base.html" %}
+
+{% block title %}Relatórios de Produção{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-chart-bar me-2"></i>Relatórios de Produção
+        </h1>
+        <button class="btn btn-success" onclick="criarRelatorioPersonalizado()">
+            <i class="fas fa-plus me-1"></i>Relatório Personalizado
+        </button>
+    </div>
+
+    <!-- Filtros Gerais -->
+    <div class="card shadow mb-4">
+        <div class="card-header">
+            <h6 class="m-0 font-weight-bold text-primary">Filtros de Período</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <label class="form-label">Data Início</label>
+                    <input type="date" class="form-control" id="dataInicio" value="2025-08-01">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Data Fim</label>
+                    <input type="date" class="form-control" id="dataFim" value="2025-08-07">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Período Rápido</label>
+                    <select class="form-select" onchange="aplicarPeriodoRapido(this.value)">
+                        <option value="">Personalizado</option>
+                        <option value="hoje">Hoje</option>
+                        <option value="semana">Esta Semana</option>
+                        <option value="mes">Este Mês</option>
+                        <option value="trimestre">Este Trimestre</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button class="btn btn-primary w-100" onclick="atualizarRelatorios()">
+                        <i class="fas fa-sync me-1"></i>Atualizar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Relatórios Rápidos -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card bg-primary text-white shadow">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-uppercase mb-1">
+                                Produção Total
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold">18.547 un</div>
+                            <div class="mt-2">
+                                <button class="btn btn-light btn-sm" onclick="gerarRelatorioPorducao()">
+                                    <i class="fas fa-download me-1"></i>Gerar PDF
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-industry fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card bg-success text-white shadow">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-uppercase mb-1">
+                                Taxa de Qualidade
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold">97.8%</div>
+                            <div class="mt-2">
+                                <button class="btn btn-light btn-sm" onclick="gerarRelatorioQualidade()">
+                                    <i class="fas fa-download me-1"></i>Gerar PDF
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-award fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card bg-info text-white shadow">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-uppercase mb-1">
+                                Eficiência OEE
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold">82.4%</div>
+                            <div class="mt-2">
+                                <button class="btn btn-light btn-sm" onclick="gerarRelatorioOEE()">
+                                    <i class="fas fa-download me-1"></i>Gerar PDF
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-tachometer-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card bg-warning text-white shadow">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-uppercase mb-1">
+                                Custo por Unidade
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold">R$ 24,50</div>
+                            <div class="mt-2">
+                                <button class="btn btn-light btn-sm" onclick="gerarRelatorioCustos()">
+                                    <i class="fas fa-download me-1"></i>Gerar PDF
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Relatórios Disponíveis -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Relatórios Disponíveis</h6>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="accordionRelatorios">
+                        <!-- Relatórios de Produção -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingProducao">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProducao">
+                                    <i class="fas fa-industry me-2"></i>Relatórios de Produção
+                                </button>
+                            </h2>
+                            <div id="collapseProducao" class="accordion-collapse collapse show" data-bs-parent="#accordionRelatorios">
+                                <div class="accordion-body">
+                                    <div class="list-group list-group-flush">
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="mb-1">Produção por Período</h6>
+                                                <p class="mb-1">Quantidade produzida por dia/semana/mês</p>
+                                            </div>
+                                            <div class="btn-group">
+                                                <button class="btn btn-sm btn-outline-primary" onclick="visualizarRelatorio('producao-periodo')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-primary" onclick="exportarRelatorio('producao-periodo', 'pdf')">
+                                                    <i class="fas fa-file-pdf"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-success" onclick="exportarRelatorio('producao-periodo', 'excel')">
+                                                    <i class="fas fa-file-excel"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="mb-1">Produção por Produto</h6>
+                                                <p class="mb-1">Detalhamento por item produzido</p>
+                                            </div>
+                                            <div class="btn-group">
+                                                <button class="btn btn-sm btn-outline-primary" onclick="visualizarRelatorio('producao-produto')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-primary" onclick="exportarRelatorio('producao-produto', 'pdf')">
+                                                    <i class="fas fa-file-pdf"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-success" onclick="exportarRelatorio('producao-produto', 'excel')">
+                                                    <i class="fas fa-file-excel"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="mb-1">Eficiência de Máquinas</h6>
+                                                <p class="mb-1">Performance e disponibilidade dos equipamentos</p>
+                                            </div>
+                                            <div class="btn-group">
+                                                <button class="btn btn-sm btn-outline-primary" onclick="visualizarRelatorio('eficiencia-maquinas')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-primary" onclick="exportarRelatorio('eficiencia-maquinas', 'pdf')">
+                                                    <i class="fas fa-file-pdf"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-success" onclick="exportarRelatorio('eficiencia-maquinas', 'excel')">
+                                                    <i class="fas fa-file-excel"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Relatórios de Qualidade -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingQualidade">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseQualidade">
+                                    <i class="fas fa-award me-2"></i>Relatórios de Qualidade
+                                </button>
+                            </h2>
+                            <div id="collapseQualidade" class="accordion-collapse collapse" data-bs-parent="#accordionRelatorios">
+                                <div class="accordion-body">
+                                    <div class="list-group list-group-flush">
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="mb-1">Inspeções Realizadas</h6>
+                                                <p class="mb-1">Histórico completo de inspeções</p>
+                                            </div>
+                                            <div class="btn-group">
+                                                <button class="btn btn-sm btn-outline-primary" onclick="visualizarRelatorio('inspecoes')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-primary" onclick="exportarRelatorio('inspecoes', 'pdf')">
+                                                    <i class="fas fa-file-pdf"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-success" onclick="exportarRelatorio('inspecoes', 'excel')">
+                                                    <i class="fas fa-file-excel"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="mb-1">Não Conformidades</h6>
+                                                <p class="mb-1">Registro de problemas de qualidade</p>
+                                            </div>
+                                            <div class="btn-group">
+                                                <button class="btn btn-sm btn-outline-primary" onclick="visualizarRelatorio('nao-conformidades')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-primary" onclick="exportarRelatorio('nao-conformidades', 'pdf')">
+                                                    <i class="fas fa-file-pdf"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-success" onclick="exportarRelatorio('nao-conformidades', 'excel')">
+                                                    <i class="fas fa-file-excel"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Relatórios de Estoque -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingEstoque">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEstoque">
+                                    <i class="fas fa-warehouse me-2"></i>Relatórios de Estoque
+                                </button>
+                            </h2>
+                            <div id="collapseEstoque" class="accordion-collapse collapse" data-bs-parent="#accordionRelatorios">
+                                <div class="accordion-body">
+                                    <div class="list-group list-group-flush">
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="mb-1">Movimentação de Estoque</h6>
+                                                <p class="mb-1">Entradas e saídas de materiais</p>
+                                            </div>
+                                            <div class="btn-group">
+                                                <button class="btn btn-sm btn-outline-primary" onclick="visualizarRelatorio('movimentacao-estoque')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-primary" onclick="exportarRelatorio('movimentacao-estoque', 'pdf')">
+                                                    <i class="fas fa-file-pdf"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-success" onclick="exportarRelatorio('movimentacao-estoque', 'excel')">
+                                                    <i class="fas fa-file-excel"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="mb-1">Inventário Atual</h6>
+                                                <p class="mb-1">Posição atual de todos os itens</p>
+                                            </div>
+                                            <div class="btn-group">
+                                                <button class="btn btn-sm btn-outline-primary" onclick="visualizarRelatorio('inventario')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-primary" onclick="exportarRelatorio('inventario', 'pdf')">
+                                                    <i class="fas fa-file-pdf"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-success" onclick="exportarRelatorio('inventario', 'excel')">
+                                                    <i class="fas fa-file-excel"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Relatórios de Manutenção -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingManutencao">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseManutencao">
+                                    <i class="fas fa-tools me-2"></i>Relatórios de Manutenção
+                                </button>
+                            </h2>
+                            <div id="collapseManutencao" class="accordion-collapse collapse" data-bs-parent="#accordionRelatorios">
+                                <div class="accordion-body">
+                                    <div class="list-group list-group-flush">
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="mb-1">Histórico de Manutenções</h6>
+                                                <p class="mb-1">Todas as manutenções realizadas</p>
+                                            </div>
+                                            <div class="btn-group">
+                                                <button class="btn btn-sm btn-outline-primary" onclick="visualizarRelatorio('historico-manutencoes')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-primary" onclick="exportarRelatorio('historico-manutencoes', 'pdf')">
+                                                    <i class="fas fa-file-pdf"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-success" onclick="exportarRelatorio('historico-manutencoes', 'excel')">
+                                                    <i class="fas fa-file-excel"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="mb-1">Custos de Manutenção</h6>
+                                                <p class="mb-1">Análise financeira das manutenções</p>
+                                            </div>
+                                            <div class="btn-group">
+                                                <button class="btn btn-sm btn-outline-primary" onclick="visualizarRelatorio('custos-manutencao')">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-primary" onclick="exportarRelatorio('custos-manutencao', 'pdf')">
+                                                    <i class="fas fa-file-pdf"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-success" onclick="exportarRelatorio('custos-manutencao', 'excel')">
+                                                    <i class="fas fa-file-excel"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card shadow mb-4">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Relatórios Recentes</h6>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold">Produção Agosto 2025</div>
+                                <small class="text-muted">Gerado em 07/08 às 14:30</small>
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary" onclick="downloadRelatorio('producao-agosto-2025.pdf')">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold">Qualidade Semanal</div>
+                                <small class="text-muted">Gerado em 07/08 às 09:15</small>
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary" onclick="downloadRelatorio('qualidade-semanal.pdf')">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold">Estoque Crítico</div>
+                                <small class="text-muted">Gerado em 06/08 às 16:45</small>
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary" onclick="downloadRelatorio('estoque-critico.pdf')">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Configurações</h6>
+                </div>
+                <div class="card-body">
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="autoEmail" checked>
+                        <label class="form-check-label" for="autoEmail">
+                            Envio automático por email
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="relatorioDiario">
+                        <label class="form-check-label" for="relatorioDiario">
+                            Relatório diário automático
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="alertasEmail" checked>
+                        <label class="form-check-label" for="alertasEmail">
+                            Alertas por email
+                        </label>
+                    </div>
+                    <button class="btn btn-primary btn-sm w-100">
+                        <i class="fas fa-save me-1"></i>Salvar Configurações
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function criarRelatorioPersonalizado() {
+    alert('Criar relatório personalizado');
+}
+
+function aplicarPeriodoRapido(periodo) {
+    const hoje = new Date();
+    const dataInicio = document.getElementById('dataInicio');
+    const dataFim = document.getElementById('dataFim');
+    
+    switch(periodo) {
+        case 'hoje':
+            dataInicio.value = hoje.toISOString().split('T')[0];
+            dataFim.value = hoje.toISOString().split('T')[0];
+            break;
+        case 'semana':
+            const inicioSemana = new Date(hoje.setDate(hoje.getDate() - hoje.getDay()));
+            dataInicio.value = inicioSemana.toISOString().split('T')[0];
+            dataFim.value = new Date().toISOString().split('T')[0];
+            break;
+        case 'mes':
+            const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+            dataInicio.value = inicioMes.toISOString().split('T')[0];
+            dataFim.value = new Date().toISOString().split('T')[0];
+            break;
+    }
+}
+
+function atualizarRelatorios() {
+    alert('Relatórios atualizados!');
+}
+
+function gerarRelatorioPorducao() {
+    alert('Gerando relatório de produção...');
+}
+
+function gerarRelatorioQualidade() {
+    alert('Gerando relatório de qualidade...');
+}
+
+function gerarRelatorioOEE() {
+    alert('Gerando relatório de eficiência...');
+}
+
+function gerarRelatorioCustos() {
+    alert('Gerando relatório de custos...');
+}
+
+function visualizarRelatorio(tipo) {
+    alert('Visualizar relatório: ' + tipo);
+}
+
+function exportarRelatorio(tipo, formato) {
+    alert('Exportar ' + tipo + ' em ' + formato.toUpperCase());
+}
+
+function downloadRelatorio(arquivo) {
+    alert('Download do arquivo: ' + arquivo);
+}
+
+console.log('Relatórios carregado!');
+</script>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Ordem {{ ordem.numero }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-eye me-2"></i>Ordem {{ ordem.numero }}
+        </h1>
+        <a href="/producao/ordens-producao" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Voltar
+        </a>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Produto:</strong> {{ ordem.produto }}</p>
+                    <p><strong>Quantidade:</strong> {{ ordem.quantidade }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>ID:</strong> {{ ordem.id }}</p>
+                    <p><strong>Status:</strong> <span class="badge bg-warning">{{ ordem.status }}</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

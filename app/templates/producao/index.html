@@ -1,145 +1,216 @@
-{%extends "base.html" %}
+{% extends "base.html" %}
 
-{%block title %}Produção (PCP){%endblock %}
+{% block title %}Produção{% endblock %}
 
-{%block content %}
-<div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">
-        <i class="fas fa-industry me-2"></i>Produção (PCP)
-    </h1>
-    <div>
-        <button class="btn btn-primary btn-sm" onclick="novaAcao()">
-            <i class="fas fa-plus me-1"></i>Novo
-        </button>
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-industry me-2"></i>Produção
+        </h1>
     </div>
-</div>
 
-<div class="row">
-    <div class="col-12">
-        <div class="alert alert-primary" role="alert">
-            <h4 class="alert-heading"><i class="fas fa-industry me-2"></i>Módulo Produção (PCP)</h4>
-            <p>Este módulo está em desenvolvimento ativo. As funcionalidades principais incluem:</p>
-            <hr>
-            <ul class="mb-0">
-                <li><strong>Ordens de Produção</strong> - Controle de ordens de produção</li>
-                <li><strong>Produtos</strong> - Cadastro de produtos</li>
-                <li><strong>OEE</strong> - Overall Equipment Effectiveness</li>
-            </ul>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-lg-4 mb-4">
-        <div class="card border-left-primary shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                            Status
+    <!-- Cards de Status -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Ordens Ativas
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">15</div>
                         </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">Em Desenvolvimento</div>
+                        <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                        </div>
                     </div>
-                    <div class="col-auto">
-                        <i class="fas fa-code fa-2x text-gray-300"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Produção Hoje
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">850</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-boxes fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Eficiência
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">92.5%</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-chart-line fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Máquinas Ativas
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">8/10</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-cogs fa-2x text-gray-300"></i>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
-    <div class="col-lg-4 mb-4">
-        <div class="card border-left-success shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                            Previsão
-                        </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">Próxima Versão</div>
+
+    <!-- Seções Principais -->
+    <div class="row">
+        <!-- Ordens de Produção -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-clipboard-list me-2"></i>Ordens de Produção
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p>Gerencie ordens de produção, acompanhe progresso e status.</p>
+                    <div class="d-grid gap-2 d-md-flex">
+                        <a href="/producao/ordens-producao" class="btn btn-primary me-md-2">
+                            <i class="fas fa-list me-1"></i>Ver Ordens
+                        </a>
+                        <a href="/producao/nova-ordem" class="btn btn-success">
+                            <i class="fas fa-plus me-1"></i>Nova Ordem
+                        </a>
                     </div>
-                    <div class="col-auto">
-                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Planejamento -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-calendar-alt me-2"></i>Planejamento
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p>Planejamento de produção, cronogramas e capacidade.</p>
+                    <div class="d-grid gap-2 d-md-flex">
+                        <a href="/producao/planejamento" class="btn btn-info me-md-2">
+                            <i class="fas fa-project-diagram me-1"></i>Planejamento
+                        </a>
+                        <a href="/producao/cronograma" class="btn btn-warning">
+                            <i class="fas fa-calendar me-1"></i>Cronograma
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controle de Qualidade -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-award me-2"></i>Controle de Qualidade
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p>Inspeções, testes e controle de qualidade.</p>
+                    <div class="d-grid gap-2 d-md-flex">
+                        <a href="/producao/controle-qualidade" class="btn btn-success me-md-2">
+                            <i class="fas fa-check-circle me-1"></i>Qualidade
+                        </a>
+                        <a href="/producao/inspecoes" class="btn btn-info">
+                            <i class="fas fa-search me-1"></i>Inspeções
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Máquinas e Equipamentos -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-cogs me-2"></i>Máquinas e Equipamentos
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p>Controle de máquinas, manutenção e paradas.</p>
+                    <div class="d-grid gap-2 d-md-flex">
+                        <a href="/producao/maquinas" class="btn btn-primary me-md-2">
+                            <i class="fas fa-wrench me-1"></i>Máquinas
+                        </a>
+                        <a href="/producao/manutencao" class="btn btn-warning">
+                            <i class="fas fa-tools me-1"></i>Manutenção
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
-    <div class="col-lg-4 mb-4">
-        <div class="card border-left-info shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                            Funcionalidades
+
+    <!-- Ações Rápidas -->
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-bolt me-2"></i>Ações Rápidas
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-2">
+                            <a href="/producao/estoque" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-warehouse me-2"></i>Estoque
+                            </a>
                         </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">3</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-list fa-2x text-gray-300"></i>
+                        <div class="col-md-3 mb-2">
+                            <a href="/producao/materiais" class="btn btn-outline-success w-100">
+                                <i class="fas fa-boxes me-2"></i>Materiais
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="/producao/relatorios" class="btn btn-outline-info w-100">
+                                <i class="fas fa-file-alt me-2"></i>Relatórios
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="/producao/indicadores" class="btn btn-outline-warning w-100">
+                                <i class="fas fa-chart-bar me-2"></i>Indicadores
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<div class="card shadow">
-    <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Funcionalidades Disponíveis</h6>
-    </div>
-    <div class="card-body">
-        <div class="row">
-            <div class="col-md-4 mb-3">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <i class="fas fa-industry fa-2x text-primary mb-3"></i>
-                        <h5>Ordens de Produção</h5>
-                        <p class="text-muted">Controle de ordens de produção</p>
-                        <button class="btn btn-primary btn-sm" onclick="acessarFuncionalidade('Ordens de Produção')">
-                            Em Breve
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-3">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <i class="fas fa-industry fa-2x text-primary mb-3"></i>
-                        <h5>Produtos</h5>
-                        <p class="text-muted">Cadastro de produtos</p>
-                        <button class="btn btn-primary btn-sm" onclick="acessarFuncionalidade('Produtos')">
-                            Em Breve
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-3">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <i class="fas fa-industry fa-2x text-primary mb-3"></i>
-                        <h5>OEE</h5>
-                        <p class="text-muted">Overall Equipment Effectiveness</p>
-                        <button class="btn btn-primary btn-sm" onclick="acessarFuncionalidade('OEE')">
-                            Em Breve
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-function novaAcao() {
-    alert('Funcionalidade em desenvolvimento');
-}
-
-function acessarFuncionalidade(nome) {
-    alert('Funcionalidade "' + nome + '" será disponibilizada em breve!');
-}
-</script>
 {% endblock %}

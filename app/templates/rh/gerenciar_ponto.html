@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Gerenciar Ponto{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-chart-bar me-2"></i>Gerenciar Ponto
+        </h1>
+        <a href="/rh" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Voltar
+        </a>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-header">
+            <h6 class="m-0 font-weight-bold text-primary">Registros de Ponto</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Colaborador</th>
+                            <th>Data</th>
+                            <th>Entrada</th>
+                            <th>Almoço</th>
+                            <th>Volta</th>
+                            <th>Saída</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>João Silva</strong></td>
+                            <td>06/08/2025</td>
+                            <td class="text-success">08:00</td>
+                            <td class="text-warning">12:00</td>
+                            <td class="text-info">13:00</td>
+                            <td class="text-danger">17:00</td>
+                            <td><strong>8h 00m</strong></td>
+                            <td><span class="badge bg-success">Completo</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Maria Santos</strong></td>
+                            <td>06/08/2025</td>
+                            <td class="text-success">08:15</td>
+                            <td class="text-warning">12:00</td>
+                            <td class="text-info">13:00</td>
+                            <td class="text-danger">17:15</td>
+                            <td><strong>8h 00m</strong></td>
+                            <td><span class="badge bg-warning">Atraso</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pedro Costa</strong></td>
+                            <td>06/08/2025</td>
+                            <td class="text-success">08:00</td>
+                            <td>--:--</td>
+                            <td>--:--</td>
+                            <td>--:--</td>
+                            <td>4h 00m</td>
+                            <td><span class="badge bg-primary">Trabalhando</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

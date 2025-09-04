@@ -1,0 +1,393 @@
+{% extends "base.html" %}
+
+{% block title %}Conciliação Bancária{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-university me-2"></i>Conciliação Bancária
+        </h1>
+        <div class="btn-group">
+            <button class="btn btn-success" onclick="novaConcialiacao()">
+                <i class="fas fa-plus me-1"></i>Nova Conciliação
+            </button>
+            <button class="btn btn-info" onclick="importarExtrato()">
+                <i class="fas fa-file-import me-1"></i>Importar Extrato
+            </button>
+        </div>
+    </div>
+
+    <!-- Cards de Status -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Contas Conciliadas
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">4</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Pendentes Conciliação
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">2</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-hourglass-half fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Diferença Total
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 1.250,00</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-balance-scale fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Última Conciliação
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">06/08/2025</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Seleção de Conta -->
+    <div class="card shadow mb-4">
+        <div class="card-header">
+            <h6 class="m-0 font-weight-bold text-primary">Selecionar Conta Bancária</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <label class="form-label">Banco</label>
+                    <select class="form-select" id="selectBanco" onchange="carregarContas()">
+                        <option value="">Selecione</option>
+                        <option value="001">Banco do Brasil</option>
+                        <option value="104">Caixa Econômica</option>
+                        <option value="237">Bradesco</option>
+                        <option value="341">Itaú</option>
+                        <option value="033">Santander</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Conta</label>
+                    <select class="form-select" id="selectConta" onchange="carregarExtrato()">
+                        <option value="">Selecione uma conta</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Período</label>
+                    <select class="form-select" onchange="carregarExtrato()">
+                        <option value="7">Últimos 7 dias</option>
+                        <option value="30" selected>Últimos 30 dias</option>
+                        <option value="90">Últimos 90 dias</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button class="btn btn-primary w-100" onclick="iniciarConciliacao()">
+                        <i class="fas fa-sync me-1"></i>Carregar Extrato
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conciliação -->
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-university me-2"></i>Extrato Bancário
+                    </h6>
+                </div>
+                <div class="card-body" style="max-height: 500px; overflow-y: auto;">
+                    <div id="extratoBancario">
+                        <div class="text-center text-muted py-4">
+                            <i class="fas fa-university fa-3x mb-3"></i>
+                            <p>Selecione uma conta para carregar o extrato bancário</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-success text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-laptop me-2"></i>Sistema ERP
+                    </h6>
+                </div>
+                <div class="card-body" style="max-height: 500px; overflow-y: auto;">
+                    <div id="movimentacaoERP">
+                        <div class="movimentacao-item mb-2 p-2 border rounded" data-valor="15200.00">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>Cliente ABC Ltda</strong>
+                                    <br><small class="text-muted">TED Recebida - 06/08/2025</small>
+                                </div>
+                                <div class="text-end">
+                                    <div class="text-success"><strong>+ R$ 15.200,00</strong></div>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="conciliarItem(this, 15200)">
+                                        <i class="fas fa-link"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="movimentacao-item mb-2 p-2 border rounded" data-valor="-8450.00">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>Fornecedor XYZ S/A</strong>
+                                    <br><small class="text-muted">Pagamento - 05/08/2025</small>
+                                </div>
+                                <div class="text-end">
+                                    <div class="text-danger"><strong>- R$ 8.450,00</strong></div>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="conciliarItem(this, -8450)">
+                                        <i class="fas fa-link"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="movimentacao-item mb-2 p-2 border rounded" data-valor="-3280.00">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>Energia Elétrica SP</strong>
+                                    <br><small class="text-muted">Débito Automático - 04/08/2025</small>
+                                </div>
+                                <div class="text-end">
+                                    <div class="text-danger"><strong>- R$ 3.280,00</strong></div>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="conciliarItem(this, -3280)">
+                                        <i class="fas fa-link"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="movimentacao-item mb-2 p-2 border rounded" data-valor="22100.00">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>Vendas à Vista</strong>
+                                    <br><small class="text-muted">Depósito - 03/08/2025</small>
+                                </div>
+                                <div class="text-end">
+                                    <div class="text-success"><strong>+ R$ 22.100,00</strong></div>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="conciliarItem(this, 22100)">
+                                        <i class="fas fa-link"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resumo da Conciliação -->
+    <div class="card shadow">
+        <div class="card-header">
+            <h6 class="m-0 font-weight-bold text-primary">Resumo da Conciliação</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <h5 class="text-primary">R$ 235.480,00</h5>
+                        <small class="text-muted">Saldo Banco</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <h5 class="text-success">R$ 234.230,00</h5>
+                        <small class="text-muted">Saldo ERP</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <h5 class="text-warning">R$ 1.250,00</h5>
+                        <small class="text-muted">Diferença</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <button class="btn btn-success" onclick="finalizarConciliacao()">
+                            <i class="fas fa-check me-1"></i>Finalizar Conciliação
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function carregarContas() {
+    const banco = document.getElementById('selectBanco').value;
+    const selectConta = document.getElementById('selectConta');
+    
+    selectConta.innerHTML = '<option value="">Carregando...</option>';
+    
+    setTimeout(() => {
+        if (banco === '001') { // Banco do Brasil
+            selectConta.innerHTML = `
+                <option value="">Selecione uma conta</option>
+                <option value="12345-6">Conta Corrente - 12345-6</option>
+                <option value="54321-0">Conta Poupança - 54321-0</option>
+            `;
+        } else if (banco === '341') { // Itaú
+            selectConta.innerHTML = `
+                <option value="">Selecione uma conta</option>
+                <option value="98765-4">Conta Corrente - 98765-4</option>
+            `;
+        } else {
+            selectConta.innerHTML = '<option value="">Nenhuma conta encontrada</option>';
+        }
+    }, 500);
+}
+
+function carregarExtrato() {
+    const extrato = document.getElementById('extratoBancario');
+    
+    extrato.innerHTML = `
+        <div class="text-center py-3">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Carregando...</span>
+            </div>
+            <p class="mt-2">Carregando extrato bancário...</p>
+        </div>
+    `;
+    
+    setTimeout(() => {
+        extrato.innerHTML = `
+            <div class="movimentacao-item mb-2 p-2 border rounded bg-light">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>TED RECEBIDA</strong>
+                        <br><small class="text-muted">06/08/2025 - 14:30</small>
+                    </div>
+                    <div class="text-end">
+                        <div class="text-success"><strong>+ R$ 15.200,00</strong></div>
+                        <small class="text-muted">Não conciliado</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="movimentacao-item mb-2 p-2 border rounded bg-success text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>PAGAMENTO</strong>
+                        <br><small>05/08/2025 - 10:15</small>
+                    </div>
+                    <div class="text-end">
+                        <div><strong>- R$ 8.450,00</strong></div>
+                        <small><i class="fas fa-check"></i> Conciliado</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="movimentacao-item mb-2 p-2 border rounded bg-light">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>DÉB AUTOMÁTICO</strong>
+                        <br><small class="text-muted">04/08/2025 - 08:00</small>
+                    </div>
+                    <div class="text-end">
+                        <div class="text-danger"><strong>- R$ 3.280,00</strong></div>
+                        <small class="text-muted">Não conciliado</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="movimentacao-item mb-2 p-2 border rounded bg-light">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>DEPÓSITO</strong>
+                        <br><small class="text-muted">03/08/2025 - 16:45</small>
+                    </div>
+                    <div class="text-end">
+                        <div class="text-success"><strong>+ R$ 22.100,00</strong></div>
+                        <small class="text-muted">Não conciliado</small>
+                    </div>
+                </div>
+            </div>
+        `;
+    }, 1000);
+}
+
+function iniciarConciliacao() {
+    carregarExtrato();
+}
+
+function conciliarItem(button, valor) {
+    const item = button.closest('.movimentacao-item');
+    item.classList.add('border-success', 'bg-success', 'text-white');
+    button.innerHTML = '<i class="fas fa-check"></i>';
+    button.classList.remove('btn-outline-primary');
+    button.classList.add('btn-outline-light');
+    alert('Item conciliado: R$ ' + Math.abs(valor).toFixed(2));
+}
+
+function novaConcialiacao() {
+    alert('Nova conciliação iniciada');
+}
+
+function importarExtrato() {
+    alert('Importar arquivo de extrato (OFX, CSV, etc.)');
+}
+
+function finalizarConciliacao() {
+    if(confirm('Finalizar conciliação bancária?')) {
+        alert('Conciliação finalizada com sucesso!');
+    }
+}
+
+console.log('Conciliação Bancária carregada!');
+</script>
+{% endblock %}

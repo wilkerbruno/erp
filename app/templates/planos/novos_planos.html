@@ -1,0 +1,435 @@
+{% extends "base.html" %}
+
+{% block title %}Novos Planos{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-tasks me-2"></i>Novos Planos de Ação
+        </h1>
+        <div class="btn-group">
+            <button class="btn btn-success" onclick="window.location.href='/planos/novo'">
+                <i class="fas fa-plus me-1"></i>Criar Plano
+            </button>
+            <button class="btn btn-info" onclick="importarPlanos()">
+                <i class="fas fa-file-import me-1"></i>Importar
+            </button>
+        </div>
+    </div>
+
+    <!-- Cards de Resumo -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Planos Criados
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">24</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Aprovados
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Aguardando Aprovação
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">6</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-hourglass-half fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Taxa de Aprovação
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">75%</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-percentage fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-2">
+                    <label class="form-label">Departamento</label>
+                    <select class="form-select">
+                        <option value="">Todos</option>
+                        <option value="vendas">Vendas</option>
+                        <option value="marketing">Marketing</option>
+                        <option value="rh">Recursos Humanos</option>
+                        <option value="ti">Tecnologia</option>
+                        <option value="financeiro">Financeiro</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Status</label>
+                    <select class="form-select">
+                        <option value="">Todos</option>
+                        <option value="rascunho">Rascunho</option>
+                        <option value="revisao">Em Revisão</option>
+                        <option value="aprovado">Aprovado</option>
+                        <option value="rejeitado">Rejeitado</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Prioridade</label>
+                    <select class="form-select">
+                        <option value="">Todas</option>
+                        <option value="baixa">Baixa</option>
+                        <option value="media">Média</option>
+                        <option value="alta">Alta</option>
+                        <option value="critica">Crítica</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Responsável</label>
+                    <select class="form-select">
+                        <option value="">Todos</option>
+                        <option value="1">João Silva</option>
+                        <option value="2">Maria Santos</option>
+                        <option value="3">Pedro Oliveira</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Data</label>
+                    <input type="date" class="form-control">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button class="btn btn-primary w-100">
+                        <i class="fas fa-search me-1"></i>Filtrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Planos -->
+    <div class="card shadow">
+        <div class="card-header py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h6 class="m-0 font-weight-bold text-primary">Lista de Novos Planos</h6>
+                <div class="btn-group btn-group-sm">
+                    <button class="btn btn-outline-primary active">
+                        <i class="fas fa-list me-1"></i>Lista
+                    </button>
+                    <button class="btn btn-outline-primary" onclick="window.location.href='/planos/kanban'">
+                        <i class="fas fa-columns me-1"></i>Kanban
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" onclick="selecionarTodos(this)"></th>
+                            <th>Plano</th>
+                            <th>Departamento</th>
+                            <th>Responsável</th>
+                            <th>Prioridade</th>
+                            <th>Status</th>
+                            <th>Criado em</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td>
+                                <div>
+                                    <strong>Implementação CRM 2025</strong>
+                                    <br><small class="text-muted">Modernização do sistema de vendas</small>
+                                </div>
+                            </td>
+                            <td><span class="badge bg-primary">Vendas</span></td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-sm me-2">
+                                        <img src="https://via.placeholder.com/32" class="rounded-circle" width="32">
+                                    </div>
+                                    <div>
+                                        <strong>João Silva</strong>
+                                        <br><small class="text-muted">Gerente Vendas</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="badge bg-danger">Alta</span></td>
+                            <td><span class="badge bg-warning">Em Revisão</span></td>
+                            <td>05/08/2025</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-info" onclick="visualizarPlano(1)" title="Visualizar">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-primary" onclick="editarPlano(1)" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-success" onclick="aprovarPlano(1)" title="Aprovar">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button class="btn btn-danger" onclick="rejeitarPlano(1)" title="Rejeitar">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td>
+                                <div>
+                                    <strong>Campanha Marketing Digital Q3</strong>
+                                    <br><small class="text-muted">Estratégia de marketing para terceiro trimestre</small>
+                                </div>
+                            </td>
+                            <td><span class="badge bg-success">Marketing</span></td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-sm me-2">
+                                        <img src="https://via.placeholder.com/32" class="rounded-circle" width="32">
+                                    </div>
+                                    <div>
+                                        <strong>Maria Santos</strong>
+                                        <br><small class="text-muted">Coord. Marketing</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="badge bg-warning">Média</span></td>
+                            <td><span class="badge bg-success">Aprovado</span></td>
+                            <td>04/08/2025</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-info" onclick="visualizarPlano(2)">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-warning" onclick="iniciarPlano(2)" title="Iniciar">
+                                        <i class="fas fa-play"></i>
+                                    </button>
+                                    <button class="btn btn-primary" onclick="duplicarPlano(2)" title="Duplicar">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td>
+                                <div>
+                                    <strong>Treinamento Equipe TI</strong>
+                                    <br><small class="text-muted">Capacitação em novas tecnologias</small>
+                                </div>
+                            </td>
+                            <td><span class="badge bg-info">Tecnologia</span></td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-sm me-2">
+                                        <img src="https://via.placeholder.com/32" class="rounded-circle" width="32">
+                                    </div>
+                                    <div>
+                                        <strong>Pedro Oliveira</strong>
+                                        <br><small class="text-muted">CTO</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="badge bg-info">Baixa</span></td>
+                            <td><span class="badge bg-secondary">Rascunho</span></td>
+                            <td>03/08/2025</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-info" onclick="visualizarPlano(3)">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-primary" onclick="editarPlano(3)">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-warning" onclick="enviarRevisao(3)" title="Enviar p/ Revisão">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td>
+                                <div>
+                                    <strong>Reestruturação Organizacional</strong>
+                                    <br><small class="text-muted">Reorganização de departamentos e processos</small>
+                                </div>
+                            </td>
+                            <td><span class="badge bg-warning">RH</span></td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-sm me-2">
+                                        <img src="https://via.placeholder.com/32" class="rounded-circle" width="32">
+                                    </div>
+                                    <div>
+                                        <strong>Ana Costa</strong>
+                                        <br><small class="text-muted">Gerente RH</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="badge bg-dark">Crítica</span></td>
+                            <td><span class="badge bg-warning">Em Revisão</span></td>
+                            <td>02/08/2025</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-info" onclick="visualizarPlano(4)">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-primary" onclick="editarPlano(4)">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-success" onclick="aprovarPlano(4)">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Ações em Lote -->
+            <div class="mt-3">
+                <button class="btn btn-success me-2" onclick="aprovarSelecionados()">
+                    <i class="fas fa-check me-1"></i>Aprovar Selecionados
+                </button>
+                <button class="btn btn-warning me-2" onclick="enviarRevisaoLote()">
+                    <i class="fas fa-paper-plane me-1"></i>Enviar para Revisão
+                </button>
+                <button class="btn btn-info me-2" onclick="exportarSelecionados()">
+                    <i class="fas fa-file-export me-1"></i>Exportar
+                </button>
+                <button class="btn btn-danger" onclick="excluirSelecionados()">
+                    <i class="fas fa-trash me-1"></i>Excluir Selecionados
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function selecionarTodos(checkbox) {
+    const checkboxes = document.querySelectorAll('tbody input[type="checkbox"]');
+    checkboxes.forEach(cb => cb.checked = checkbox.checked);
+}
+
+function visualizarPlano(id) {
+    alert('Visualizar plano ID: ' + id);
+}
+
+function editarPlano(id) {
+    window.location.href = '/planos/editar/' + id;
+}
+
+function aprovarPlano(id) {
+    if(confirm('Aprovar este plano de ação?')) {
+        alert('Plano aprovado com sucesso!');
+        location.reload();
+    }
+}
+
+function rejeitarPlano(id) {
+    const motivo = prompt('Motivo da rejeição:');
+    if(motivo) {
+        alert('Plano rejeitado: ' + motivo);
+        location.reload();
+    }
+}
+
+function iniciarPlano(id) {
+    if(confirm('Iniciar execução deste plano?')) {
+        alert('Plano iniciado! Redirecionando para acompanhamento...');
+        window.location.href = '/planos/andamento';
+    }
+}
+
+function duplicarPlano(id) {
+    if(confirm('Duplicar este plano de ação?')) {
+        alert('Plano duplicado com sucesso!');
+        location.reload();
+    }
+}
+
+function enviarRevisao(id) {
+    if(confirm('Enviar este plano para revisão?')) {
+        alert('Plano enviado para revisão!');
+        location.reload();
+    }
+}
+
+function importarPlanos() {
+    alert('Importar planos de arquivo Excel/CSV');
+}
+
+function aprovarSelecionados() {
+    alert('Aprovar planos selecionados');
+}
+
+function enviarRevisaoLote() {
+    alert('Enviar selecionados para revisão');
+}
+
+function exportarSelecionados() {
+    alert('Exportar planos selecionados');
+}
+
+function excluirSelecionados() {
+    if(confirm('Excluir planos selecionados? Esta ação não pode ser desfeita.')) {
+        alert('Planos excluídos!');
+        location.reload();
+    }
+}
+
+console.log('Novos Planos carregado!');
+</script>
+{% endblock %}

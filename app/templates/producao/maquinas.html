@@ -1,0 +1,500 @@
+{% extends "base.html" %}
+
+{% block title %}Controle de Máquinas{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-cogs me-2"></i>Controle de Máquinas
+        </h1>
+        <button class="btn btn-success" onclick="adicionarMaquina()">
+            <i class="fas fa-plus me-1"></i>Adicionar Máquina
+        </button>
+    </div>
+
+    <!-- Status das Máquinas -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Máquinas Ativas
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">8</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-play-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Em Manutenção
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">2</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-tools fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                Paradas
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">1</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-stop-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Eficiência Média
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">89.5%</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-chart-line fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Máquinas -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h6 class="m-0 font-weight-bold text-primary">Status das Máquinas</h6>
+                <div class="btn-group btn-group-sm">
+                    <button class="btn btn-outline-primary active">Todas</button>
+                    <button class="btn btn-outline-success">Ativas</button>
+                    <button class="btn btn-outline-warning">Manutenção</button>
+                    <button class="btn btn-outline-danger">Paradas</button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-xl-4 col-md-6 mb-3">
+                    <div class="card border-success">
+                        <div class="card-header bg-success text-white d-flex justify-content-between">
+                            <span><strong>Linha 1</strong></span>
+                            <span><i class="fas fa-circle text-success"></i> ATIVA</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Produto:</span>
+                                <strong>Produto A</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Velocidade:</span>
+                                <strong>95%</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Produzidas:</span>
+                                <strong>2.150 un</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-3">
+                                <span>Tempo Ativo:</span>
+                                <strong>7h 45min</strong>
+                            </div>
+                            <div class="btn-group w-100">
+                                <button class="btn btn-sm btn-info" onclick="verDetalhes('linha1')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="pararMaquina('linha1')">
+                                    <i class="fas fa-pause"></i>
+                                </button>
+                                <button class="btn btn-sm btn-primary" onclick="configurar('linha1')">
+                                    <i class="fas fa-cog"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-md-6 mb-3">
+                    <div class="card border-success">
+                        <div class="card-header bg-success text-white d-flex justify-content-between">
+                            <span><strong>Linha 2</strong></span>
+                            <span><i class="fas fa-circle text-success"></i> ATIVA</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Produto:</span>
+                                <strong>Produto B</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Velocidade:</span>
+                                <strong>87%</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Produzidas:</span>
+                                <strong>1.890 un</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-3">
+                                <span>Tempo Ativo:</span>
+                                <strong>7h 30min</strong>
+                            </div>
+                            <div class="btn-group w-100">
+                                <button class="btn btn-sm btn-info" onclick="verDetalhes('linha2')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="pararMaquina('linha2')">
+                                    <i class="fas fa-pause"></i>
+                                </button>
+                                <button class="btn btn-sm btn-primary" onclick="configurar('linha2')">
+                                    <i class="fas fa-cog"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-md-6 mb-3">
+                    <div class="card border-warning">
+                        <div class="card-header bg-warning text-dark d-flex justify-content-between">
+                            <span><strong>Máquina 1</strong></span>
+                            <span><i class="fas fa-circle text-warning"></i> MANUTENÇÃO</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Tipo:</span>
+                                <strong>Preventiva</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Responsável:</span>
+                                <strong>João Técnico</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Início:</span>
+                                <strong>07/08 06:00</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-3">
+                                <span>Previsão:</span>
+                                <strong>07/08 14:00</strong>
+                            </div>
+                            <div class="progress mb-3">
+                                <div class="progress-bar bg-warning" style="width: 60%">60%</div>
+                            </div>
+                            <div class="btn-group w-100">
+                                <button class="btn btn-sm btn-info" onclick="verDetalhes('maquina1')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="finalizarManutencao('maquina1')">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-md-6 mb-3">
+                    <div class="card border-danger">
+                        <div class="card-header bg-danger text-white d-flex justify-content-between">
+                            <span><strong>Máquina 2</strong></span>
+                            <span><i class="fas fa-circle text-danger"></i> PARADA</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Motivo:</span>
+                                <strong>Falha Mecânica</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Desde:</span>
+                                <strong>07/08 11:30</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Duração:</span>
+                                <strong>3h 15min</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-3">
+                                <span>Técnico:</span>
+                                <strong>Pedro Manutenção</strong>
+                            </div>
+                            <div class="btn-group w-100">
+                                <button class="btn btn-sm btn-info" onclick="verDetalhes('maquina2')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="reativarMaquina('maquina2')">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-md-6 mb-3">
+                    <div class="card border-success">
+                        <div class="card-header bg-success text-white d-flex justify-content-between">
+                            <span><strong>Prensa 1</strong></span>
+                            <span><i class="fas fa-circle text-success"></i> ATIVA</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Produto:</span>
+                                <strong>Componente X</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Velocidade:</span>
+                                <strong>92%</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Produzidas:</span>
+                                <strong>4.280 un</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-3">
+                                <span>Tempo Ativo:</span>
+                                <strong>7h 20min</strong>
+                            </div>
+                            <div class="btn-group w-100">
+                                <button class="btn btn-sm btn-info" onclick="verDetalhes('prensa1')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="pararMaquina('prensa1')">
+                                    <i class="fas fa-pause"></i>
+                                </button>
+                                <button class="btn btn-sm btn-primary" onclick="configurar('prensa1')">
+                                    <i class="fas fa-cog"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-md-6 mb-3">
+                    <div class="card border-secondary">
+                        <div class="card-header bg-secondary text-white d-flex justify-content-between">
+                            <span><strong>Torno CNC</strong></span>
+                            <span><i class="fas fa-circle text-secondary"></i> SETUP</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Próximo Produto:</span>
+                                <strong>Produto C</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Operador:</span>
+                                <strong>Carlos Setup</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Início Setup:</span>
+                                <strong>07/08 13:00</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-3">
+                                <span>Conclusão:</span>
+                                <strong>07/08 15:30</strong>
+                            </div>
+                            <div class="progress mb-3">
+                                <div class="progress-bar bg-info" style="width: 40%">40%</div>
+                            </div>
+                            <div class="btn-group w-100">
+                                <button class="btn btn-sm btn-info" onclick="verDetalhes('torno1')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="finalizarSetup('torno1')">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alertas e Notificações -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Histórico de Eventos</h6>
+                </div>
+                <div class="card-body">
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-danger"></div>
+                            <div class="timeline-content">
+                                <h6 class="timeline-title">Máquina 2 - Falha Mecânica</h6>
+                                <p class="timeline-text">Falha no sistema de refrigeração</p>
+                                <small class="text-muted">07/08/2025 11:30</small>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-warning"></div>
+                            <div class="timeline-content">
+                                <h6 class="timeline-title">Máquina 1 - Manutenção Iniciada</h6>
+                                <p class="timeline-text">Manutenção preventiva programada</p>
+                                <small class="text-muted">07/08/2025 06:00</small>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-success"></div>
+                            <div class="timeline-content">
+                                <h6 class="timeline-title">Linha 1 - Produção Iniciada</h6>
+                                <p class="timeline-text">Início da produção do Produto A</p>
+                                <small class="text-muted">07/08/2025 05:30</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card shadow mb-3">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-danger">Alertas Críticos</h6>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Máquina 2:</strong> Falha crítica - Requer atenção imediata
+                    </div>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-clock me-2"></i>
+                        <strong>Linha 1:</strong> Manutenção programada em 2 dias
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Performance Geral</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="graficoPerformance" width="300" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+.timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+}
+.timeline-marker {
+    position: absolute;
+    left: -35px;
+    top: 0;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+.timeline-content {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    border-left: 3px solid #007bff;
+}
+.timeline-title {
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+.timeline-text {
+    margin-bottom: 5px;
+    color: #6c757d;
+}
+</style>
+
+<script>
+// Gráfico de Performance
+const ctx3 = document.getElementById('graficoPerformance').getContext('2d');
+const graficoPerformance = new Chart(ctx3, {
+    type: 'bar',
+    data: {
+        labels: ['L1', 'L2', 'M1', 'M2', 'P1', 'T1'],
+        datasets: [{
+            label: 'Eficiência (%)',
+            data: [95, 87, 0, 0, 92, 0],
+            backgroundColor: [
+                '#28a745',
+                '#28a745', 
+                '#ffc107',
+                '#dc3545',
+                '#28a745',
+                '#6c757d'
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: 100
+            }
+        }
+    }
+});
+
+function verDetalhes(maquina) {
+    alert('Ver detalhes da máquina: ' + maquina);
+}
+
+function pararMaquina(maquina) {
+    if(confirm('Tem certeza que deseja parar a ' + maquina + '?')) {
+        alert('Máquina ' + maquina + ' parada');
+    }
+}
+
+function configurar(maquina) {
+    alert('Configurar ' + maquina);
+}
+
+function reativarMaquina(maquina) {
+    if(confirm('Reativar a ' + maquina + '?')) {
+        alert('Máquina ' + maquina + ' reativada');
+    }
+}
+
+function finalizarManutencao(maquina) {
+    if(confirm('Finalizar manutenção da ' + maquina + '?')) {
+        alert('Manutenção da ' + maquina + ' finalizada');
+    }
+}
+
+function adicionarMaquina() {
+    alert('Adicionar nova máquina');
+}
+
+console.log('Máquinas carregado!');
+</script>
+{% endblock %}

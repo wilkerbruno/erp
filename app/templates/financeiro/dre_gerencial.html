@@ -1,0 +1,411 @@
+{% extends "base.html" %}
+
+{% block title %}DRE Gerencial{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-chart-bar me-2"></i>DRE Gerencial
+        </h1>
+        <div class="btn-group">
+            <button class="btn btn-outline-primary" onclick="compararPeriodos()">
+                <i class="fas fa-balance-scale me-1"></i>Comparar Períodos
+            </button>
+            <button class="btn btn-success" onclick="exportarDRE()">
+                <i class="fas fa-file-excel me-1"></i>Exportar
+            </button>
+        </div>
+    </div>
+
+    <!-- Filtros de Período -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <label class="form-label">Período</label>
+                    <select class="form-select" id="periodoDRE" onchange="atualizarDRE()">
+                        <option value="mensal">Mensal</option>
+                        <option value="trimestral">Trimestral</option>
+                        <option value="semestral">Semestral</option>
+                        <option value="anual" selected>Anual</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Ano</label>
+                    <select class="form-select" onchange="atualizarDRE()">
+                        <option value="2024">2024</option>
+                        <option value="2025" selected>2025</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Centro de Custo</label>
+                    <select class="form-select" onchange="atualizarDRE()">
+                        <option value="todos">Consolidado</option>
+                        <option value="vendas">Vendas</option>
+                        <option value="producao">Produção</option>
+                        <option value="administrativo">Administrativo</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button class="btn btn-primary w-100" onclick="atualizarDRE()">
+                        <i class="fas fa-sync me-1"></i>Atualizar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DRE Principal -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Demonstração do Resultado do Exercício - 2025</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 50%">Conta</th>
+                                    <th class="text-end">Jan-Ago 2025</th>
+                                    <th class="text-end">% Receita</th>
+                                    <th class="text-end">Variação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- RECEITAS -->
+                                <tr class="table-success">
+                                    <td><strong><i class="fas fa-plus-circle me-2"></i>RECEITA BRUTA</strong></td>
+                                    <td class="text-end"><strong>R$ 2.850.000,00</strong></td>
+                                    <td class="text-end"><strong>100,0%</strong></td>
+                                    <td class="text-end text-success"><i class="fas fa-arrow-up"></i> +12.5%</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-4">Vendas de Produtos</td>
+                                    <td class="text-end">R$ 2.450.000,00</td>
+                                    <td class="text-end">86.0%</td>
+                                    <td class="text-end text-success">+15.2%</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-4">Prestação de Serviços</td>
+                                    <td class="text-end">R$ 400.000,00</td>
+                                    <td class="text-end">14.0%</td>
+                                    <td class="text-end text-success">+8.7%</td>
+                                </tr>
+                                
+                                <!-- DEDUÇÕES -->
+                                <tr class="table-warning">
+                                    <td><strong><i class="fas fa-minus-circle me-2"></i>DEDUÇÕES DA RECEITA</strong></td>
+                                    <td class="text-end"><strong>(R$ 456.000,00)</strong></td>
+                                    <td class="text-end"><strong>(16.0%)</strong></td>
+                                    <td class="text-end text-warning">+2.1%</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-4">Impostos sobre Vendas</td>
+                                    <td class="text-end">(R$ 285.000,00)</td>
+                                    <td class="text-end">(10.0%)</td>
+                                    <td class="text-end">+1.8%</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-4">Devoluções e Abatimentos</td>
+                                    <td class="text-end">(R$ 171.000,00)</td>
+                                    <td class="text-end">(6.0%)</td>
+                                    <td class="text-end">+2.5%</td>
+                                </tr>
+                                
+                                <!-- RECEITA LÍQUIDA -->
+                                <tr class="table-info">
+                                    <td><strong><i class="fas fa-equals me-2"></i>RECEITA LÍQUIDA</strong></td>
+                                    <td class="text-end"><strong>R$ 2.394.000,00</strong></td>
+                                    <td class="text-end"><strong>84,0%</strong></td>
+                                    <td class="text-end text-success"><i class="fas fa-arrow-up"></i> +15.8%</td>
+                                </tr>
+                                
+                                <!-- CMV -->
+                                <tr class="table-danger">
+                                    <td><strong><i class="fas fa-minus-circle me-2"></i>CUSTO DOS PRODUTOS/SERVIÇOS</strong></td>
+                                    <td class="text-end"><strong>(R$ 1.436.400,00)</strong></td>
+                                    <td class="text-end"><strong>(60.0%)</strong></td>
+                                    <td class="text-end text-danger">+18.2%</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-4">Matéria-Prima</td>
+                                    <td class="text-end">(R$ 956.400,00)</td>
+                                    <td class="text-end">(40.0%)</td>
+                                    <td class="text-end">+20.1%</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-4">Mão de Obra Direta</td>
+                                    <td class="text-end">(R$ 240.000,00)</td>
+                                    <td class="text-end">(10.0%)</td>
+                                    <td class="text-end">+12.5%</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-4">Custos Indiretos</td>
+                                    <td class="text-end">(R$ 240.000,00)</td>
+                                    <td class="text-end">(10.0%)</td>
+                                    <td class="text-end">+15.8%</td>
+                                </tr>
+                                
+                                <!-- LUCRO BRUTO -->
+                                <tr class="table-success">
+                                    <td><strong><i class="fas fa-equals me-2"></i>LUCRO BRUTO</strong></td>
+                                    <td class="text-end"><strong>R$ 957.600,00</strong></td>
+                                    <td class="text-end"><strong>40,0%</strong></td>
+                                    <td class="text-end text-success"><i class="fas fa-arrow-up"></i> +12.1%</td>
+                                </tr>
+                                
+                                <!-- DESPESAS OPERACIONAIS -->
+                                <tr class="table-warning">
+                                    <td><strong><i class="fas fa-minus-circle me-2"></i>DESPESAS OPERACIONAIS</strong></td>
+                                    <td class="text-end"><strong>(R$ 622.200,00)</strong></td>
+                                    <td class="text-end"><strong>(26.0%)</strong></td>
+                                    <td class="text-end text-warning">+8.5%</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-4">Despesas Administrativas</td>
+                                    <td class="text-end">(R$ 287.280,00)</td>
+                                    <td class="text-end">(12.0%)</td>
+                                    <td class="text-end">+5.2%</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-4">Despesas Comerciais</td>
+                                    <td class="text-end">(R$ 239.400,00)</td>
+                                    <td class="text-end">(10.0%)</td>
+                                    <td class="text-end">+12.8%</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-4">Outras Despesas Operacionais</td>
+                                    <td class="text-end">(R$ 95.520,00)</td>
+                                    <td class="text-end">(4.0%)</td>
+                                    <td class="text-end">+7.9%</td>
+                                </tr>
+                                
+                                <!-- EBITDA -->
+                                <tr class="table-primary">
+                                    <td><strong><i class="fas fa-chart-line me-2"></i>EBITDA</strong></td>
+                                    <td class="text-end"><strong>R$ 335.400,00</strong></td>
+                                    <td class="text-end"><strong>14,0%</strong></td>
+                                    <td class="text-end text-success"><i class="fas fa-arrow-up"></i> +18.9%</td>
+                                </tr>
+                                
+                                <!-- DEPRECIAÇÃO -->
+                                <tr>
+                                    <td class="ps-4">Depreciação/Amortização</td>
+                                    <td class="text-end">(R$ 71.820,00)</td>
+                                    <td class="text-end">(3.0%)</td>
+                                    <td class="text-end">+2.1%</td>
+                                </tr>
+                                
+                                <!-- RESULTADO OPERACIONAL -->
+                                <tr class="table-success">
+                                    <td><strong><i class="fas fa-equals me-2"></i>RESULTADO OPERACIONAL</strong></td>
+                                    <td class="text-end"><strong>R$ 263.580,00</strong></td>
+                                    <td class="text-end"><strong>11,0%</strong></td>
+                                    <td class="text-end text-success"><i class="fas fa-arrow-up"></i> +22.5%</td>
+                                </tr>
+                                
+                                <!-- RESULTADO FINANCEIRO -->
+                                <tr>
+                                    <td><strong><i class="fas fa-percent me-2"></i>RESULTADO FINANCEIRO</strong></td>
+                                    <td class="text-end"><strong>(R$ 47.880,00)</strong></td>
+                                    <td class="text-end"><strong>(2,0%)</strong></td>
+                                    <td class="text-end text-danger">+15.2%</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-4">Receitas Financeiras</td>
+                                    <td class="text-end">R$ 23.940,00</td>
+                                    <td class="text-end">1.0%</td>
+                                    <td class="text-end">+8.5%</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-4">Despesas Financeiras</td>
+                                    <td class="text-end">(R$ 71.820,00)</td>
+                                    <td class="text-end">(3.0%)</td>
+                                    <td class="text-end">+18.7%</td>
+                                </tr>
+                                
+                                <!-- RESULTADO ANTES IR -->
+                                <tr class="table-info">
+                                    <td><strong><i class="fas fa-calculator me-2"></i>RESULTADO ANTES DO IR</strong></td>
+                                    <td class="text-end"><strong>R$ 215.700,00</strong></td>
+                                    <td class="text-end"><strong>9,0%</strong></td>
+                                    <td class="text-end text-success"><i class="fas fa-arrow-up"></i> +24.8%</td>
+                                </tr>
+                                
+                                <!-- IR/CS -->
+                                <tr>
+                                    <td class="ps-4">Imposto de Renda / CSLL</td>
+                                    <td class="text-end">(R$ 71.820,00)</td>
+                                    <td class="text-end">(3.0%)</td>
+                                    <td class="text-end">+24.8%</td>
+                                </tr>
+                                
+                                <!-- RESULTADO LÍQUIDO -->
+                                <tr class="table-success fw-bold">
+                                    <td><strong><i class="fas fa-trophy me-2"></i>RESULTADO LÍQUIDO DO PERÍODO</strong></td>
+                                    <td class="text-end"><strong>R$ 143.880,00</strong></td>
+                                    <td class="text-end"><strong>6,0%</strong></td>
+                                    <td class="text-end text-success"><i class="fas fa-arrow-up"></i> +24.8%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <!-- Gráfico de Margem -->
+            <div class="card shadow mb-4">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Evolução das Margens</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="graficoMargens" width="400" height="300"></canvas>
+                </div>
+            </div>
+            
+            <!-- Indicadores Chave -->
+            <div class="card shadow mb-4">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Indicadores Chave</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Margem Bruta:</span>
+                            <strong class="text-success">40.0%</strong>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-success" style="width: 40%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Margem EBITDA:</span>
+                            <strong class="text-primary">14.0%</strong>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-primary" style="width: 14%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Margem Operacional:</span>
+                            <strong class="text-info">11.0%</strong>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-info" style="width: 11%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Margem Líquida:</span>
+                            <strong class="text-warning">6.0%</strong>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-warning" style="width: 6%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Análise Vertical -->
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Composição da Receita</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="graficoComposicao" width="400" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Gráfico de Margens
+const ctxMargens = document.getElementById('graficoMargens').getContext('2d');
+const graficoMargens = new Chart(ctxMargens, {
+    type: 'line',
+    data: {
+        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago'],
+        datasets: [{
+            label: 'Margem Bruta',
+            data: [38, 39, 40, 41, 40, 39, 40, 40],
+            borderColor: '#28a745',
+            backgroundColor: 'rgba(40, 167, 69, 0.1)',
+            tension: 0.4
+        }, {
+            label: 'Margem EBITDA',
+            data: [12, 13, 14, 15, 14, 13, 14, 14],
+            borderColor: '#007bff',
+            backgroundColor: 'rgba(0, 123, 255, 0.1)',
+            tension: 0.4
+        }, {
+            label: 'Margem Líquida',
+            data: [5, 5.5, 6, 6.5, 6, 5.5, 6, 6],
+            borderColor: '#ffc107',
+            backgroundColor: 'rgba(255, 193, 7, 0.1)',
+            tension: 0.4
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: 50
+            }
+        }
+    }
+});
+
+// Gráfico de Composição
+const ctxComposicao = document.getElementById('graficoComposicao').getContext('2d');
+const graficoComposicao = new Chart(ctxComposicao, {
+    type: 'pie',
+    data: {
+        labels: ['Custo Produtos', 'Desp. Operacionais', 'Desp. Financeiras', 'Impostos', 'Lucro Líquido'],
+        datasets: [{
+            data: [60, 26, 3, 5, 6],
+            backgroundColor: [
+                '#dc3545',
+                '#ffc107', 
+                '#17a2b8',
+                '#6c757d',
+                '#28a745'
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+function atualizarDRE() {
+    alert('Atualizando DRE...');
+}
+
+function compararPeriodos() {
+    alert('Comparar períodos');
+}
+
+function exportarDRE() {
+    alert('Exportando DRE para Excel...');
+}
+
+console.log('DRE Gerencial carregado!');
+</script>
+{% endblock %}

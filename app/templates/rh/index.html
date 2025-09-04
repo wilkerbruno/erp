@@ -8,14 +8,9 @@
         <h1 class="h3 mb-0 text-gray-800">
             <i class="fas fa-users me-2"></i>Recursos Humanos
         </h1>
-        <div>
-            <button class="btn btn-primary btn-sm" onclick="acessarRelatorios()">
-                <i class="fas fa-chart-bar me-1"></i>Relatórios
-            </button>
-        </div>
     </div>
 
-    <!-- Status Cards -->
+    <!-- Cards de Status -->
     <div class="row mb-4">
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
@@ -25,7 +20,7 @@
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                 Total Colaboradores
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">156</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">127</div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-users fa-2x text-gray-300"></i>
@@ -41,9 +36,9 @@
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                Colaboradores Ativos
+                                Presentes Hoje
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">148</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">124</div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-user-check fa-2x text-gray-300"></i>
@@ -59,7 +54,7 @@
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                Admissões (Mês)
+                                Novos (Mês)
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">8</div>
                         </div>
@@ -77,12 +72,12 @@
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                Pontos Registrados (Hoje)
+                                Departamentos
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">234</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">12</div>
                         </div>
                         <div class="col-auto">
-                            <i class="fas fa-clock fa-2x text-gray-300"></i>
+                            <i class="fas fa-building fa-2x text-gray-300"></i>
                         </div>
                     </div>
                 </div>
@@ -90,155 +85,91 @@
         </div>
     </div>
 
-    <!-- Módulos principais do RH -->
+    <!-- Seções Principais -->
     <div class="row">
-        <div class="col-lg-6 col-md-12 mb-4">
-            <div class="card shadow h-100">
+        <!-- Gestão de Colaboradores -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">
                         <i class="fas fa-users me-2"></i>Gestão de Colaboradores
                     </h6>
                 </div>
                 <div class="card-body">
-                    <p>Cadastre e gerencie todos os colaboradores da empresa, incluindo dados pessoais, cargos, setores e histórico.</p>
-                    <div class="row">
-                        <div class="col-sm-6 mb-2">
-                            <a href="/rh/colaboradores" class="btn btn-primary btn-block w-100">
-                                <i class="fas fa-list me-1"></i>Ver Colaboradores
-                            </a>
-                        </div>
-                        <div class="col-sm-6 mb-2">
-                            <button class="btn btn-success btn-block w-100" onclick="novoColaborador()">
-                                <i class="fas fa-user-plus me-1"></i>Novo Colaborador
-                            </button>
-                        </div>
+                    <p>Gerencie informações dos colaboradores, cadastros e atualizações.</p>
+                    <div class="d-grid gap-2 d-md-flex">
+                        <a href="/rh/colaboradores" class="btn btn-primary me-md-2">
+                            <i class="fas fa-list me-1"></i>Ver Colaboradores
+                        </a>
+                        <a href="/rh/novo-colaborador" class="btn btn-success">
+                            <i class="fas fa-plus me-1"></i>Novo Colaborador
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <div class="col-lg-6 col-md-12 mb-4">
-            <div class="card shadow h-100">
+
+        <!-- Ponto Eletrônico -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">
                         <i class="fas fa-clock me-2"></i>Ponto Eletrônico
                     </h6>
                 </div>
                 <div class="card-body">
-                    <p>Sistema de controle de ponto e frequência dos colaboradores com registro de entrada, saída e relatórios.</p>
-                    <div class="row">
-                        <div class="col-sm-6 mb-2">
-                            <a href="/rh/ponto-eletronico" class="btn btn-info btn-block w-100">
-                                <i class="fas fa-clock me-1"></i>Acessar Ponto
-                            </a>
-                        </div>
-                        <div class="col-sm-6 mb-2">
-                            <button class="btn btn-warning btn-block w-100" onclick="registrarPonto()">
-                                <i class="fas fa-hand-point-right me-1"></i>Registrar Ponto
-                            </button>
-                        </div>
+                    <p>Controle de ponto, registros de entrada e saída dos colaboradores.</p>
+                    <div class="d-grid gap-2 d-md-flex flex-wrap">
+                        <a href="/rh/bater-ponto" class="btn btn-info me-md-2 mb-2">
+                            <i class="fas fa-clock me-1"></i>Bater Ponto
+                        </a>
+                        <a href="/rh/gerenciar-ponto" class="btn btn-warning me-md-2 mb-2">
+                            <i class="fas fa-chart-bar me-1"></i>Gerenciar Ponto
+                        </a>
+                        <a href="/rh/controle-ponto" class="btn btn-secondary mb-2">
+                            <i class="fas fa-cogs me-1"></i>Controle de Ponto
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Ações rápidas -->
-    <div class="card shadow">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">
-                <i class="fas fa-bolt me-2"></i>Ações Rápidas
-            </h6>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-3 mb-3">
-                    <button class="btn btn-outline-primary btn-block w-100 h-100" onclick="buscarColaborador()">
-                        <i class="fas fa-search fa-2x mb-2"></i><br>
-                        <strong>Buscar Colaborador</strong>
-                    </button>
+    <!-- Ações Rápidas -->
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-bolt me-2"></i>Ações Rápidas
+                    </h6>
                 </div>
-                <div class="col-md-3 mb-3">
-                    <button class="btn btn-outline-success btn-block w-100 h-100" onclick="relatorioFrequencia()">
-                        <i class="fas fa-chart-line fa-2x mb-2"></i><br>
-                        <strong>Relatório Frequência</strong>
-                    </button>
-                </div>
-                <div class="col-md-3 mb-3">
-                    <button class="btn btn-outline-warning btn-block w-100 h-100" onclick="gerenciarFerias()">
-                        <i class="fas fa-calendar-alt fa-2x mb-2"></i><br>
-                        <strong>Gerenciar Férias</strong>
-                    </button>
-                </div>
-                <div class="col-md-3 mb-3">
-                    <button class="btn btn-outline-info btn-block w-100 h-100" onclick="exportarDados()">
-                        <i class="fas fa-download fa-2x mb-2"></i><br>
-                        <strong>Exportar Dados</strong>
-                    </button>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-2">
+                            <a href="/rh/relatorio-frequencias" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-chart-line me-2"></i>Relatório Frequências
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="/rh/gerenciar-ferias" class="btn btn-outline-success w-100">
+                                <i class="fas fa-umbrella-beach me-2"></i>Gerenciar Férias
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="/rh/exportar-dados" class="btn btn-outline-info w-100">
+                                <i class="fas fa-download me-2"></i>Exportar Dados
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="/rh/relatorios" class="btn btn-outline-secondary w-100">
+                                <i class="fas fa-file-alt me-2"></i>Relatórios
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-// Funções para os botões funcionarem
-function novoColaborador() {
-    window.location.href = '/rh/colaboradores/novo';
-}
-
-function registrarPonto() {
-    if(confirm('Deseja registrar seu ponto agora?')) {
-        fetch('/rh/ponto-eletronico/registrar', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                tipo: 'entrada'
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.success) {
-                alert('Ponto registrado com sucesso às ' + data.horario);
-            } else {
-                alert('Erro ao registrar ponto: ' + data.message);
-            }
-        })
-        .catch(error => {
-            alert('Erro ao registrar ponto');
-        });
-    }
-}
-
-function buscarColaborador() {
-    const nome = prompt('Digite o nome do colaborador:');
-    if(nome) {
-        window.location.href = '/rh/colaboradores?busca=' + encodeURIComponent(nome);
-    }
-}
-
-function relatorioFrequencia() {
-    alert('Redirecionando para relatório de frequência...');
-}
-
-function gerenciarFerias() {
-    alert('Funcionalidade de férias em desenvolvimento!');
-}
-
-function exportarDados() {
-    alert('Exportando dados do RH...');
-}
-
-function acessarRelatorios() {
-    alert('Módulo de relatórios em desenvolvimento!');
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Módulo RH carregado com sucesso!');
-});
-</script>
 {% endblock %}

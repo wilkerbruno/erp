@@ -1,59 +1,15 @@
 {% extends "base.html" %}
-
-{% block title %}Perfil do Colaborador{% endblock %}
-
+{% block title %}Colaborador - {{ colaborador.nome }}{% endblock %}
 {% block content %}
 <div class="container-fluid">
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">
-            <i class="fas fa-user me-2"></i>Perfil do Colaborador
-        </h1>
-        <a href="/rh/colaboradores" class="btn btn-secondary">
-            <i class="fas fa-arrow-left me-1"></i>Voltar
-        </a>
-    </div>
-
+    <h1 class="h3 mb-4"><i class="fas fa-user me-2"></i>{{ colaborador.nome }}</h1>
     <div class="card shadow">
-        <div class="card-header">
-            <h6 class="m-0 font-weight-bold text-primary">
-                <i class="fas fa-id-card me-2"></i>Informações do Colaborador #{{ colaborador_id }}
-            </h6>
-        </div>
         <div class="card-body">
-            <div class="row">
-                <div class="col-md-3 text-center">
-                    <img src="https://via.placeholder.com/150x150/4e73df/fff?text={{ colaborador.nome[0] }}" 
-                         class="rounded-circle mb-3" alt="Foto">
-                </div>
-                <div class="col-md-9">
-                    <h4>{{ colaborador.nome }}</h4>
-                    <p><strong>Cargo:</strong> {{ colaborador.cargo }}</p>
-                    <p><strong>Setor:</strong> {{ colaborador.setor }}</p>
-                    <p><strong>Status:</strong> <span class="badge bg-success">Ativo</span></p>
-                    
-                    <div class="mt-4">
-                        <button class="btn btn-warning me-2" onclick="editarColaborador({{ colaborador_id }})">
-                            <i class="fas fa-edit me-1"></i>Editar
-                        </button>
-                        <button class="btn btn-info me-2" onclick="verHistorico({{ colaborador_id }})">
-                            <i class="fas fa-history me-1"></i>Histórico
-                        </button>
-                    </div>
-                </div>
-            </div>
+            <p><strong>Cargo:</strong> {{ colaborador.cargo }}</p>
+            <p><strong>Departamento:</strong> {{ colaborador.departamento }}</p>
+            <p><strong>Email:</strong> {{ colaborador.email }}</p>
+            <a href="/rh/colaboradores" class="btn btn-secondary">Voltar</a>
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-function editarColaborador(id) {
-    window.location.href = '/rh/colaboradores/' + id + '/editar';
-}
-
-function verHistorico(id) {
-    window.location.href = '/rh/colaboradores/' + id + '/historico';
-}
-</script>
 {% endblock %}

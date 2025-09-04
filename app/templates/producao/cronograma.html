@@ -1,0 +1,342 @@
+{% extends "base.html" %}
+
+{% block title %}Cronograma de Produção{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-calendar me-2"></i>Cronograma de Produção
+        </h1>
+        <div class="btn-group">
+            <button class="btn btn-outline-primary" onclick="visualizarSemana()">Semana</button>
+            <button class="btn btn-primary" onclick="visualizarMes()">Mês</button>
+            <button class="btn btn-outline-primary" onclick="visualizarTrimestre()">Trimestre</button>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <label class="form-label">Máquina/Linha</label>
+                    <select class="form-select">
+                        <option value="">Todas</option>
+                        <option value="linha1">Linha 1</option>
+                        <option value="linha2">Linha 2</option>
+                        <option value="maquina1">Máquina 1</option>
+                        <option value="maquina2">Máquina 2</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Produto</label>
+                    <select class="form-select">
+                        <option value="">Todos</option>
+                        <option value="produto-a">Produto A</option>
+                        <option value="produto-b">Produto B</option>
+                        <option value="produto-c">Produto C</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Status</label>
+                    <select class="form-select">
+                        <option value="">Todos</option>
+                        <option value="programado">Programado</option>
+                        <option value="em-producao">Em Produção</option>
+                        <option value="concluido">Concluído</option>
+                        <option value="atrasado">Atrasado</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button class="btn btn-primary w-100">
+                        <i class="fas fa-search me-1"></i>Filtrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cronograma Visual -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Cronograma Visual - Agosto 2025</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered cronograma-table">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 150px;">Recurso</th>
+                            <th>05/08</th>
+                            <th>06/08</th>
+                            <th>07/08</th>
+                            <th>08/08</th>
+                            <th>09/08</th>
+                            <th>10/08</th>
+                            <th>11/08</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Linha 1</strong></td>
+                            <td class="text-center">
+                                <div class="cronograma-item bg-success text-white p-1 rounded">
+                                    <small>Prod. A<br>100 un</small>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="cronograma-item bg-success text-white p-1 rounded">
+                                    <small>Prod. A<br>100 un</small>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="cronograma-item bg-warning text-dark p-1 rounded">
+                                    <small>Prod. B<br>150 un</small>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="cronograma-item bg-warning text-dark p-1 rounded">
+                                    <small>Prod. B<br>150 un</small>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="cronograma-item bg-info text-white p-1 rounded">
+                                    <small>Prod. C<br>75 un</small>
+                                </div>
+                            </td>
+                            <td class="text-center bg-light">
+                                <small class="text-muted">Manutenção</small>
+                            </td>
+                            <td class="text-center">
+                                <div class="cronograma-item bg-primary text-white p-1 rounded">
+                                    <small>Prod. D<br>200 un</small>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Linha 2</strong></td>
+                            <td class="text-center">
+                                <div class="cronograma-item bg-primary text-white p-1 rounded">
+                                    <small>Prod. D<br>200 un</small>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="cronograma-item bg-primary text-white p-1 rounded">
+                                    <small>Prod. D<br>200 un</small>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="cronograma-item bg-danger text-white p-1 rounded">
+                                    <small>Prod. E<br>80 un</small>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="cronograma-item bg-danger text-white p-1 rounded">
+                                    <small>Prod. E<br>80 un</small>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="cronograma-item bg-secondary text-white p-1 rounded">
+                                    <small>Setup</small>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="cronograma-item bg-success text-white p-1 rounded">
+                                    <small>Prod. A<br>120 un</small>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="cronograma-item bg-success text-white p-1 rounded">
+                                    <small>Prod. A<br>120 un</small>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Máquina 1</strong></td>
+                            <td class="text-center">
+                                <div class="cronograma-item bg-info text-white p-1 rounded">
+                                    <small>Comp. X<br>500 un</small>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="cronograma-item bg-info text-white p-1 rounded">
+                                    <small>Comp. X<br>500 un</small>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="cronograma-item bg-warning text-dark p-1 rounded">
+                                    <small>Comp. Y<br>300 un</small>
+                                </div>
+                            </td>
+                            <td class="text-center bg-light">
+                                <small class="text-muted">Parada</small>
+                            </td>
+                            <td class="text-center">
+                                <div class="cronograma-item bg-primary text-white p-1 rounded">
+                                    <small>Comp. Z<br>400 un</small>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="cronograma-item bg-primary text-white p-1 rounded">
+                                    <small>Comp. Z<br>400 un</small>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="cronograma-item bg-success text-white p-1 rounded">
+                                    <small>Comp. W<br>250 un</small>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resumo e Alertas -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Lista de Atividades</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Ordem</th>
+                                    <th>Produto</th>
+                                    <th>Recurso</th>
+                                    <th>Data/Hora</th>
+                                    <th>Duração</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>OP-001</td>
+                                    <td>Produto A</td>
+                                    <td>Linha 1</td>
+                                    <td>07/08 08:00</td>
+                                    <td>8h</td>
+                                    <td><span class="badge bg-success">Em Andamento</span></td>
+                                </tr>
+                                <tr>
+                                    <td>OP-002</td>
+                                    <td>Produto B</td>
+                                    <td>Linha 1</td>
+                                    <td>07/08 16:00</td>
+                                    <td>6h</td>
+                                    <td><span class="badge bg-warning">Programado</span></td>
+                                </tr>
+                                <tr>
+                                    <td>OP-003</td>
+                                    <td>Produto C</td>
+                                    <td>Linha 2</td>
+                                    <td>08/08 08:00</td>
+                                    <td>4h</td>
+                                    <td><span class="badge bg-info">Próximo</span></td>
+                                </tr>
+                                <tr class="table-danger">
+                                    <td>OP-004</td>
+                                    <td>Produto D</td>
+                                    <td>Máquina 1</td>
+                                    <td>06/08 14:00</td>
+                                    <td>10h</td>
+                                    <td><span class="badge bg-danger">Atrasado</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card shadow mb-3">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-danger">Alertas</h6>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Conflito:</strong> Linha 1 tem sobreposição em 08/08
+                    </div>
+                    <div class="alert alert-danger">
+                        <i class="fas fa-times-circle me-2"></i>
+                        <strong>Atraso:</strong> OP-004 está 2h atrasada
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Manutenção:</strong> Linha 1 programada para 10/08
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Legenda</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-2">
+                        <span class="badge bg-success me-2"></span>Produto A
+                    </div>
+                    <div class="mb-2">
+                        <span class="badge bg-warning me-2"></span>Produto B
+                    </div>
+                    <div class="mb-2">
+                        <span class="badge bg-info me-2"></span>Produto C
+                    </div>
+                    <div class="mb-2">
+                        <span class="badge bg-primary me-2"></span>Produto D
+                    </div>
+                    <div class="mb-2">
+                        <span class="badge bg-danger me-2"></span>Produto E
+                    </div>
+                    <div class="mb-2">
+                        <span class="badge bg-secondary me-2"></span>Setup/Parada
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<style>
+.cronograma-item {
+    font-size: 0.75rem;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+.cronograma-table td {
+    vertical-align: middle;
+    padding: 5px;
+}
+</style>
+
+<script>
+function visualizarSemana() {
+    alert('Visualização: Semana');
+    document.querySelector('.btn-primary').classList.remove('btn-primary');
+    document.querySelector('.btn-primary').classList.add('btn-outline-primary');
+    event.target.classList.add('btn-primary');
+}
+
+function visualizarMes() {
+    alert('Visualização: Mês');
+}
+
+function visualizarTrimestre() {
+    alert('Visualização: Trimestre');
+}
+
+console.log('Cronograma carregado!');
+</script>
+{% endblock %}

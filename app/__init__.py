@@ -4,6 +4,9 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect
 from config import config
+from app.blueprints.producao import bp as producao_bp
+from app.blueprints.planos import bp as planos_bp
+from app.blueprints.financeiro import bp as financeiro_bp
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -27,9 +30,13 @@ def create_app(config_name='development'):
     
     # Register blueprints - MUITO SIMPLES
     from app.blueprints.auth import bp as auth_bp
+    from app.blueprints.rh import bp as rh_bp
     from app.blueprints.dashboard import bp as dashboard_bp
     
     app.register_blueprint(auth_bp, url_prefix='/auth')
+    app.register_blueprint(planos_bp)
+    app.register_blueprint(financeiro_bp)
+    app.register_blueprint(rh_bp)
     app.register_blueprint(dashboard_bp, url_prefix='/')
     
     # Modulos

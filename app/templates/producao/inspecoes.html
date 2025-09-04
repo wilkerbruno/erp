@@ -1,0 +1,415 @@
+{% extends "base.html" %}
+
+{% block title %}Inspeções de Qualidade{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-search me-2"></i>Inspeções de Qualidade
+        </h1>
+        <button class="btn btn-success" onclick="agendarInspecao()">
+            <i class="fas fa-calendar-plus me-1"></i>Agendar Inspeção
+        </button>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-2">
+                    <label class="form-label">Data</label>
+                    <input type="date" class="form-control" id="filtroData">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Status</label>
+                    <select class="form-select" id="filtroStatus">
+                        <option value="">Todos</option>
+                        <option value="agendada">Agendada</option>
+                        <option value="em-andamento">Em Andamento</option>
+                        <option value="concluida">Concluída</option>
+                        <option value="cancelada">Cancelada</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Produto</label>
+                    <select class="form-select" id="filtroProduto">
+                        <option value="">Todos</option>
+                        <option value="produto-a">Produto A</option>
+                        <option value="produto-b">Produto B</option>
+                        <option value="produto-c">Produto C</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Inspetor</label>
+                    <select class="form-select" id="filtroInspetor">
+                        <option value="">Todos</option>
+                        <option value="joao">João Silva</option>
+                        <option value="maria">Maria Santos</option>
+                        <option value="pedro">Pedro Costa</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Resultado</label>
+                    <select class="form-select" id="filtroResultado">
+                        <option value="">Todos</option>
+                        <option value="aprovado">Aprovado</option>
+                        <option value="rejeitado">Rejeitado</option>
+                        <option value="condicional">Condicional</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button class="btn btn-primary w-100" onclick="aplicarFiltros()">
+                        <i class="fas fa-filter me-1"></i>Filtrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inspeções do Dia -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-calendar-day me-2"></i>Inspeções de Hoje - 07/08/2025
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Horário</th>
+                                    <th>Produto/Lote</th>
+                                    <th>Tipo</th>
+                                    <th>Inspetor</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="table-success">
+                                    <td><strong>08:00</strong></td>
+                                    <td>
+                                        <div>Produto A</div>
+                                        <small class="text-muted">Lote: L20250807-01</small>
+                                    </td>
+                                    <td>Recebimento</td>
+                                    <td>João Silva</td>
+                                    <td><span class="badge bg-success">Concluída</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info" onclick="verResultado(1)">
+                                            <i class="fas fa-eye"></i> Ver
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="table-warning">
+                                    <td><strong>10:30</strong></td>
+                                    <td>
+                                        <div>Produto B</div>
+                                        <small class="text-muted">Lote: L20250807-02</small>
+                                    </td>
+                                    <td>Processo</td>
+                                    <td>Maria Santos</td>
+                                    <td><span class="badge bg-warning">Em Andamento</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" onclick="continuarInspecao(2)">
+                                            <i class="fas fa-play"></i> Continuar
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>14:00</strong></td>
+                                    <td>
+                                        <div>Produto C</div>
+                                        <small class="text-muted">Lote: L20250807-03</small>
+                                    </td>
+                                    <td>Final</td>
+                                    <td>Pedro Costa</td>
+                                    <td><span class="badge bg-primary">Agendada</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-success" onclick="iniciarInspecao(3)">
+                                            <i class="fas fa-play"></i> Iniciar
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>16:30</strong></td>
+                                    <td>
+                                        <div>Produto D</div>
+                                        <small class="text-muted">Lote: L20250807-04</small>
+                                    </td>
+                                    <td>Recebimento</td>
+                                    <td>João Silva</td>
+                                    <td><span class="badge bg-secondary">Agendada</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="editarAgenda(4)">
+                                            <i class="fas fa-edit"></i> Editar
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="m-0 font-weight-bold text-primary">Resumo do Dia</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>Total Agendadas:</span>
+                                <span class="badge bg-primary">4</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>Concluídas:</span>
+                                <span class="badge bg-success">1</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>Em Andamento:</span>
+                                <span class="badge bg-warning">1</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>Pendentes:</span>
+                                <span class="badge bg-secondary">2</span>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span><strong>Progresso:</strong></span>
+                                <span><strong>25%</strong></span>
+                            </div>
+                            <div class="progress mt-2">
+                                <div class="progress-bar bg-success" style="width: 25%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Histórico de Inspeções -->
+    <div class="card shadow">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Histórico de Inspeções</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Data/Hora</th>
+                            <th>Produto/Lote</th>
+                            <th>Tipo</th>
+                            <th>Inspetor</th>
+                            <th>Resultado</th>
+                            <th>Observações</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>INS-005</strong></td>
+                            <td>
+                                <div>06/08/2025</div>
+                                <small class="text-muted">15:45</small>
+                            </td>
+                            <td>
+                                <div>Produto A</div>
+                                <small class="text-muted">L20250806-01</small>
+                            </td>
+                            <td>Final</td>
+                            <td>Maria Santos</td>
+                            <td><span class="badge bg-success">Aprovado</span></td>
+                            <td>Conforme especificação</td>
+                            <td>
+                                <button class="btn btn-sm btn-info me-1" onclick="verDetalhes(5)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-secondary" onclick="imprimirRelatorio(5)">
+                                    <i class="fas fa-print"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>INS-004</strong></td>
+                            <td>
+                                <div>06/08/2025</div>
+                                <small class="text-muted">13:20</small>
+                            </td>
+                            <td>
+                                <div>Produto B</div>
+                                <small class="text-muted">L20250806-02</small>
+                            </td>
+                            <td>Processo</td>
+                            <td>Pedro Costa</td>
+                            <td><span class="badge bg-danger">Rejeitado</span></td>
+                            <td>Dimensão fora do limite</td>
+                            <td>
+                                <button class="btn btn-sm btn-info me-1" onclick="verDetalhes(4)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="criarNC(4)">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>INS-003</strong></td>
+                            <td>
+                                <div>06/08/2025</div>
+                                <small class="text-muted">10:15</small>
+                            </td>
+                            <td>
+                                <div>Produto C</div>
+                                <small class="text-muted">L20250806-03</small>
+                            </td>
+                            <td>Recebimento</td>
+                            <td>João Silva</td>
+                            <td><span class="badge bg-warning">Condicional</span></td>
+                            <td>Requer retrabalho menor</td>
+                            <td>
+                                <button class="btn btn-sm btn-info me-1" onclick="verDetalhes(3)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-primary" onclick="reagendar(3)">
+                                    <i class="fas fa-redo"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Paginação -->
+            <nav>
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#">Anterior</a>
+                    </li>
+                    <li class="page-item active">
+                        <a class="page-link" href="#">1</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">2</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">3</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Próximo</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Agendar Inspeção -->
+<div class="modal fade" id="modalAgendarInspecao" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-calendar-plus me-2"></i>Agendar Inspeção
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formAgendarInspecao">
+                    <div class="mb-3">
+                        <label class="form-label">Produto/Lote *</label>
+                        <select class="form-select" required>
+                            <option value="">Selecione</option>
+                            <option value="prod-a">Produto A - L20250808-01</option>
+                            <option value="prod-b">Produto B - L20250808-02</option>
+                            <option value="prod-c">Produto C - L20250808-03</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Data *</label>
+                                <input type="date" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Horário *</label>
+                                <input type="time" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tipo de Inspeção *</label>
+                        <select class="form-select" required>
+                            <option value="">Selecione</option>
+                            <option value="recebimento">Recebimento</option>
+                            <option value="processo">Processo</option>
+                            <option value="final">Final</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Inspetor *</label>
+                        <select class="form-select" required>
+                            <option value="">Selecione</option>
+                            <option value="joao">João Silva</option>
+                            <option value="maria">Maria Santos</option>
+                            <option value="pedro">Pedro Costa</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Observações</label>
+                        <textarea class="form-control" rows="2"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="salvarAgendamento()">Agendar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function agendarInspecao() {
+    var modal = new bootstrap.Modal(document.getElementById('modalAgendarInspecao'));
+    modal.show();
+}
+
+function salvarAgendamento() {
+    alert('Inspeção agendada com sucesso!');
+    var modal = bootstrap.Modal.getInstance(document.getElementById('modalAgendarInspecao'));
+    modal.hide();
+}
+
+function iniciarInspecao(id) {
+    alert('Iniciar inspeção ID: ' + id);
+}
+
+function continuarInspecao(id) {
+    alert('Continuar inspeção ID: ' + id);
+}
+
+function verResultado(id) {
+    alert('Ver resultado da inspeção ID: ' + id);
+}
+
+function verDetalhes(id) {
+    alert('Ver detalhes da inspeção ID: ' + id);
+}
+
+function aplicarFiltros() {
+    alert('Filtros aplicados!');
+}
+
+console.log('Inspeções carregado!');
+</script>
+{% endblock %}

@@ -1,0 +1,470 @@
+{% extends "base.html" %}
+
+{% block title %}Controle de Estoque{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-warehouse me-2"></i>Controle de Estoque
+        </h1>
+        <button class="btn btn-success" onclick="novaMovimentacao()">
+            <i class="fas fa-plus me-1"></i>Nova Movimentação
+        </button>
+    </div>
+
+    <!-- Cards de Status -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total de Itens
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">2,847</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-boxes fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Valor Total
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 485.2k</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Estoque Baixo
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">23</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                Sem Estoque
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">7</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-times-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <label class="form-label">Categoria</label>
+                    <select class="form-select" id="filtroCategoria">
+                        <option value="">Todas</option>
+                        <option value="materia-prima">Matéria Prima</option>
+                        <option value="produtos-acabados">Produtos Acabados</option>
+                        <option value="componentes">Componentes</option>
+                        <option value="embalagens">Embalagens</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Status</label>
+                    <select class="form-select" id="filtroStatus">
+                        <option value="">Todos</option>
+                        <option value="normal">Normal</option>
+                        <option value="baixo">Estoque Baixo</option>
+                        <option value="critico">Crítico</option>
+                        <option value="zerado">Sem Estoque</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Localização</label>
+                    <select class="form-select" id="filtroLocalizacao">
+                        <option value="">Todas</option>
+                        <option value="almoxarifado">Almoxarifado</option>
+                        <option value="linha-producao">Linha Produção</option>
+                        <option value="expedicao">Expedição</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button class="btn btn-primary w-100" onclick="aplicarFiltros()">
+                        <i class="fas fa-filter me-1"></i>Filtrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de Estoque -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h6 class="m-0 font-weight-bold text-primary">Itens em Estoque</h6>
+                <div class="btn-group btn-group-sm">
+                    <button class="btn btn-outline-primary active">Todos</button>
+                    <button class="btn btn-outline-warning">Baixo</button>
+                    <button class="btn btn-outline-danger">Crítico</button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Descrição</th>
+                            <th>Categoria</th>
+                            <th>Localização</th>
+                            <th>Qtd Atual</th>
+                            <th>Qtd Mínima</th>
+                            <th>Valor Unit.</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>MAT-001</strong></td>
+                            <td>
+                                <div>Chapa de Aço 1mm</div>
+                                <small class="text-muted">Material base para produção</small>
+                            </td>
+                            <td><span class="badge bg-info">Matéria Prima</span></td>
+                            <td>Almoxarifado A1</td>
+                            <td><strong>850 kg</strong></td>
+                            <td>200 kg</td>
+                            <td>R$ 12,50</td>
+                            <td><span class="badge bg-success">Normal</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-info me-1" onclick="verDetalhes('MAT-001')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-primary" onclick="movimentar('MAT-001')">
+                                    <i class="fas fa-exchange-alt"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="table-warning">
+                            <td><strong>COMP-045</strong></td>
+                            <td>
+                                <div>Parafuso M8x20</div>
+                                <small class="text-muted">Componente de fixação</small>
+                            </td>
+                            <td><span class="badge bg-secondary">Componentes</span></td>
+                            <td>Almoxarifado B2</td>
+                            <td><strong>150 un</strong></td>
+                            <td>500 un</td>
+                            <td>R$ 0,35</td>
+                            <td><span class="badge bg-warning">Baixo</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-info me-1" onclick="verDetalhes('COMP-045')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="solicitarCompra('COMP-045')">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="table-danger">
+                            <td><strong>EMB-012</strong></td>
+                            <td>
+                                <div>Caixa Papelão 30x20x15</div>
+                                <small class="text-muted">Embalagem produto final</small>
+                            </td>
+                            <td><span class="badge bg-warning">Embalagens</span></td>
+                            <td>Expedição C1</td>
+                            <td><strong>0 un</strong></td>
+                            <td>100 un</td>
+                            <td>R$ 2,80</td>
+                            <td><span class="badge bg-danger">Sem Estoque</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-info me-1" onclick="verDetalhes('EMB-012')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="comprarUrgente('EMB-012')">
+                                    <i class="fas fa-bolt"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>PROD-A001</strong></td>
+                            <td>
+                                <div>Produto A Finalizado</div>
+                                <small class="text-muted">Produto acabado pronto</small>
+                            </td>
+                            <td><span class="badge bg-success">Produto Acabado</span></td>
+                            <td>Expedição A1</td>
+                            <td><strong>425 un</strong></td>
+                            <td>50 un</td>
+                            <td>R$ 89,90</td>
+                            <td><span class="badge bg-success">Normal</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-info me-1" onclick="verDetalhes('PROD-A001')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="expedir('PROD-A001')">
+                                    <i class="fas fa-truck"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Movimentações Recentes -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Movimentações Recentes</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Data/Hora</th>
+                                    <th>Tipo</th>
+                                    <th>Item</th>
+                                    <th>Quantidade</th>
+                                    <th>Responsável</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div>07/08/2025</div>
+                                        <small class="text-muted">14:30</small>
+                                    </td>
+                                    <td><span class="badge bg-success">Entrada</span></td>
+                                    <td>Chapa de Aço 1mm</td>
+                                    <td>+200 kg</td>
+                                    <td>João Almoxarife</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div>07/08/2025</div>
+                                        <small class="text-muted">13:15</small>
+                                    </td>
+                                    <td><span class="badge bg-danger">Saída</span></td>
+                                    <td>Parafuso M8x20</td>
+                                    <td>-500 un</td>
+                                    <td>Maria Produção</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div>07/08/2025</div>
+                                        <small class="text-muted">10:45</small>
+                                    </td>
+                                    <td><span class="badge bg-info">Transferência</span></td>
+                                    <td>Produto A</td>
+                                    <td>50 un</td>
+                                    <td>Pedro Expedição</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card shadow mb-3">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-danger">Alertas de Estoque</h6>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold text-danger">Caixa Papelão 30x20x15</div>
+                                <small class="text-muted">Sem estoque - Urgente</small>
+                            </div>
+                            <span class="badge bg-danger rounded-pill">0</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold text-warning">Parafuso M8x20</div>
+                                <small class="text-muted">Abaixo do mínimo</small>
+                            </div>
+                            <span class="badge bg-warning rounded-pill">150</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold text-warning">Tinta Azul RAL5010</div>
+                                <small class="text-muted">Estoque baixo</small>
+                            </div>
+                            <span class="badge bg-warning rounded-pill">25L</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Estatísticas</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="graficoEstoque" width="300" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Nova Movimentação -->
+<div class="modal fade" id="modalNovaMovimentacao" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-plus me-2"></i>Nova Movimentação
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formNovaMovimentacao">
+                    <div class="mb-3">
+                        <label class="form-label">Tipo de Movimentação *</label>
+                        <select class="form-select" required>
+                            <option value="">Selecione</option>
+                            <option value="entrada">Entrada</option>
+                            <option value="saida">Saída</option>
+                            <option value="transferencia">Transferência</option>
+                            <option value="ajuste">Ajuste de Estoque</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Item *</label>
+                        <select class="form-select" required>
+                            <option value="">Selecione</option>
+                            <option value="MAT-001">Chapa de Aço 1mm</option>
+                            <option value="COMP-045">Parafuso M8x20</option>
+                            <option value="EMB-012">Caixa Papelão 30x20x15</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Quantidade *</label>
+                        <input type="number" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Localização *</label>
+                        <select class="form-select" required>
+                            <option value="">Selecione</option>
+                            <option value="almoxarifado-a1">Almoxarifado A1</option>
+                            <option value="almoxarifado-b2">Almoxarifado B2</option>
+                            <option value="expedicao-c1">Expedição C1</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Observações</label>
+                        <textarea class="form-control" rows="2"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="salvarMovimentacao()">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Gráfico de Estoque por Categoria
+const ctx = document.getElementById('graficoEstoque').getContext('2d');
+const graficoEstoque = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Matéria Prima', 'Componentes', 'Produtos Acabados', 'Embalagens'],
+        datasets: [{
+            data: [45, 30, 15, 10],
+            backgroundColor: [
+                '#007bff',
+                '#6c757d', 
+                '#28a745',
+                '#ffc107'
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+function novaMovimentacao() {
+    var modal = new bootstrap.Modal(document.getElementById('modalNovaMovimentacao'));
+    modal.show();
+}
+
+function salvarMovimentacao() {
+    alert('Movimentação salva com sucesso!');
+    var modal = bootstrap.Modal.getInstance(document.getElementById('modalNovaMovimentacao'));
+    modal.hide();
+}
+
+function verDetalhes(codigo) {
+    alert('Ver detalhes do item: ' + codigo);
+}
+
+function movimentar(codigo) {
+    alert('Movimentar item: ' + codigo);
+}
+
+function solicitarCompra(codigo) {
+    alert('Solicitar compra do item: ' + codigo);
+}
+
+function aplicarFiltros() {
+    alert('Filtros aplicados!');
+}
+
+console.log('Estoque carregado!');
+</script>
+{% endblock %}

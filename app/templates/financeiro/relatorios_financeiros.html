@@ -1,0 +1,442 @@
+{% extends "base.html" %}
+
+{% block title %}Relatórios Financeiros{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-file-alt me-2"></i>Relatórios Financeiros
+        </h1>
+        <div class="btn-group">
+            <button class="btn btn-success" onclick="gerarRelatorioPersonalizado()">
+                <i class="fas fa-plus me-1"></i>Relatório Personalizado
+            </button>
+            <button class="btn btn-info" onclick="agendarRelatorio()">
+                <i class="fas fa-clock me-1"></i>Agendar Relatório
+            </button>
+        </div>
+    </div>
+
+    <!-- Filtros Globais -->
+    <div class="card shadow mb-4">
+        <div class="card-header">
+            <h6 class="m-0 font-weight-bold text-primary">Filtros de Período</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-2">
+                    <label class="form-label">Data Início</label>
+                    <input type="date" class="form-control" id="dataInicio" value="2025-01-01">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Data Fim</label>
+                    <input type="date" class="form-control" id="dataFim" value="2025-08-07">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Período Rápido</label>
+                    <select class="form-select" onchange="aplicarPeriodoRapido(this.value)">
+                        <option value="">Personalizado</option>
+                        <option value="hoje">Hoje</option>
+                        <option value="semana">Esta Semana</option>
+                        <option value="mes">Este Mês</option>
+                        <option value="trimestre">Este Trimestre</option>
+                        <option value="ano">Este Ano</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Centro de Custo</label>
+                    <select class="form-select" id="centroCusto">
+                        <option value="">Todos</option>
+                        <option value="administrativo">Administrativo</option>
+                        <option value="vendas">Vendas</option>
+                        <option value="producao">Produção</option>
+                        <option value="marketing">Marketing</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Formato</label>
+                    <select class="form-select" id="formatoRelatorio">
+                        <option value="pdf">PDF</option>
+                        <option value="excel">Excel</option>
+                        <option value="csv">CSV</option>
+                        <option value="html">HTML</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button class="btn btn-primary w-100" onclick="atualizarFiltros()">
+                        <i class="fas fa-filter me-1"></i>Aplicar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Relatórios Disponíveis -->
+    <div class="row">
+        <!-- Relatórios Principais -->
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Relatórios Principais</h6>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="accordionRelatorios">
+                        <!-- DRE e Balanço -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDRE">
+                                    <i class="fas fa-chart-bar me-2"></i>DRE e Balanço
+                                </button>
+                            </h2>
+                            <div id="collapseDRE" class="accordion-collapse collapse show" data-bs-parent="#accordionRelatorios">
+                                <div class="accordion-body">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <div class="d-flex justify-content-between align-items-center p-3 border rounded">
+                                                <div>
+                                                    <h6 class="mb-1">DRE Gerencial</h6>
+                                                    <p class="mb-0 text-muted">Demonstração do Resultado</p>
+                                                </div>
+                                                <button class="btn btn-primary btn-sm" onclick="gerarRelatorio('dre')">
+                                                    <i class="fas fa-download me-1"></i>Gerar
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="d-flex justify-content-between align-items-center p-3 border rounded">
+                                                <div>
+                                                    <h6 class="mb-1">Balanço Patrimonial</h6>
+                                                    <p class="mb-0 text-muted">Posição patrimonial</p>
+                                                </div>
+                                                <button class="btn btn-primary btn-sm" onclick="gerarRelatorio('balanco')">
+                                                    <i class="fas fa-download me-1"></i>Gerar
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="d-flex justify-content-between align-items-center p-3 border rounded">
+                                                <div>
+                                                    <h6 class="mb-1">Fluxo de Caixa</h6>
+                                                    <p class="mb-0 text-muted">Movimentação de caixa</p>
+                                                </div>
+                                                <button class="btn btn-primary btn-sm" onclick="gerarRelatorio('fluxo-caixa')">
+                                                    <i class="fas fa-download me-1"></i>Gerar
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="d-flex justify-content-between align-items-center p-3 border rounded">
+                                                <div>
+                                                    <h6 class="mb-1">Análise Vertical</h6>
+                                                    <p class="mb-0 text-muted">Participação percentual</p>
+                                                </div>
+                                                <button class="btn btn-primary btn-sm" onclick="gerarRelatorio('analise-vertical')">
+                                                    <i class="fas fa-download me-1"></i>Gerar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contas a Pagar e Receber -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseContas">
+                                    <i class="fas fa-credit-card me-2"></i>Contas a Pagar e Receber
+                                </button>
+                            </h2>
+                            <div id="collapseContas" class="accordion-collapse collapse" data-bs-parent="#accordionRelatorios">
+                                <div class="accordion-body">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <div class="d-flex justify-content-between align-items-center p-3 border rounded">
+                                                <div>
+                                                    <h6 class="mb-1">Contas a Receber</h6>
+                                                    <p class="mb-0 text-muted">Títulos em aberto</p>
+                                                </div>
+                                                <button class="btn btn-success btn-sm" onclick="gerarRelatorio('contas-receber')">
+                                                    <i class="fas fa-download me-1"></i>Gerar
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="d-flex justify-content-between align-items-center p-3 border rounded">
+                                                <div>
+                                                    <h6 class="mb-1">Contas a Pagar</h6>
+                                                    <p class="mb-0 text-muted">Compromissos pendentes</p>
+                                                </div>
+                                                <button class="btn btn-danger btn-sm" onclick="gerarRelatorio('contas-pagar')">
+                                                    <i class="fas fa-download me-1"></i>Gerar
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="d-flex justify-content-between align-items-center p-3 border rounded">
+                                                <div>
+                                                    <h6 class="mb-1">Vencimentos</h6>
+                                                    <p class="mb-0 text-muted">Títulos vencendo</p>
+                                                </div>
+                                                <button class="btn btn-warning btn-sm" onclick="gerarRelatorio('vencimentos')">
+                                                    <i class="fas fa-download me-1"></i>Gerar
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="d-flex justify-content-between align-items-center p-3 border rounded">
+                                                <div>
+                                                    <h6 class="mb-1">Aging List</h6>
+                                                    <p class="mb-0 text-muted">Análise de vencimentos</p>
+                                                </div>
+                                                <button class="btn btn-info btn-sm" onclick="gerarRelatorio('aging')">
+                                                    <i class="fas fa-download me-1"></i>Gerar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Análises Gerenciais -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAnalises">
+                                    <i class="fas fa-chart-line me-2"></i>Análises Gerenciais
+                                </button>
+                            </h2>
+                            <div id="collapseAnalises" class="accordion-collapse collapse" data-bs-parent="#accordionRelatorios">
+                                <div class="accordion-body">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <div class="d-flex justify-content-between align-items-center p-3 border rounded">
+                                                <div>
+                                                    <h6 class="mb-1">Centro de Custo</h6>
+                                                    <p class="mb-0 text-muted">Análise por departamento</p>
+                                                </div>
+                                                <button class="btn btn-primary btn-sm" onclick="gerarRelatorio('centro-custo')">
+                                                    <i class="fas fa-download me-1"></i>Gerar
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="d-flex justify-content-between align-items-center p-3 border rounded">
+                                                <div>
+                                                    <h6 class="mb-1">Rentabilidade</h6>
+                                                    <p class="mb-0 text-muted">Análise de rentabilidade</p>
+                                                </div>
+                                                <button class="btn btn-success btn-sm" onclick="gerarRelatorio('rentabilidade')">
+                                                    <i class="fas fa-download me-1"></i>Gerar
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="d-flex justify-content-between align-items-center p-3 border rounded">
+                                                <div>
+                                                    <h6 class="mb-1">Comparativo</h6>
+                                                    <p class="mb-0 text-muted">Análise comparativa</p>
+                                                </div>
+                                                <button class="btn btn-info btn-sm" onclick="gerarRelatorio('comparativo')">
+                                                    <i class="fas fa-download me-1"></i>Gerar
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="d-flex justify-content-between align-items-center p-3 border rounded">
+                                                <div>
+                                                    <h6 class="mb-1">Indicadores</h6>
+                                                    <p class="mb-0 text-muted">KPIs financeiros</p>
+                                                </div>
+                                                <button class="btn btn-warning btn-sm" onclick="gerarRelatorio('indicadores')">
+                                                    <i class="fas fa-download me-1"></i>Gerar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Painel Lateral -->
+        <div class="col-lg-4">
+            <!-- Relatórios Recentes -->
+            <div class="card shadow mb-4">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Relatórios Recentes</h6>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold">DRE Agosto 2025</div>
+                                <small class="text-muted">Gerado em 07/08 às 14:30</small>
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary" onclick="downloadRelatorio('dre-agosto-2025.pdf')">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold">Contas a Receber</div>
+                                <small class="text-muted">Gerado em 07/08 às 09:15</small>
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary" onclick="downloadRelatorio('contas-receber.xlsx')">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold">Fluxo de Caixa</div>
+                                <small class="text-muted">Gerado em 06/08 às 16:45</small>
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary" onclick="downloadRelatorio('fluxo-caixa.pdf')">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Relatórios Agendados -->
+            <div class="card shadow mb-4">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Relatórios Agendados</h6>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="fw-bold">DRE Mensal</div>
+                                <small class="text-muted">Todo dia 5 às 08:00</small>
+                            </div>
+                            <span class="badge bg-success rounded-pill">Ativo</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="fw-bold">Contas a Vencer</div>
+                                <small class="text-muted">Diário às 07:00</small>
+                            </div>
+                            <span class="badge bg-success rounded-pill">Ativo</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="fw-bold">Fluxo Semanal</div>
+                                <small class="text-muted">Segunda às 06:00</small>
+                            </div>
+                            <span class="badge bg-warning rounded-pill">Pausado</span>
+                        </div>
+                    </div>
+                    <div class="text-center mt-3">
+                        <button class="btn btn-outline-primary btn-sm" onclick="gerenciarAgendamentos()">
+                            <i class="fas fa-cog me-1"></i>Gerenciar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estatísticas -->
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Estatísticas</h6>
+                </div>
+                <div class="card-body">
+                    <div class="text-center">
+                        <div class="mb-3">
+                            <h4 class="text-primary">1,247</h4>
+                            <small class="text-muted">Relatórios gerados este mês</small>
+                        </div>
+                        <div class="mb-3">
+                            <h4 class="text-success">89%</h4>
+                            <small class="text-muted">Taxa de entrega automática</small>
+                        </div>
+                        <div class="mb-3">
+                            <h4 class="text-info">2.3 GB</h4>
+                            <small class="text-muted">Espaço utilizado</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function aplicarPeriodoRapido(periodo) {
+    const hoje = new Date();
+    const dataInicio = document.getElementById('dataInicio');
+    const dataFim = document.getElementById('dataFim');
+    
+    switch(periodo) {
+        case 'hoje':
+            dataInicio.value = hoje.toISOString().split('T')[0];
+            dataFim.value = hoje.toISOString().split('T')[0];
+            break;
+        case 'semana':
+            const inicioSemana = new Date(hoje.setDate(hoje.getDate() - hoje.getDay()));
+            dataInicio.value = inicioSemana.toISOString().split('T')[0];
+            dataFim.value = new Date().toISOString().split('T')[0];
+            break;
+        case 'mes':
+            const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+            dataInicio.value = inicioMes.toISOString().split('T')[0];
+            dataFim.value = new Date().toISOString().split('T')[0];
+            break;
+        case 'trimestre':
+            const inicioTrimestre = new Date(hoje.getFullYear(), Math.floor(hoje.getMonth() / 3) * 3, 1);
+            dataInicio.value = inicioTrimestre.toISOString().split('T')[0];
+            dataFim.value = new Date().toISOString().split('T')[0];
+            break;
+        case 'ano':
+            const inicioAno = new Date(hoje.getFullYear(), 0, 1);
+            dataInicio.value = inicioAno.toISOString().split('T')[0];
+            dataFim.value = new Date().toISOString().split('T')[0];
+            break;
+    }
+}
+
+function atualizarFiltros() {
+    alert('Filtros aplicados!');
+}
+
+function gerarRelatorio(tipo) {
+    const formato = document.getElementById('formatoRelatorio').value;
+    const dataInicio = document.getElementById('dataInicio').value;
+    const dataFim = document.getElementById('dataFim').value;
+    
+    alert('Gerando relatório: ' + tipo.toUpperCase() + '\n' +
+          'Formato: ' + formato.toUpperCase() + '\n' +
+          'Período: ' + dataInicio + ' a ' + dataFim);
+    
+    // Simular download
+    setTimeout(() => {
+        alert('Relatório ' + tipo + '.' + formato + ' gerado com sucesso!');
+    }, 2000);
+}
+
+function gerarRelatorioPersonalizado() {
+    alert('Abrir assistente de relatório personalizado');
+}
+
+function agendarRelatorio() {
+    alert('Configurar agendamento de relatório');
+}
+
+function downloadRelatorio(arquivo) {
+    alert('Download do arquivo: ' + arquivo);
+}
+
+function gerenciarAgendamentos() {
+    alert('Gerenciar relatórios agendados');
+}
+
+console.log('Relatórios Financeiros carregado!');
+</script>
+{% endblock %}

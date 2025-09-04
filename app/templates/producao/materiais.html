@@ -1,0 +1,421 @@
+{% extends "base.html" %}
+
+{% block title %}Gestão de Materiais{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-boxes me-2"></i>Gestão de Materiais
+        </h1>
+        <button class="btn btn-success" onclick="cadastrarMaterial()">
+            <i class="fas fa-plus me-1"></i>Cadastrar Material
+        </button>
+    </div>
+
+    <!-- Cards Resumo -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Total de Materiais
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">1,247</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-list fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Matéria Prima
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">456</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-industry fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Componentes
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">621</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-cog fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Fornecedores Ativos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">87</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-truck fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-2">
+                    <label class="form-label">Categoria</label>
+                    <select class="form-select">
+                        <option value="">Todas</option>
+                        <option value="materia-prima">Matéria Prima</option>
+                        <option value="componentes">Componentes</option>
+                        <option value="embalagens">Embalagens</option>
+                        <option value="consumiveis">Consumíveis</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Tipo</label>
+                    <select class="form-select">
+                        <option value="">Todos</option>
+                        <option value="nacional">Nacional</option>
+                        <option value="importado">Importado</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Status</label>
+                    <select class="form-select">
+                        <option value="">Todos</option>
+                        <option value="ativo">Ativo</option>
+                        <option value="inativo">Inativo</option>
+                        <option value="descontinuado">Descontinuado</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Buscar</label>
+                    <input type="text" class="form-control" placeholder="Código ou descrição...">
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button class="btn btn-primary me-2">
+                        <i class="fas fa-search me-1"></i>Buscar
+                    </button>
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-download me-1"></i>Exportar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de Materiais -->
+    <div class="card shadow">
+        <div class="card-header py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h6 class="m-0 font-weight-bold text-primary">Cadastro de Materiais</h6>
+                <div class="btn-group btn-group-sm">
+                    <button class="btn btn-outline-primary active">Todos</button>
+                    <button class="btn btn-outline-primary">Matéria Prima</button>
+                    <button class="btn btn-outline-primary">Componentes</button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Descrição</th>
+                            <th>Categoria</th>
+                            <th>Unidade</th>
+                            <th>Fornecedor Principal</th>
+                            <th>Preço Médio</th>
+                            <th>Lead Time</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>MAT-001</strong></td>
+                            <td>
+                                <div>Chapa de Aço Carbono 1mm</div>
+                                <small class="text-muted">Material base para estampagem</small>
+                            </td>
+                            <td><span class="badge bg-primary">Matéria Prima</span></td>
+                            <td>KG</td>
+                            <td>
+                                <div>Aços Brasil Ltda</div>
+                                <small class="text-muted">CNPJ: 12.345.678/0001-90</small>
+                            </td>
+                            <td>R$ 12,50</td>
+                            <td>5 dias</td>
+                            <td><span class="badge bg-success">Ativo</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-info me-1" onclick="verMaterial('MAT-001')" title="Ver">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning me-1" onclick="editarMaterial('MAT-001')" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-primary" onclick="consultarPrecos('MAT-001')" title="Preços">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>COMP-045</strong></td>
+                            <td>
+                                <div>Parafuso Sextavado M8x20 Zincado</div>
+                                <small class="text-muted">Fixação estrutural</small>
+                            </td>
+                            <td><span class="badge bg-secondary">Componentes</span></td>
+                            <td>UN</td>
+                            <td>
+                                <div>Parafusos & Cia</div>
+                                <small class="text-muted">CNPJ: 98.765.432/0001-10</small>
+                            </td>
+                            <td>R$ 0,35</td>
+                            <td>3 dias</td>
+                            <td><span class="badge bg-success">Ativo</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-info me-1" onclick="verMaterial('COMP-045')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning me-1" onclick="editarMaterial('COMP-045')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-primary" onclick="consultarPrecos('COMP-045')">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>EMB-012</strong></td>
+                            <td>
+                                <div>Caixa Papelão Ondulado 30x20x15cm</div>
+                                <small class="text-muted">Embalagem produto final</small>
+                            </td>
+                            <td><span class="badge bg-warning">Embalagens</span></td>
+                            <td>UN</td>
+                            <td>
+                                <div>Embalagens Express</div>
+                                <small class="text-muted">CNPJ: 11.222.333/0001-44</small>
+                            </td>
+                            <td>R$ 2,80</td>
+                            <td>7 dias</td>
+                            <td><span class="badge bg-success">Ativo</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-info me-1" onclick="verMaterial('EMB-012')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning me-1" onclick="editarMaterial('EMB-012')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-primary" onclick="consultarPrecos('EMB-012')">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>CONS-007</strong></td>
+                            <td>
+                                <div>Óleo de Corte Solúvel 20L</div>
+                                <small class="text-muted">Fluido para usinagem</small>
+                            </td>
+                            <td><span class="badge bg-info">Consumíveis</span></td>
+                            <td>L</td>
+                            <td>
+                                <div>Química Industrial S/A</div>
+                                <small class="text-muted">CNPJ: 55.666.777/0001-88</small>
+                            </td>
+                            <td>R$ 45,00</td>
+                            <td>10 dias</td>
+                            <td><span class="badge bg-warning">Sob Consulta</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-info me-1" onclick="verMaterial('CONS-007')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning me-1" onclick="editarMaterial('CONS-007')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="solicitarCotacao('CONS-007')">
+                                    <i class="fas fa-file-invoice"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Paginação -->
+            <nav class="mt-3">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled">
+                        <a class="page-link">Anterior</a>
+                    </li>
+                    <li class="page-item active">
+                        <a class="page-link" href="#">1</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">2</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">3</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Próximo</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Cadastrar Material -->
+<div class="modal fade" id="modalCadastrarMaterial" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-plus me-2"></i>Cadastrar Material
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formCadastrarMaterial">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Código *</label>
+                                <input type="text" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Categoria *</label>
+                                <select class="form-select" required>
+                                    <option value="">Selecione</option>
+                                    <option value="materia-prima">Matéria Prima</option>
+                                    <option value="componentes">Componentes</option>
+                                    <option value="embalagens">Embalagens</option>
+                                    <option value="consumiveis">Consumíveis</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Descrição *</label>
+                        <input type="text" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Especificações Técnicas</label>
+                        <textarea class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Unidade *</label>
+                                <select class="form-select" required>
+                                    <option value="">Selecione</option>
+                                    <option value="UN">Unidade</option>
+                                    <option value="KG">Quilograma</option>
+                                    <option value="L">Litro</option>
+                                    <option value="M">Metro</option>
+                                    <option value="M2">Metro Quadrado</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Estoque Mínimo</label>
+                                <input type="number" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Lead Time (dias)</label>
+                                <input type="number" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Fornecedor Principal</label>
+                        <select class="form-select">
+                            <option value="">Selecione</option>
+                            <option value="1">Aços Brasil Ltda</option>
+                            <option value="2">Parafusos & Cia</option>
+                            <option value="3">Embalagens Express</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="salvarMaterial()">Cadastrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function cadastrarMaterial() {
+    var modal = new bootstrap.Modal(document.getElementById('modalCadastrarMaterial'));
+    modal.show();
+}
+
+function salvarMaterial() {
+    alert('Material cadastrado com sucesso!');
+    var modal = bootstrap.Modal.getInstance(document.getElementById('modalCadastrarMaterial'));
+    modal.hide();
+}
+
+function verMaterial(codigo) {
+    alert('Ver detalhes do material: ' + codigo);
+}
+
+function editarMaterial(codigo) {
+    alert('Editar material: ' + codigo);
+}
+
+function consultarPrecos(codigo) {
+    alert('Consultar histórico de preços: ' + codigo);
+}
+
+function solicitarCotacao(codigo) {
+    alert('Solicitar nova cotação: ' + codigo);
+}
+
+console.log('Materiais carregado!');
+</script>
+{% endblock %}
