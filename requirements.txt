@@ -1,13 +1,20 @@
-Flask
-Flask-SQLAlchemy==3.0.5
-PyMySQL==1.1.0
-python-dotenv
-Werkzeug
-cryptography==41.0.4
-python-dotenv 
-Flask-Migrate
-Flask-Login
-Flask-WTF==1.2.1
-WTForms
-gunicorn==21.2.0
-email-validator
+# Flask e dependências principais (versões compatíveis)
+Flask==2.2.5
+Werkzeug==2.2.3
+
+# Banco de dados (versões estáveis)
+SQLAlchemy==1.4.53
+Flask-SQLAlchemy==2.5.1
+Flask-Migrate==3.1.0
+
+# Autenticação e segurança
+Flask-Login==0.6.2
+Flask-WTF==1.0.1
+WTForms==3.0.1
+
+# Utilitários
+python-dotenv==1.0.0
+email-validator==2.0.0
+
+# Para produção
+gunicorn==20.1.0

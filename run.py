@@ -4,15 +4,19 @@ import sys
 def get_environment():
     """Determina o ambiente baseado nas variáveis disponíveis"""
     
-    # Verificar se é Railway
+    # Verificar EasyPanel
+    if os.getenv('EASYPANEL_PROJECT_ID') or os.getenv('PORT'):
+        return 'production'
+    
+    # Verificar Railway
     if (os.getenv('RAILWAY_DB_HOST') and 
         os.getenv('RAILWAY_DB_PASSWORD')):
         return 'railway'
     
     # Verificar URL do banco
     database_url = os.getenv('DATABASE_URL', '')
-    if 'railway' in database_url or 'rlwy.net' in database_url:
-        return 'railway'
+    if any(keyword in database_url for keyword in ['railway', 'rlwy.net', 'postgres', 'mysql']):
+        return 'production'
     
     # Verificar se tem arquivo de configuração específico
     if os.path.exists('config.py'):
@@ -36,41 +40,24 @@ def ensure_database_exists():
             
         return True
     else:
-        # Para outros ambientes (Railway), assumir que o banco existe
+        # Para outros ambientes, assumir que o banco existe
         return True
-    
 
-def fix_werkzeug_compatibility():
-    """Corrige problemas de compatibilidade do Werkzeug"""
+def fix_import_compatibility():
+    """Corrige problemas de compatibilidade de importação"""
+    
     try:
+        # Tentar importar url_parse da nova localização primeiro
         from urllib.parse import urlparse
-        import werkzeug.urls
         
+        # Monkey patch para bibliotecas que ainda usam werkzeug.urls
+        import werkzeug.urls
         if not hasattr(werkzeug.urls, 'url_parse'):
             werkzeug.urls.url_parse = urlparse
+            print("✅ Compatibilidade werkzeug.urls.url_parse corrigida")
             
-    except Exception:
-        pass
-
-# Aplicar correção
-fix_werkzeug_compatibility()
-
-# Importar aplicação
-try:
-    from run import create_application
-    application = create_application()
-    
-except Exception as e:
-    print(f"Erro ao carregar aplicação: {e}")
-    
-    # Fallback - tentar importar diretamente
-    try:
-        from app import create_app
-        application = create_app('production')
-        
-    except Exception as e2:
-        print(f"Erro no fallback: {e2}")
-        raise
+    except Exception as e:
+        print(f"⚠️  Aviso: Não foi possível corrigir compatibilidade: {e}")
 
 def create_admin_safely(app):
     """Cria usuário admin de forma segura"""
@@ -136,6 +123,9 @@ def create_admin_safely(app):
 
 def initialize_app():
     """Inicializa a aplicação Flask"""
+    
+    # Corrigir problemas de compatibilidade primeiro
+    fix_import_compatibility()
     
     # Determinar ambiente
     environment = get_environment()
@@ -206,7 +196,7 @@ def run_development_server(app):
         print(f"\n❌ Erro no servidor: {e}")
 
 def run_production_server(app):
-    """Executa o servidor de produção"""
+    """Executa o servidor de produção usando Flask built-in server"""
     
     port = int(os.environ.get('PORT', 8000))
     host = os.environ.get('HOST', '0.0.0.0')
@@ -254,6 +244,68 @@ def main():
         run_production_server(app)
     
     return True
+
+# Para compatibilidade com WSGI servers
+def create_application():
+    """Factory function para WSGI servers como Gunicorn"""
+    
+    fix_import_compatibility()
+    
+    try:
+        # Importar configuração
+        from config import config
+        
+        environment = get_environment()
+        config_class = config.get(environment, config['default'])
+        
+        print(f"🔧 Usando configuração: {config_class.__name__}")
+        
+        from app import create_app, db
+        
+        app = create_app(environment)
+        
+        # Configurar banco e admin em contexto de aplicação
+        with app.app_context():
+            try:
+                from app.models.user import User
+                
+                # Criar tabelas se não existirem
+                print("🔧 Criando estrutura do banco...")
+                db.create_all()
+                print("✅ Estrutura criada!")
+                
+                # Criar admin se não existir
+                admin = User.query.filter_by(username='admin').first()
+                if not admin:
+                    print("🔧 Criando usuário admin...")
+                    admin = User(
+                        username='admin',
+                        email='admin@corrigindoarota.com.br',
+                        perfil='admin',
+                        ativo=True
+                    )
+                    admin.set_password('admin123')
+                    db.session.add(admin)
+                    db.session.commit()
+                    print("✅ Admin criado!")
+                else:
+                    print("✅ Admin já existe!")
+                    
+            except Exception as e:
+                print(f"⚠️  Aviso ao configurar banco: {e}")
+                import traceback
+                traceback.print_exc()
+        
+        return app
+        
+    except Exception as e:
+        print(f"❌ Erro ao criar aplicação WSGI: {e}")
+        import traceback
+        traceback.print_exc()
+        raise
+
+# Para Gunicorn e outros WSGI servers
+application = create_application()
 
 if __name__ == '__main__':
     try:
