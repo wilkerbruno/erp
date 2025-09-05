@@ -38,6 +38,39 @@ def ensure_database_exists():
     else:
         # Para outros ambientes (Railway), assumir que o banco existe
         return True
+    
+
+def fix_werkzeug_compatibility():
+    """Corrige problemas de compatibilidade do Werkzeug"""
+    try:
+        from urllib.parse import urlparse
+        import werkzeug.urls
+        
+        if not hasattr(werkzeug.urls, 'url_parse'):
+            werkzeug.urls.url_parse = urlparse
+            
+    except Exception:
+        pass
+
+# Aplicar correção
+fix_werkzeug_compatibility()
+
+# Importar aplicação
+try:
+    from run import create_application
+    application = create_application()
+    
+except Exception as e:
+    print(f"Erro ao carregar aplicação: {e}")
+    
+    # Fallback - tentar importar diretamente
+    try:
+        from app import create_app
+        application = create_app('production')
+        
+    except Exception as e2:
+        print(f"Erro no fallback: {e2}")
+        raise
 
 def create_admin_safely(app):
     """Cria usuário admin de forma segura"""
