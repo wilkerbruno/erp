@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-"""
-Script principal corrigido para iniciar a aplicação Flask
-"""
 import os
 import sys
 
