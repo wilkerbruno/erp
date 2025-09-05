@@ -1,5 +1,21 @@
 import os
 import sys
+from dotenv import load_dotenv
+
+# Carrega variáveis do arquivo .env
+load_dotenv()
+
+# Força o uso da configuração de desenvolvimento
+os.environ['FLASK_ENV'] = 'development'
+
+# Força recarregar módulos de configuração
+if 'config' in sys.modules:
+    del sys.modules['config']
+
+# Define explicitamente o ambiente
+os.environ['FLASK_ENV'] = 'development'
+
+
 
 def get_environment():
     """Determina o ambiente baseado nas variáveis disponíveis"""
@@ -303,6 +319,9 @@ def create_application():
         import traceback
         traceback.print_exc()
         raise
+
+
+
 
 # Para Gunicorn e outros WSGI servers
 application = create_application()
