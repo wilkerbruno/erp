@@ -3,8 +3,6 @@ from datetime import timedelta
 
 class Config:
     """Configuração base"""
-
-    
     
     # Chave secreta
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production'
@@ -57,11 +55,12 @@ class ProductionConfig(Config):
     
     DEBUG = False
     
-    # MySQL - Host Externo para produção
+    # MySQL - Host para produção no Easy Panel
     MYSQL_USER = os.environ.get('MYSQL_USER') or 'erp_admin'
     MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD') or '8de3405e496812d04fc7'
-    MYSQL_HOST = os.environ.get('MYSQL_HOST') or 'easypanel.pontocomdesconto.com.br'
-    MYSQL_PORT = os.environ.get('MYSQL_PORT') or '33070'
+    # No Easy Panel, use o host interno se disponível
+    MYSQL_HOST = os.environ.get('MYSQL_HOST') or 'divisions_bhs_erp_bd'
+    MYSQL_PORT = os.environ.get('MYSQL_PORT') or '3306'
     MYSQL_DATABASE = os.environ.get('MYSQL_DATABASE') or 'erp'
     
     # URL de conexão MySQL
