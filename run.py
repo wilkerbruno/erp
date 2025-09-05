@@ -4,7 +4,6 @@ Script principal corrigido para iniciar a aplicação Flask
 """
 import os
 import sys
-from flask_migrate import Migrate
 
 def get_environment():
     """Determina o ambiente baseado nas variáveis disponíveis"""
@@ -104,63 +103,6 @@ def create_admin_safely(app):
             
     except Exception as e:
         print(f"❌ Erro geral ao criar admin: {e}")
-        
-        # Fallback: tentar criar via SQL direto (só para SQLite)
-        try:
-            environment = get_environment()
-            if environment == 'development':
-                print("🔧 Tentando fallback com SQLite...")
-                return create_admin_sqlite_fallback()
-            else:
-                return False
-                
-        except Exception as fallback_error:
-            print(f"❌ Fallback também falhou: {fallback_error}")
-            return False
-
-def create_admin_sqlite_fallback():
-    """Fallback para criar admin diretamente no SQLite"""
-    
-    try:
-        import sqlite3
-        from werkzeug.security import generate_password_hash
-        
-        db_file = 'instance/app.db'
-        conn = sqlite3.connect(db_file)
-        cursor = conn.cursor()
-        
-        # Criar tabela se não existir
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username VARCHAR(80) UNIQUE NOT NULL,
-                email VARCHAR(120) UNIQUE NOT NULL,
-                password_hash VARCHAR(255),
-                perfil VARCHAR(20) DEFAULT 'user',
-                ativo BOOLEAN DEFAULT 1,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                last_login DATETIME
-            )
-        """)
-        
-        # Verificar se admin existe
-        cursor.execute("SELECT id FROM users WHERE username = 'admin'")
-        if not cursor.fetchone():
-            password_hash = generate_password_hash('admin123')
-            cursor.execute("""
-                INSERT INTO users (username, email, password_hash, perfil, ativo)
-                VALUES ('admin', 'admin@corrigindoarota.com.br', ?, 'admin', 1)
-            """, (password_hash,))
-            print("✅ Admin criado via SQLite!")
-        else:
-            print("✅ Admin já existe no SQLite!")
-        
-        conn.commit()
-        conn.close()
-        return True
-        
-    except Exception as e:
-        print(f"❌ Falha no fallback SQLite: {e}")
         return False
 
 def initialize_app():
@@ -181,8 +123,14 @@ def initialize_app():
         
         app = create_app(environment)
         
-        # Inicializar Flask-Migrate
-        migrate = Migrate(app, db)
+        # Inicializar Flask-Migrate apenas em desenvolvimento
+        if environment == 'development':
+            try:
+                from flask_migrate import Migrate
+                migrate = Migrate(app, db)
+                print("✅ Flask-Migrate inicializado!")
+            except ImportError:
+                print("⚠️  Flask-Migrate não disponível, continuando sem migrations...")
         
         print("✅ Aplicação Flask criada com sucesso!")
         
