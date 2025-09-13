@@ -19,15 +19,15 @@ class Config:
     WTF_CSRF_TIME_LIMIT = None
 
 class DevelopmentConfig(Config):
-    """Configuração para desenvolvimento"""
+    """Configuração para desenvolvimento - EasyPanel Externa"""
     
     DEBUG = True
     
-    # MySQL - Host Interno para desenvolvimento local
+    # MySQL - EasyPanel Host Externo
     MYSQL_USER = os.environ.get('MYSQL_USER') or 'erp_admin'
     MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD') or '8de3405e496812d04fc7'
-    MYSQL_HOST = os.environ.get('MYSQL_HOST') or 'divisions_bhs_erp_bd'
-    MYSQL_PORT = os.environ.get('MYSQL_PORT') or '3306'
+    MYSQL_HOST = os.environ.get('MYSQL_HOST') or 'easypanel.pontocomdesconto.com.br'
+    MYSQL_PORT = os.environ.get('MYSQL_PORT') or '33070'
     MYSQL_DATABASE = os.environ.get('MYSQL_DATABASE') or 'erp'
     
     # URL de conexão MySQL
@@ -36,12 +36,12 @@ class DevelopmentConfig(Config):
     
     # Engine options para MySQL
     SQLALCHEMY_ENGINE_OPTIONS = {
-        'pool_timeout': 20,
+        'pool_timeout': 30,
         'pool_recycle': 3600,  # 1 hora
         'pool_pre_ping': True,
         'pool_size': 5,
         'max_overflow': 10,
-        'echo': False,  # Para debug, mude para True se quiser ver as queries SQL
+        'echo': False,
         'connect_args': {
             'charset': 'utf8mb4',
             'connect_timeout': 60,
@@ -51,14 +51,14 @@ class DevelopmentConfig(Config):
     }
 
 class ProductionConfig(Config):
-    """Configuração para produção"""
+    """Configuração para produção - EasyPanel Interno"""
     
     DEBUG = False
     
-    # MySQL - Host para produção no Easy Panel
+    # MySQL - EasyPanel Host Interno (quando rodando no próprio servidor)
     MYSQL_USER = os.environ.get('MYSQL_USER') or 'erp_admin'
     MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD') or '8de3405e496812d04fc7'
-    # No Easy Panel, use o host interno se disponível
+    # Tentar primeiro o host interno, depois externo como fallback
     MYSQL_HOST = os.environ.get('MYSQL_HOST') or 'divisions_bhs_erp_bd'
     MYSQL_PORT = os.environ.get('MYSQL_PORT') or '3306'
     MYSQL_DATABASE = os.environ.get('MYSQL_DATABASE') or 'erp'
@@ -79,17 +79,16 @@ class ProductionConfig(Config):
             'charset': 'utf8mb4',
             'connect_timeout': 60,
             'read_timeout': 30,
-            'write_timeout': 30,
-            'autocommit': True
+            'write_timeout': 30
         }
     }
 
-class LocalConfig(Config):
-    """Configuração para desenvolvimento local usando host externo"""
+class ExternalConfig(Config):
+    """Configuração forçando conexão externa - EasyPanel"""
     
-    DEBUG = True
+    DEBUG = False
     
-    # MySQL - Host Externo para desenvolvimento local
+    # MySQL - Forçar Host Externo EasyPanel
     MYSQL_USER = 'erp_admin'
     MYSQL_PASSWORD = '8de3405e496812d04fc7'
     MYSQL_HOST = 'easypanel.pontocomdesconto.com.br'
@@ -99,44 +98,13 @@ class LocalConfig(Config):
     # URL de conexão MySQL
     SQLALCHEMY_DATABASE_URI = f'mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DATABASE}'
     
-    # Engine options para desenvolvimento local
+    # Engine options para conexão externa
     SQLALCHEMY_ENGINE_OPTIONS = {
-        'pool_timeout': 20,
-        'pool_recycle': 3600,
-        'pool_pre_ping': True,
-        'pool_size': 3,
-        'max_overflow': 5,
-        'echo': True,  # Para ver as queries SQL em desenvolvimento
-        'connect_args': {
-            'charset': 'utf8mb4',
-            'connect_timeout': 60,
-            'read_timeout': 30,
-            'write_timeout': 30
-        }
-    }
-
-class InternalConfig(Config):
-    """Configuração para ambiente interno (usando host interno)"""
-    
-    DEBUG = False
-    
-    # MySQL - Host Interno
-    MYSQL_USER = 'erp_admin'
-    MYSQL_PASSWORD = '8de3405e496812d04fc7'
-    MYSQL_HOST = 'divisions_bhs_erp_bd'
-    MYSQL_PORT = '3306'
-    MYSQL_DATABASE = 'erp'
-    
-    # URL de conexão MySQL
-    SQLALCHEMY_DATABASE_URI = f'mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DATABASE}'
-    
-    # Engine options para ambiente interno
-    SQLALCHEMY_ENGINE_OPTIONS = {
-        'pool_size': 8,
         'pool_timeout': 30,
         'pool_recycle': 3600,
         'pool_pre_ping': True,
-        'max_overflow': 15,
+        'pool_size': 5,
+        'max_overflow': 10,
         'echo': False,
         'connect_args': {
             'charset': 'utf8mb4',
@@ -148,9 +116,8 @@ class InternalConfig(Config):
 
 # Mapeamento de configurações
 config = {
-    'development': DevelopmentConfig,  # Agora usa host externo
-    'production': ProductionConfig,
-    'local': LocalConfig,              # Alternativa para desenvolvimento local
-    'internal': InternalConfig,        # Para quando estiver no ambiente interno
-    'default': DevelopmentConfig       # Padrão mudou para DevelopmentConfig
+    'development': DevelopmentConfig,   # Usa host externo EasyPanel
+    'production': ProductionConfig,     # Usa host interno com fallback
+    'external': ExternalConfig,         # Força host externo sempre
+    'default': ExternalConfig           # Mudança: padrão agora é forçar externo
 }
