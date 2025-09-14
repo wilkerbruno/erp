@@ -5,34 +5,33 @@ from dotenv import load_dotenv
 # Carrega variáveis do arquivo .env
 load_dotenv()
 
+# Prevenir múltiplas inicializações
+_app_instance = None
+
 def get_environment():
     """Determina o ambiente baseado nas variáveis disponíveis"""
     
     # FORÇAR CONFIGURAÇÃO EXTERNA para EasyPanel
-    # Se estamos rodando em produção ou temos PORT definida (EasyPanel)
     if os.getenv('PORT') or os.getenv('EASYPANEL_PROJECT_ID'):
         print("🔧 Detectado ambiente EasyPanel - usando configuração externa")
-        return 'external'  # Forçar uso da configuração externa
+        return 'external'
     
-    # Verificar outras plataformas
+    # Outras plataformas
     if os.getenv('RAILWAY_DB_HOST'):
         return 'railway'
     
-    # Verificar URL do banco
     database_url = os.getenv('DATABASE_URL', '')
     if any(keyword in database_url for keyword in ['railway', 'rlwy.net', 'postgres', 'mysql']):
-        return 'external'  # Forçar externo para qualquer serviço cloud
+        return 'external'
     
-    # Para desenvolvimento local
     return 'development'
 
 def test_database_connection():
     """Testa a conexão com o banco antes de inicializar"""
     
     try:
-        from sqlalchemy import create_engine
+        from sqlalchemy import create_engine, text
         
-        # Dados do EasyPanel
         db_url = "mysql+pymysql://erp_admin:8de3405e496812d04fc7@easypanel.pontocomdesconto.com.br:33070/erp"
         
         print("🔧 Testando conexão com banco EasyPanel...")
@@ -52,10 +51,9 @@ def test_database_connection():
             }
         )
         
-        connection = engine.connect()
-        result = connection.execute("SELECT 1 as test")
-        test_value = result.fetchone()[0]
-        connection.close()
+        with engine.connect() as connection:
+            result = connection.execute(text("SELECT 1 as test"))
+            test_value = result.fetchone()[0]
         
         if test_value == 1:
             print("✅ Conexão com banco EasyPanel OK!")
@@ -70,35 +68,32 @@ def test_database_connection():
         return False
 
 def ensure_database_exists():
-    """Garante que o banco de dados existe e tem a estrutura necessária"""
+    """Garante que o banco de dados existe"""
     
     environment = get_environment()
     
     if environment in ['external', 'production']:
-        # Para EasyPanel, testar a conexão primeiro
         return test_database_connection()
     else:
-        # Para SQLite local
         os.makedirs('instance', exist_ok=True)
         return True
 
 def fix_import_compatibility():
-    """Corrige problemas de compatibilidade de importação"""
+    """Corrige problemas de compatibilidade"""
     
     try:
         from urllib.parse import urlparse
         
-        # Monkey patch para werkzeug se necessário
         try:
             import werkzeug.urls
             if not hasattr(werkzeug.urls, 'url_parse'):
                 werkzeug.urls.url_parse = urlparse
-                print("✅ Compatibilidade werkzeug.urls.url_parse corrigida")
+                print("✅ Compatibilidade werkzeug corrigida")
         except ImportError:
-            pass  # werkzeug não está disponível
+            pass
             
     except Exception as e:
-        print(f"⚠️  Aviso: Problema de compatibilidade: {e}")
+        print(f"⚠️  Problema de compatibilidade: {e}")
 
 def create_admin_safely(app):
     """Cria usuário admin de forma segura"""
@@ -111,17 +106,14 @@ def create_admin_safely(app):
             print("🔧 Verificando estrutura do banco...")
             
             try:
-                # Tentar criar todas as tabelas
                 db.create_all()
-                print("✅ Estrutura do banco verificada/criada!")
+                print("✅ Estrutura do banco verificada!")
                 
-                # Verificar se conseguimos acessar a tabela users
                 existing_admin = User.query.filter_by(username='admin').first()
                 
                 if existing_admin:
                     print("✅ Usuário admin já existe!")
                     
-                    # Garantir que tem senha
                     if not existing_admin.password_hash:
                         print("🔧 Corrigindo senha do admin...")
                         existing_admin.set_password('admin123')
@@ -143,68 +135,70 @@ def create_admin_safely(app):
                     
                     db.session.add(admin)
                     db.session.commit()
-                    print("✅ Usuário admin criado com sucesso!")
+                    print("✅ Usuário admin criado!")
                 
                 return True
                 
             except Exception as db_error:
-                print(f"❌ Erro no banco de dados: {db_error}")
+                print(f"❌ Erro no banco: {db_error}")
                 return False
             
     except Exception as e:
-        print(f"❌ Erro geral ao configurar admin: {e}")
-        import traceback
-        traceback.print_exc()
+        print(f"❌ Erro geral: {e}")
         return False
+
+def setup_environment_vars():
+    """Configura variáveis de ambiente para EasyPanel"""
+    
+    os.environ['DB_HOST'] = 'easypanel.pontocomdesconto.com.br'
+    os.environ['DB_PORT'] = '33070'
+    os.environ['DB_USER'] = 'erp_admin'
+    os.environ['DB_PASSWORD'] = '8de3405e496812d04fc7'
+    os.environ['DB_NAME'] = 'erp'
+    
+    # Para MySQL também
+    os.environ['MYSQL_HOST'] = 'easypanel.pontocomdesconto.com.br'
+    os.environ['MYSQL_PORT'] = '33070'
+    os.environ['MYSQL_USER'] = 'erp_admin'
+    os.environ['MYSQL_PASSWORD'] = '8de3405e496812d04fc7'
+    os.environ['MYSQL_DATABASE'] = 'erp'
 
 def initialize_app():
     """Inicializa a aplicação Flask"""
     
+    global _app_instance
+    
+    # Evitar múltiplas inicializações
+    if _app_instance is not None:
+        return _app_instance
+    
     print("🔧 Inicializando aplicação...")
     
-    # Corrigir compatibilidade primeiro
     fix_import_compatibility()
     
-    # Determinar ambiente
     environment = get_environment()
     print(f"🌍 Ambiente detectado: {environment}")
     
-    # Para EasyPanel, forçar variáveis de ambiente
     if environment == 'external':
         print("🔧 Configurando para EasyPanel...")
-        
-        # Definir explicitamente as variáveis para o EasyPanel
-        os.environ['DB_HOST'] = 'easypanel.pontocomdesconto.com.br'
-        os.environ['DB_PORT'] = '33070'
-        os.environ['DB_USER'] = 'erp_admin'
-        os.environ['DB_PASSWORD'] = '8de3405e496812d04fc7'
-        os.environ['DB_NAME'] = 'erp'
-        
-        # Para MySQL também
-        os.environ['MYSQL_HOST'] = 'easypanel.pontocomdesconto.com.br'
-        os.environ['MYSQL_PORT'] = '33070'
-        os.environ['MYSQL_USER'] = 'erp_admin'
-        os.environ['MYSQL_PASSWORD'] = '8de3405e496812d04fc7'
-        os.environ['MYSQL_DATABASE'] = 'erp'
+        setup_environment_vars()
     
-    # Verificar banco antes de continuar
     if not ensure_database_exists():
-        print("❌ Falha na configuração do banco de dados!")
+        print("❌ Falha na configuração do banco!")
         return None
     
-    # Importar e criar app
     try:
-        from app import create_app, db
+        from app import create_app
         
         app = create_app(environment)
         
         print("✅ Aplicação Flask criada!")
-        print(f"📊 Database URI: {app.config.get('SQLALCHEMY_DATABASE_URI')}")
+        print(f"📊 Database URI: {app.config.get('SQLALCHEMY_DATABASE_URI', 'N/A')}")
         
-        # Mostrar blueprints
         blueprints = list(app.blueprints.keys())
         print(f"📋 Blueprints: {', '.join(blueprints) if blueprints else 'Nenhum'}")
         
+        _app_instance = app
         return app
         
     except Exception as e:
@@ -214,7 +208,7 @@ def initialize_app():
         return None
 
 def run_production_server(app):
-    """Executa servidor de produção - EasyPanel"""
+    """Executa servidor de produção"""
     
     port = int(os.environ.get('PORT', 8000))
     host = os.environ.get('HOST', '0.0.0.0')
@@ -239,8 +233,6 @@ def run_production_server(app):
         )
     except Exception as e:
         print(f"❌ Erro no servidor: {e}")
-        import traceback
-        traceback.print_exc()
 
 def run_development_server(app):
     """Executa servidor de desenvolvimento"""
@@ -275,19 +267,16 @@ def main():
     print("🏢 SISTEMA ERP - CORRIGINDO À ROTA")
     print("="*50)
     
-    # Inicializar aplicação
     app = initialize_app()
     if not app:
-        print("❌ FALHA CRÍTICA NA INICIALIZAÇÃO!")
+        print("❌ FALHA NA INICIALIZAÇÃO!")
         return False
     
-    # Configurar admin
-    print("\n🔧 Configurando usuário administrador...")
+    print("\n🔧 Configurando administrador...")
     admin_ok = create_admin_safely(app)
     if not admin_ok:
-        print("⚠️  Problema ao criar admin - continuando...")
+        print("⚠️  Problema ao configurar admin - continuando...")
     
-    # Executar servidor
     environment = get_environment()
     print(f"\n🚀 Iniciando servidor ({environment})...")
     
@@ -299,33 +288,32 @@ def main():
     return True
 
 def create_application():
-    """Factory para WSGI servers (Gunicorn, etc.)"""
+    """Factory para WSGI servers"""
+    
+    global _app_instance
+    
+    # Evitar recriação se já existe
+    if _app_instance is not None:
+        print("✅ Usando instância existente")
+        return _app_instance
     
     print("🔧 WSGI Factory - EasyPanel")
     
-    # Configurar ambiente para EasyPanel
-    environment = 'external'  # Forçar configuração externa
-    
-    # Definir variáveis de ambiente
-    os.environ['DB_HOST'] = 'easypanel.pontocomdesconto.com.br'
-    os.environ['DB_PORT'] = '33070'
-    os.environ['DB_USER'] = 'erp_admin'
-    os.environ['DB_PASSWORD'] = '8de3405e496812d04fc7'
-    os.environ['DB_NAME'] = 'erp'
-    
     fix_import_compatibility()
+    setup_environment_vars()
+    
+    environment = 'external'
     
     try:
         from app import create_app, db
         
-        print(f"🔧 Criando app WSGI com configuração: {environment}")
+        print(f"🔧 Criando app WSGI: {environment}")
         
         app = create_app(environment)
         
-        # Configurar banco em contexto
         with app.app_context():
             try:
-                print("🔧 Configurando estrutura do banco...")
+                print("🔧 Configurando banco via WSGI...")
                 db.create_all()
                 
                 from app.models.user import User
@@ -348,6 +336,7 @@ def create_application():
                 print(f"⚠️  Problema WSGI: {e}")
         
         print("✅ Aplicação WSGI pronta!")
+        _app_instance = app
         return app
         
     except Exception as e:
