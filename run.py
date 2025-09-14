@@ -5,75 +5,100 @@ from dotenv import load_dotenv
 # Carrega variáveis do arquivo .env
 load_dotenv()
 
-# Força o uso da configuração de desenvolvimento
-os.environ['FLASK_ENV'] = 'development'
-
-# Força recarregar módulos de configuração
-if 'config' in sys.modules:
-    del sys.modules['config']
-
-# Define explicitamente o ambiente
-os.environ['FLASK_ENV'] = 'development'
-
-
-
 def get_environment():
     """Determina o ambiente baseado nas variáveis disponíveis"""
     
-    # Verificar EasyPanel
-    if os.getenv('EASYPANEL_PROJECT_ID') or os.getenv('PORT'):
-        return 'production'
+    # FORÇAR CONFIGURAÇÃO EXTERNA para EasyPanel
+    # Se estamos rodando em produção ou temos PORT definida (EasyPanel)
+    if os.getenv('PORT') or os.getenv('EASYPANEL_PROJECT_ID'):
+        print("🔧 Detectado ambiente EasyPanel - usando configuração externa")
+        return 'external'  # Forçar uso da configuração externa
     
-    # Verificar Railway
-    if (os.getenv('RAILWAY_DB_HOST') and 
-        os.getenv('RAILWAY_DB_PASSWORD')):
+    # Verificar outras plataformas
+    if os.getenv('RAILWAY_DB_HOST'):
         return 'railway'
     
     # Verificar URL do banco
     database_url = os.getenv('DATABASE_URL', '')
     if any(keyword in database_url for keyword in ['railway', 'rlwy.net', 'postgres', 'mysql']):
-        return 'production'
+        return 'external'  # Forçar externo para qualquer serviço cloud
     
-    # Verificar se tem arquivo de configuração específico
-    if os.path.exists('config.py'):
-        return 'development'
-    
-    # Default
+    # Para desenvolvimento local
     return 'development'
+
+def test_database_connection():
+    """Testa a conexão com o banco antes de inicializar"""
+    
+    try:
+        from sqlalchemy import create_engine
+        
+        # Dados do EasyPanel
+        db_url = "mysql+pymysql://erp_admin:8de3405e496812d04fc7@easypanel.pontocomdesconto.com.br:33070/erp"
+        
+        print("🔧 Testando conexão com banco EasyPanel...")
+        print(f"   Host: easypanel.pontocomdesconto.com.br:33070")
+        print(f"   Database: erp")
+        
+        engine = create_engine(
+            db_url,
+            pool_timeout=30,
+            pool_recycle=3600,
+            pool_pre_ping=True,
+            connect_args={
+                'charset': 'utf8mb4',
+                'connect_timeout': 60,
+                'read_timeout': 30,
+                'write_timeout': 30
+            }
+        )
+        
+        connection = engine.connect()
+        result = connection.execute("SELECT 1 as test")
+        test_value = result.fetchone()[0]
+        connection.close()
+        
+        if test_value == 1:
+            print("✅ Conexão com banco EasyPanel OK!")
+            return True
+        
+    except Exception as e:
+        print(f"❌ Erro na conexão com banco: {e}")
+        print("🔧 Verifique se:")
+        print("   - O banco está online no EasyPanel")
+        print("   - As credenciais estão corretas")
+        print("   - A porta 33070 está acessível")
+        return False
 
 def ensure_database_exists():
     """Garante que o banco de dados existe e tem a estrutura necessária"""
     
     environment = get_environment()
     
-    if environment == 'development':
-        # Para SQLite, garantir que o diretório instance existe
-        os.makedirs('instance', exist_ok=True)
-        
-        db_file = 'instance/app.db'
-        if not os.path.exists(db_file):
-            print(f"🔧 Banco {db_file} não existe, será criado automaticamente")
-            
-        return True
+    if environment in ['external', 'production']:
+        # Para EasyPanel, testar a conexão primeiro
+        return test_database_connection()
     else:
-        # Para outros ambientes, assumir que o banco existe
+        # Para SQLite local
+        os.makedirs('instance', exist_ok=True)
         return True
 
 def fix_import_compatibility():
     """Corrige problemas de compatibilidade de importação"""
     
     try:
-        # Tentar importar url_parse da nova localização primeiro
         from urllib.parse import urlparse
         
-        # Monkey patch para bibliotecas que ainda usam werkzeug.urls
-        import werkzeug.urls
-        if not hasattr(werkzeug.urls, 'url_parse'):
-            werkzeug.urls.url_parse = urlparse
-            print("✅ Compatibilidade werkzeug.urls.url_parse corrigida")
+        # Monkey patch para werkzeug se necessário
+        try:
+            import werkzeug.urls
+            if not hasattr(werkzeug.urls, 'url_parse'):
+                werkzeug.urls.url_parse = urlparse
+                print("✅ Compatibilidade werkzeug.urls.url_parse corrigida")
+        except ImportError:
+            pass  # werkzeug não está disponível
             
     except Exception as e:
-        print(f"⚠️  Aviso: Não foi possível corrigir compatibilidade: {e}")
+        print(f"⚠️  Aviso: Problema de compatibilidade: {e}")
 
 def create_admin_safely(app):
     """Cria usuário admin de forma segura"""
@@ -83,73 +108,88 @@ def create_admin_safely(app):
             from app import db
             from app.models.user import User
             
-            # Verificar se as tabelas existem
+            print("🔧 Verificando estrutura do banco...")
+            
             try:
-                # Tentar uma query simples para verificar se a tabela existe
-                User.query.first()
-                print("✅ Tabela 'users' encontrada")
+                # Tentar criar todas as tabelas
+                db.create_all()
+                print("✅ Estrutura do banco verificada/criada!")
                 
-            except Exception as table_error:
-                print(f"🔧 Tabela 'users' não encontrada, criando estrutura...")
+                # Verificar se conseguimos acessar a tabela users
+                existing_admin = User.query.filter_by(username='admin').first()
                 
-                try:
-                    # Criar todas as tabelas
-                    db.create_all()
-                    print("✅ Estrutura do banco criada!")
+                if existing_admin:
+                    print("✅ Usuário admin já existe!")
                     
-                except Exception as create_error:
-                    print(f"❌ Erro ao criar estrutura: {create_error}")
-                    return False
-            
-            # Verificar/criar admin
-            admin = User.query.filter_by(username='admin').first()
-            
-            if admin:
-                print("✅ Usuário admin já existe!")
-                
-                # Verificar se a senha está funcionando
-                if not admin.password_hash:
-                    print("🔧 Admin sem senha, corrigindo...")
+                    # Garantir que tem senha
+                    if not existing_admin.password_hash:
+                        print("🔧 Corrigindo senha do admin...")
+                        existing_admin.set_password('admin123')
+                        existing_admin.perfil = 'admin'
+                        existing_admin.ativo = True
+                        db.session.commit()
+                        print("✅ Senha corrigida!")
+                        
+                else:
+                    print("🔧 Criando usuário admin...")
+                    
+                    admin = User(
+                        username='admin',
+                        email='admin@corrigindoarota.com.br',
+                        perfil='admin',
+                        ativo=True
+                    )
                     admin.set_password('admin123')
-                    admin.perfil = 'admin'
-                    admin.ativo = True
-                    db.session.commit()
-                    print("✅ Senha do admin corrigida!")
                     
-            else:
-                print("🔧 Criando usuário admin...")
+                    db.session.add(admin)
+                    db.session.commit()
+                    print("✅ Usuário admin criado com sucesso!")
                 
-                admin = User(
-                    username='admin',
-                    email='admin@corrigindoarota.com.br',
-                    perfil='admin',
-                    ativo=True
-                )
-                admin.set_password('admin123')
+                return True
                 
-                db.session.add(admin)
-                db.session.commit()
-                print("✅ Usuário admin criado!")
-            
-            return True
+            except Exception as db_error:
+                print(f"❌ Erro no banco de dados: {db_error}")
+                return False
             
     except Exception as e:
-        print(f"❌ Erro geral ao criar admin: {e}")
+        print(f"❌ Erro geral ao configurar admin: {e}")
+        import traceback
+        traceback.print_exc()
         return False
 
 def initialize_app():
     """Inicializa a aplicação Flask"""
     
-    # Corrigir problemas de compatibilidade primeiro
+    print("🔧 Inicializando aplicação...")
+    
+    # Corrigir compatibilidade primeiro
     fix_import_compatibility()
     
     # Determinar ambiente
     environment = get_environment()
     print(f"🌍 Ambiente detectado: {environment}")
     
-    # Garantir que o banco existe
+    # Para EasyPanel, forçar variáveis de ambiente
+    if environment == 'external':
+        print("🔧 Configurando para EasyPanel...")
+        
+        # Definir explicitamente as variáveis para o EasyPanel
+        os.environ['DB_HOST'] = 'easypanel.pontocomdesconto.com.br'
+        os.environ['DB_PORT'] = '33070'
+        os.environ['DB_USER'] = 'erp_admin'
+        os.environ['DB_PASSWORD'] = '8de3405e496812d04fc7'
+        os.environ['DB_NAME'] = 'erp'
+        
+        # Para MySQL também
+        os.environ['MYSQL_HOST'] = 'easypanel.pontocomdesconto.com.br'
+        os.environ['MYSQL_PORT'] = '33070'
+        os.environ['MYSQL_USER'] = 'erp_admin'
+        os.environ['MYSQL_PASSWORD'] = '8de3405e496812d04fc7'
+        os.environ['MYSQL_DATABASE'] = 'erp'
+    
+    # Verificar banco antes de continuar
     if not ensure_database_exists():
-        print("❌ Falha ao configurar banco de dados!")
+        print("❌ Falha na configuração do banco de dados!")
         return None
     
     # Importar e criar app
@@ -158,20 +198,12 @@ def initialize_app():
         
         app = create_app(environment)
         
-        # Inicializar Flask-Migrate apenas em desenvolvimento
-        if environment == 'development':
-            try:
-                from flask_migrate import Migrate
-                migrate = Migrate(app, db)
-                print("✅ Flask-Migrate inicializado!")
-            except ImportError:
-                print("⚠️  Flask-Migrate não disponível, continuando sem migrations...")
+        print("✅ Aplicação Flask criada!")
+        print(f"📊 Database URI: {app.config.get('SQLALCHEMY_DATABASE_URI')}")
         
-        print("✅ Aplicação Flask criada com sucesso!")
-        
-        # Mostrar blueprints registrados
+        # Mostrar blueprints
         blueprints = list(app.blueprints.keys())
-        print(f"📋 Blueprints registrados ({len(blueprints)}): {', '.join(blueprints)}")
+        print(f"📋 Blueprints: {', '.join(blueprints) if blueprints else 'Nenhum'}")
         
         return app
         
@@ -181,46 +213,20 @@ def initialize_app():
         traceback.print_exc()
         return None
 
-def run_development_server(app):
-    """Executa o servidor de desenvolvimento"""
-    
-    port = int(os.environ.get('PORT', 5000))
-    host = os.environ.get('HOST', '0.0.0.0')
-    
-    print("="*60)
-    print("🚀 INICIANDO SERVIDOR DE DESENVOLVIMENTO")
-    print("="*60)
-    print(f"🌍 Ambiente: {get_environment()}")
-    print(f"🔗 URL: http://localhost:{port}")
-    print(f"👤 Login: admin")
-    print(f"🔐 Senha: admin123")
-    print("="*60)
-    print("💡 Pressione Ctrl+C para parar o servidor")
-    print("="*60)
-    
-    try:
-        app.run(
-            host=host,
-            port=port,
-            debug=True,
-            use_reloader=False,  # Evitar recarregamento duplo
-            threaded=True
-        )
-    except KeyboardInterrupt:
-        print("\n🛑 Servidor parado pelo usuário")
-    except Exception as e:
-        print(f"\n❌ Erro no servidor: {e}")
-
 def run_production_server(app):
-    """Executa o servidor de produção usando Flask built-in server"""
+    """Executa servidor de produção - EasyPanel"""
     
     port = int(os.environ.get('PORT', 8000))
     host = os.environ.get('HOST', '0.0.0.0')
     
     print("="*60)
-    print("🚀 INICIANDO SERVIDOR DE PRODUÇÃO")
+    print("🚀 SERVIDOR ERP - EASYPANEL")
     print("="*60)
-    print(f"🔗 Host: {host}:{port}")
+    print(f"🌍 Host: {host}")
+    print(f"🔌 Port: {port}")
+    print(f"🗄️  Database: EasyPanel MySQL")
+    print(f"👤 Admin: admin")
+    print(f"🔐 Senha: admin123")
     print("="*60)
     
     try:
@@ -233,67 +239,100 @@ def run_production_server(app):
         )
     except Exception as e:
         print(f"❌ Erro no servidor: {e}")
+        import traceback
+        traceback.print_exc()
+
+def run_development_server(app):
+    """Executa servidor de desenvolvimento"""
+    
+    port = int(os.environ.get('PORT', 5000))
+    host = '0.0.0.0'
+    
+    print("="*60)
+    print("🚀 SERVIDOR DE DESENVOLVIMENTO")
+    print("="*60)
+    print(f"🔗 URL: http://localhost:{port}")
+    print(f"👤 Login: admin")
+    print(f"🔐 Senha: admin123")
+    print("="*60)
+    
+    try:
+        app.run(
+            host=host,
+            port=port,
+            debug=True,
+            use_reloader=False,
+            threaded=True
+        )
+    except KeyboardInterrupt:
+        print("\n🛑 Servidor parado")
+    except Exception as e:
+        print(f"\n❌ Erro no servidor: {e}")
 
 def main():
     """Função principal"""
     
-    print("🔧 SISTEMA ERP - CORRIGINDO À ROTA")
+    print("🏢 SISTEMA ERP - CORRIGINDO À ROTA")
     print("="*50)
     
     # Inicializar aplicação
     app = initialize_app()
     if not app:
-        print("❌ Falha crítica na inicialização!")
+        print("❌ FALHA CRÍTICA NA INICIALIZAÇÃO!")
         return False
     
-    # Configurar banco e admin
-    admin_created = create_admin_safely(app)
-    if not admin_created:
-        print("⚠️  Aviso: Problemas na criação do admin, mas continuando...")
+    # Configurar admin
+    print("\n🔧 Configurando usuário administrador...")
+    admin_ok = create_admin_safely(app)
+    if not admin_ok:
+        print("⚠️  Problema ao criar admin - continuando...")
     
-    # Determinar tipo de servidor
+    # Executar servidor
     environment = get_environment()
+    print(f"\n🚀 Iniciando servidor ({environment})...")
     
-    if environment == 'development':
-        run_development_server(app)
-    else:
+    if environment in ['external', 'production']:
         run_production_server(app)
+    else:
+        run_development_server(app)
     
     return True
 
-# Para compatibilidade com WSGI servers
 def create_application():
-    """Factory function para WSGI servers como Gunicorn"""
+    """Factory para WSGI servers (Gunicorn, etc.)"""
+    
+    print("🔧 WSGI Factory - EasyPanel")
+    
+    # Configurar ambiente para EasyPanel
+    environment = 'external'  # Forçar configuração externa
+    
+    # Definir variáveis de ambiente
+    os.environ['DB_HOST'] = 'easypanel.pontocomdesconto.com.br'
+    os.environ['DB_PORT'] = '33070'
+    os.environ['DB_USER'] = 'erp_admin'
+    os.environ['DB_PASSWORD'] = '8de3405e496812d04fc7'
+    os.environ['DB_NAME'] = 'erp'
     
     fix_import_compatibility()
     
     try:
-        # Importar configuração
-        from config import config
-        
-        environment = get_environment()
-        config_class = config.get(environment, config['default'])
-        
-        print(f"🔧 Usando configuração: {config_class.__name__}")
-        
         from app import create_app, db
+        
+        print(f"🔧 Criando app WSGI com configuração: {environment}")
         
         app = create_app(environment)
         
-        # Configurar banco e admin em contexto de aplicação
+        # Configurar banco em contexto
         with app.app_context():
             try:
+                print("🔧 Configurando estrutura do banco...")
+                db.create_all()
+                
                 from app.models.user import User
                 
-                # Criar tabelas se não existirem
-                print("🔧 Criando estrutura do banco...")
-                db.create_all()
-                print("✅ Estrutura criada!")
-                
-                # Criar admin se não existir
                 admin = User.query.filter_by(username='admin').first()
                 if not admin:
-                    print("🔧 Criando usuário admin...")
+                    print("🔧 Criando admin via WSGI...")
                     admin = User(
                         username='admin',
                         email='admin@corrigindoarota.com.br',
@@ -303,37 +342,31 @@ def create_application():
                     admin.set_password('admin123')
                     db.session.add(admin)
                     db.session.commit()
-                    print("✅ Admin criado!")
-                else:
-                    print("✅ Admin já existe!")
-                    
+                    print("✅ Admin criado via WSGI!")
+                
             except Exception as e:
-                print(f"⚠️  Aviso ao configurar banco: {e}")
-                import traceback
-                traceback.print_exc()
+                print(f"⚠️  Problema WSGI: {e}")
         
+        print("✅ Aplicação WSGI pronta!")
         return app
         
     except Exception as e:
-        print(f"❌ Erro ao criar aplicação WSGI: {e}")
+        print(f"❌ Erro crítico WSGI: {e}")
         import traceback
         traceback.print_exc()
         raise
 
-
-
-
-# Para Gunicorn e outros WSGI servers
+# Para WSGI servers
 application = create_application()
 
 if __name__ == '__main__':
     try:
         success = main()
         if not success:
-            print("\n❌ Sistema encerrado com erros!")
+            print("\n❌ Sistema falhou!")
             sys.exit(1)
     except KeyboardInterrupt:
-        print("\n👋 Sistema encerrado pelo usuário")
+        print("\n👋 Encerrado pelo usuário")
     except Exception as e:
         print(f"\n💥 Erro crítico: {e}")
         import traceback
