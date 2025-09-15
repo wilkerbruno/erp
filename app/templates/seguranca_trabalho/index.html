@@ -1,0 +1,336 @@
+{% extends "base.html" %}
+
+{% block title %}Segurança do Trabalho{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-hard-hat me-2"></i>Dashboard - Segurança do Trabalho
+        </h1>
+        <div class="btn-group">
+            <a href="{{ url_for('seguranca_trabalho.novo_acidente') }}" class="btn btn-danger">
+                <i class="fas fa-exclamation-triangle me-1"></i>Registrar Acidente
+            </a>
+            <button class="btn btn-outline-primary" onclick="atualizarDados()">
+                <i class="fas fa-sync me-1"></i>Atualizar
+            </button>
+        </div>
+    </div>
+
+    <!-- Alertas de Segurança -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-success border-left-success">
+                <h5><i class="fas fa-check-circle me-2"></i>✅ Sistema de Segurança Ativo</h5>
+                <p class="mb-0">Acesse rapidamente todas as funcionalidades de segurança:</p>
+                <div class="mt-2">
+                    <a href="{{ url_for('seguranca_trabalho.acidentes') }}" class="btn btn-outline-danger btn-sm me-2">
+                        🚨 Acidentes
+                    </a>
+                    <a href="{{ url_for('seguranca_trabalho.treinamentos') }}" class="btn btn-outline-success btn-sm me-2">
+                        📚 Treinamentos
+                    </a>
+                    <a href="{{ url_for('seguranca_trabalho.inspecoes') }}" class="btn btn-outline-warning btn-sm me-2">
+                        🔍 Inspeções
+                    </a>
+                    <a href="{{ url_for('seguranca_trabalho.epis') }}" class="btn btn-outline-info btn-sm me-2">
+                        🦺 EPIs
+                    </a>
+                    <a href="{{ url_for('seguranca_trabalho.relatorios') }}" class="btn btn-outline-secondary btn-sm">
+                        📊 Relatórios
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KPIs de Segurança -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('seguranca_trabalho.acidentes') }}'">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Dias sem Acidentes
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">127</div>
+                            <div class="small text-success">
+                                <i class="fas fa-shield-alt me-1"></i>Meta: 365 dias
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar-check fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('seguranca_trabalho.acidentes') }}'">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Incidentes no Mês
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">3</div>
+                            <div class="small text-warning">
+                                <i class="fas fa-exclamation-triangle me-1"></i>-2 vs mês anterior
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('seguranca_trabalho.treinamentos') }}'">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Funcionários Treinados
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">89%</div>
+                            <div class="small text-info">
+                                <i class="fas fa-graduation-cap me-1"></i>246 de 276 funcionários
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-graduation-cap fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('seguranca_trabalho.epis') }}'">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                EPIs em Estoque
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">1.247</div>
+                            <div class="small text-primary">
+                                <i class="fas fa-hard-hat me-1"></i>15 tipos diferentes
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-hard-hat fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Funcionalidades Principais -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-shield-alt me-2"></i>Módulos de Segurança
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow">
+                        <div class="card-body text-center">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-ambulance fa-3x text-danger"></i>
+                            </div>
+                            <h5 class="card-title">Acidentes e Incidentes</h5>
+                            <p class="card-text text-muted">Registro, investigação e acompanhamento de acidentes e incidentes de trabalho</p>
+                            <a href="{{ url_for('seguranca_trabalho.acidentes') }}" class="btn btn-danger w-100">
+                                <i class="fas fa-exclamation-triangle me-1"></i>Acessar Acidentes
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow">
+                        <div class="card-body text-center">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-graduation-cap fa-3x text-success"></i>
+                            </div>
+                            <h5 class="card-title">Treinamentos</h5>
+                            <p class="card-text text-muted">Gestão de treinamentos de segurança, capacitações e certificações dos funcionários</p>
+                            <a href="{{ url_for('seguranca_trabalho.treinamentos') }}" class="btn btn-success w-100">
+                                <i class="fas fa-graduation-cap me-1"></i>Ver Treinamentos
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow">
+                        <div class="card-body text-center">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-search fa-3x text-warning"></i>
+                            </div>
+                            <h5 class="card-title">Inspeções</h5>
+                            <p class="card-text text-muted">Inspeções de segurança, auditorias e verificações de conformidade</p>
+                            <a href="{{ url_for('seguranca_trabalho.inspecoes') }}" class="btn btn-warning w-100">
+                                <i class="fas fa-search me-1"></i>Acessar Inspeções
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow">
+                        <div class="card-body text-center">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-hard-hat fa-3x text-info"></i>
+                            </div>
+                            <h5 class="card-title">EPIs</h5>
+                            <p class="card-text text-muted">Controle de Equipamentos de Proteção Individual, estoque e distribuição</p>
+                            <a href="{{ url_for('seguranca_trabalho.epis') }}" class="btn btn-info w-100">
+                                <i class="fas fa-hard-hat me-1"></i>Gerenciar EPIs
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow">
+                        <div class="card-body text-center">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-file-alt fa-3x text-secondary"></i>
+                            </div>
+                            <h5 class="card-title">Documentos</h5>
+                            <p class="card-text text-muted">Gestão de normas, procedimentos e documentos de segurança</p>
+                            <a href="{{ url_for('seguranca_trabalho.documentos') }}" class="btn btn-secondary w-100">
+                                <i class="fas fa-file-alt me-1"></i>Ver Documentos
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow">
+                        <div class="card-body text-center">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-chart-line fa-3x text-primary"></i>
+                            </div>
+                            <h5 class="card-title">Relatórios</h5>
+                            <p class="card-text text-muted">Relatórios, estatísticas e análises de segurança do trabalho</p>
+                            <a href="{{ url_for('seguranca_trabalho.relatorios') }}" class="btn btn-primary w-100">
+                                <i class="fas fa-chart-line me-1"></i>Ver Relatórios
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ações Rápidas -->
+    <div class="card shadow">
+        <div class="card-header">
+            <h6 class="m-0 font-weight-bold text-primary">Ações Rápidas</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-2 mb-3">
+                    <a href="{{ url_for('seguranca_trabalho.novo_acidente') }}" class="btn btn-outline-danger w-100">
+                        <i class="fas fa-exclamation-triangle d-block mb-2"></i>
+                        Registrar Acidente
+                    </a>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <a href="{{ url_for('seguranca_trabalho.novo_treinamento') }}" class="btn btn-outline-success w-100">
+                        <i class="fas fa-graduation-cap d-block mb-2"></i>
+                        Novo Treinamento
+                    </a>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <a href="{{ url_for('seguranca_trabalho.nova_inspecao') }}" class="btn btn-outline-warning w-100">
+                        <i class="fas fa-search d-block mb-2"></i>
+                        Nova Inspeção
+                    </a>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <a href="{{ url_for('seguranca_trabalho.epis') }}" class="btn btn-outline-info w-100">
+                        <i class="fas fa-hard-hat d-block mb-2"></i>
+                        Controle EPIs
+                    </a>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <a href="{{ url_for('seguranca_trabalho.relatorios') }}" class="btn btn-outline-primary w-100">
+                        <i class="fas fa-chart-bar d-block mb-2"></i>
+                        Relatórios
+                    </a>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <a href="{{ url_for('seguranca_trabalho.documentos') }}" class="btn btn-outline-secondary w-100">
+                        <i class="fas fa-file-alt d-block mb-2"></i>
+                        Documentos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function atualizarDados() {
+    alert('Dados de segurança atualizados!');
+    location.reload();
+}
+
+// Adicionar efeito hover nos cards
+document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.hover-shadow');
+    cards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+            this.style.transition = 'transform 0.2s ease-in-out';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+    
+    // Tornar cards clicáveis
+    const clickableCards = document.querySelectorAll('.cursor-pointer');
+    clickableCards.forEach(card => {
+        card.style.cursor = 'pointer';
+    });
+});
+
+console.log('Dashboard Segurança do Trabalho carregado!');
+</script>
+
+<style>
+.hover-shadow {
+    transition: all 0.2s ease-in-out;
+}
+
+.hover-shadow:hover {
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+    transform: translateY(-2px);
+}
+
+.cursor-pointer {
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.cursor-pointer:hover {
+    transform: translateY(-2px);
+}
+</style>
+{% endblock %}

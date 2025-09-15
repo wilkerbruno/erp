@@ -1,16 +1,16 @@
 {% extends "base.html" %}
 
-{% block title %}Consultoria{% endblock %}
+{% block title %}Reuniões{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">
-            <i class="fas fa-briefcase me-2"></i>Dashboard - Consultoria
+            <i class="fas fa-users me-2"></i>Dashboard - Reuniões
         </h1>
         <div class="btn-group">
-            <a href="{{ url_for('consultoria.novo_projeto') }}" class="btn btn-success">
-                <i class="fas fa-plus me-1"></i>Novo Projeto
+            <a href="{{ url_for('reunioes.nova_reuniao') }}" class="btn btn-success">
+                <i class="fas fa-plus me-1"></i>Nova Reunião
             </a>
             <button class="btn btn-outline-primary" onclick="atualizarDados()">
                 <i class="fas fa-sync me-1"></i>Atualizar
@@ -21,68 +21,47 @@
     <!-- Acesso Rápido -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="alert alert-primary border-left-primary">
-                <h5><i class="fas fa-handshake me-2"></i>💼 Gestão de Consultoria Ativa</h5>
-                <p class="mb-0">Gerencie projetos, clientes e consultores:</p>
+            <div class="alert alert-warning border-left-warning">
+                <h5><i class="fas fa-calendar-alt me-2"></i>🤝 Gestão de Reuniões Ativa</h5>
+                <p class="mb-0">Organize, acompanhe e documente todas as reuniões:</p>
                 <div class="mt-2">
-                    <a href="{{ url_for('consultoria.projetos') }}" class="btn btn-outline-success btn-sm me-2">
-                        📁 Projetos
+                    <a href="{{ url_for('reunioes.agenda') }}" class="btn btn-outline-primary btn-sm me-2">
+                        📅 Agenda
                     </a>
-                    <a href="{{ url_for('consultoria.clientes') }}" class="btn btn-outline-primary btn-sm me-2">
-                        👥 Clientes
+                    <a href="{{ url_for('reunioes.atas') }}" class="btn btn-outline-success btn-sm me-2">
+                        📋 Atas
                     </a>
-                    <a href="{{ url_for('consultoria.consultores') }}" class="btn btn-outline-info btn-sm me-2">
-                        👨‍💼 Consultores
+                    <a href="{{ url_for('reunioes.participantes') }}" class="btn btn-outline-info btn-sm me-2">
+                        👥 Participantes
                     </a>
-                    <a href="{{ url_for('consultoria.contratos') }}" class="btn btn-outline-warning btn-sm me-2">
-                        📋 Contratos
+                    <a href="{{ url_for('reunioes.acoes') }}" class="btn btn-outline-warning btn-sm me-2">
+                        ✅ Ações
                     </a>
-                    <a href="{{ url_for('consultoria.cronogramas') }}" class="btn btn-outline-secondary btn-sm">
-                        📅 Cronogramas
+                    <a href="{{ url_for('reunioes.salas') }}" class="btn btn-outline-secondary btn-sm">
+                        🏢 Salas
                     </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- KPIs de Consultoria -->
+    <!-- KPIs de Reuniões -->
     <div class="row mb-4">
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('consultoria.projetos') }}'">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                Projetos Ativos
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">15</div>
-                            <div class="small text-success">
-                                <i class="fas fa-arrow-up me-1"></i>+3 este mês
-                            </div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-project-diagram fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('consultoria.clientes') }}'">
+            <div class="card border-left-primary shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('reunioes.agenda') }}'">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                Clientes Ativos
+                                Reuniões Agendadas
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">32</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
                             <div class="small text-primary">
-                                <i class="fas fa-users me-1"></i>8 novos clientes
+                                <i class="fas fa-calendar me-1"></i>Esta semana
                             </div>
                         </div>
                         <div class="col-auto">
-                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                            <i class="fas fa-calendar-alt fa-2x text-gray-300"></i>
                         </div>
                     </div>
                 </div>
@@ -90,20 +69,41 @@
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-warning shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('consultoria.consultores') }}'">
+            <div class="card border-left-success shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('reunioes.atas') }}'">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Atas Elaboradas
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">94%</div>
+                            <div class="small text-success">
+                                <i class="fas fa-check me-1"></i>42 de 45 reuniões
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-file-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('reunioes.acoes') }}'">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                Consultores
+                                Ações Pendentes
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">12</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">27</div>
                             <div class="small text-warning">
-                                <i class="fas fa-user-tie me-1"></i>8 especialistas
+                                <i class="fas fa-tasks me-1"></i>7 vencendo hoje
                             </div>
                         </div>
                         <div class="col-auto">
-                            <i class="fas fa-user-tie fa-2x text-gray-300"></i>
+                            <i class="fas fa-tasks fa-2x text-gray-300"></i>
                         </div>
                     </div>
                 </div>
@@ -111,20 +111,20 @@
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('consultoria.contratos') }}'">
+            <div class="card border-left-info shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('reunioes.salas') }}'">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                Receita Mensal
+                                Salas Disponíveis
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 247k</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">5</div>
                             <div class="small text-info">
-                                <i class="fas fa-dollar-sign me-1"></i>+12% vs anterior
+                                <i class="fas fa-door-open me-1"></i>3 equipadas
                             </div>
                         </div>
                         <div class="col-auto">
-                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                            <i class="fas fa-door-open fa-2x text-gray-300"></i>
                         </div>
                     </div>
                 </div>
@@ -136,7 +136,7 @@
     <div class="card shadow mb-4">
         <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-primary">
-                <i class="fas fa-briefcase me-2"></i>Gestão de Consultoria
+                <i class="fas fa-users me-2"></i>Gestão de Reuniões
             </h6>
         </div>
         <div class="card-body">
@@ -145,12 +145,12 @@
                     <div class="card h-100 border-0 shadow-sm hover-shadow">
                         <div class="card-body text-center">
                             <div class="feature-icon mb-3">
-                                <i class="fas fa-project-diagram fa-3x text-success"></i>
+                                <i class="fas fa-calendar-alt fa-3x text-primary"></i>
                             </div>
-                            <h5 class="card-title">Projetos</h5>
-                            <p class="card-text text-muted">Gerencie todos os projetos de consultoria, status e entregas</p>
-                            <a href="{{ url_for('consultoria.projetos') }}" class="btn btn-success w-100">
-                                <i class="fas fa-project-diagram me-1"></i>Ver Projetos
+                            <h5 class="card-title">Agenda</h5>
+                            <p class="card-text text-muted">Visualize e gerencie todas as reuniões agendadas</p>
+                            <a href="{{ url_for('reunioes.agenda') }}" class="btn btn-primary w-100">
+                                <i class="fas fa-calendar-alt me-1"></i>Ver Agenda
                             </a>
                         </div>
                     </div>
@@ -160,12 +160,12 @@
                     <div class="card h-100 border-0 shadow-sm hover-shadow">
                         <div class="card-body text-center">
                             <div class="feature-icon mb-3">
-                                <i class="fas fa-users fa-3x text-primary"></i>
+                                <i class="fas fa-file-alt fa-3x text-success"></i>
                             </div>
-                            <h5 class="card-title">Clientes</h5>
-                            <p class="card-text text-muted">Cadastro e gestão de clientes, histórico e relacionamento</p>
-                            <a href="{{ url_for('consultoria.clientes') }}" class="btn btn-primary w-100">
-                                <i class="fas fa-users me-1"></i>Gerenciar Clientes
+                            <h5 class="card-title">Atas de Reunião</h5>
+                            <p class="card-text text-muted">Elabore e gerencie atas de todas as reuniões</p>
+                            <a href="{{ url_for('reunioes.atas') }}" class="btn btn-success w-100">
+                                <i class="fas fa-file-alt me-1"></i>Gerenciar Atas
                             </a>
                         </div>
                     </div>
@@ -175,12 +175,12 @@
                     <div class="card h-100 border-0 shadow-sm hover-shadow">
                         <div class="card-body text-center">
                             <div class="feature-icon mb-3">
-                                <i class="fas fa-user-tie fa-3x text-warning"></i>
+                                <i class="fas fa-users fa-3x text-info"></i>
                             </div>
-                            <h5 class="card-title">Consultores</h5>
-                            <p class="card-text text-muted">Equipe de consultores, especialidades e alocação</p>
-                            <a href="{{ url_for('consultoria.consultores') }}" class="btn btn-warning w-100">
-                                <i class="fas fa-user-tie me-1"></i>Ver Consultores
+                            <h5 class="card-title">Participantes</h5>
+                            <p class="card-text text-muted">Gerencie participantes e convites das reuniões</p>
+                            <a href="{{ url_for('reunioes.participantes') }}" class="btn btn-info w-100">
+                                <i class="fas fa-users me-1"></i>Ver Participantes
                             </a>
                         </div>
                     </div>
@@ -190,12 +190,12 @@
                     <div class="card h-100 border-0 shadow-sm hover-shadow">
                         <div class="card-body text-center">
                             <div class="feature-icon mb-3">
-                                <i class="fas fa-file-contract fa-3x text-info"></i>
+                                <i class="fas fa-tasks fa-3x text-warning"></i>
                             </div>
-                            <h5 class="card-title">Contratos</h5>
-                            <p class="card-text text-muted">Gestão de contratos, valores e condições comerciais</p>
-                            <a href="{{ url_for('consultoria.contratos') }}" class="btn btn-info w-100">
-                                <i class="fas fa-file-contract me-1"></i>Ver Contratos
+                            <h5 class="card-title">Ações e Follow-up</h5>
+                            <p class="card-text text-muted">Acompanhe ações definidas nas reuniões</p>
+                            <a href="{{ url_for('reunioes.acoes') }}" class="btn btn-warning w-100">
+                                <i class="fas fa-tasks me-1"></i>Ver Ações
                             </a>
                         </div>
                     </div>
@@ -205,12 +205,12 @@
                     <div class="card h-100 border-0 shadow-sm hover-shadow">
                         <div class="card-body text-center">
                             <div class="feature-icon mb-3">
-                                <i class="fas fa-calendar-alt fa-3x text-secondary"></i>
+                                <i class="fas fa-door-open fa-3x text-secondary"></i>
                             </div>
-                            <h5 class="card-title">Cronogramas</h5>
-                            <p class="card-text text-muted">Planejamento e acompanhamento de cronogramas</p>
-                            <a href="{{ url_for('consultoria.cronogramas') }}" class="btn btn-secondary w-100">
-                                <i class="fas fa-calendar-alt me-1"></i>Ver Cronogramas
+                            <h5 class="card-title">Salas de Reunião</h5>
+                            <p class="card-text text-muted">Gerencie reservas e disponibilidade das salas</p>
+                            <a href="{{ url_for('reunioes.salas') }}" class="btn btn-secondary w-100">
+                                <i class="fas fa-door-open me-1"></i>Gerenciar Salas
                             </a>
                         </div>
                     </div>
@@ -220,12 +220,12 @@
                     <div class="card h-100 border-0 shadow-sm hover-shadow">
                         <div class="card-body text-center">
                             <div class="feature-icon mb-3">
-                                <i class="fas fa-chart-line fa-3x text-dark"></i>
+                                <i class="fas fa-chart-bar fa-3x text-dark"></i>
                             </div>
                             <h5 class="card-title">Relatórios</h5>
-                            <p class="card-text text-muted">Relatórios financeiros e de performance dos projetos</p>
+                            <p class="card-text text-muted">Relatórios de produtividade e frequência</p>
                             <button class="btn btn-dark w-100" onclick="relatorios()">
-                                <i class="fas fa-chart-line me-1"></i>Gerar Relatórios
+                                <i class="fas fa-chart-bar me-1"></i>Gerar Relatórios
                             </button>
                         </div>
                     </div>
@@ -244,7 +244,7 @@ function atualizarDados() {
 }
 
 function relatorios() {
-    alert('Relatórios de Consultoria');
+    alert('Relatórios de Reuniões');
 }
 
 // Efeitos visuais
@@ -267,7 +267,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-console.log('Dashboard Consultoria carregado!');
+console.log('Dashboard Reuniões carregado!');
 </script>
 
 <style>

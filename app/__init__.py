@@ -5,8 +5,13 @@ from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect
 from config import config
 from app.blueprints.producao import bp as producao_bp
+from app.blueprints.reunioes import bp as reunioes_bp
+from app.blueprints.consultoria import bp as consultoria_bp
+from app.blueprints.gestao_vista import bp as gestao_vista_bp
+from app.blueprints.seguranca_trabalho import bp as seguranca_trabalho_bp
 from app.blueprints.planos import bp as planos_bp
 from app.blueprints.financeiro import bp as financeiro_bp
+
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -34,7 +39,11 @@ def create_app(config_name='development'):
     from app.blueprints.dashboard import bp as dashboard_bp
     
     app.register_blueprint(auth_bp, url_prefix='/auth')
-    app.register_blueprint(planos_bp)
+    app.register_blueprint(reunioes_bp)
+    app.register_blueprint(consultoria_bp)
+    app.register_blueprint(gestao_vista_bp)
+    app.register_blueprint(seguranca_trabalho_bp)
+    app.register_blueprint(planos_bp)  # ← CORRIGIDO: era 'planos_bp', agora é 'planos_acao_bp'
     app.register_blueprint(financeiro_bp)
     app.register_blueprint(rh_bp)
     app.register_blueprint(dashboard_bp, url_prefix='/')
@@ -45,14 +54,17 @@ def create_app(config_name='development'):
         ('qualidade', '/qualidade'),
         ('producao', '/producao'),
         ('compras', '/compras'),
-        ('planos_acao', '/planos-acao'),
-        ('consultoria', '/consultoria'),
+        ('planos_acao', '/planos-acao'),  # ← JÁ ESTAVA CORRETO
+        ('consultoria', '/consultoria'),  # ← JÁ ESTAVA CORRETO
         ('financeiro', '/financeiro'),
         ('manutencao', '/manutencao'),
-        ('projetos', '/projetos'),
-                    ('relatorios', '/relatorios'),
-            ('empresas', '/empresas'),
-            ('efo', '/efo'),
+        ('projetos', '/projetos'),                     
+        ('relatorios', '/relatorios'),             
+        ('empresas', '/empresas'),             
+        ('efo', '/efo'),
+        ('gestao_vista', '/gestao-vista'),  # ← ADICIONADO
+        ('seguranca_trabalho', '/seguranca-trabalho'),  # ← ADICIONADO
+        ('reunioes', '/reunioes'),  # ← ADICIONADO
         ('configuracoes', '/configuracoes')
     ]
     

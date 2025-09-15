@@ -121,7 +121,7 @@
                                 <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                     Módulos Ativos
                                 </div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">8</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">12</div>
                             </div>
                             <div class="col-auto">
                                 <i class="fas fa-puzzle-piece fa-2x text-gray-300"></i>
@@ -233,18 +233,63 @@
                         </div>
                     </div>
 
-                    <!-- Outros módulos -->
+                    <!-- Segurança do Trabalho -->
                     <div class="col-lg-3 col-md-6 mb-4">
-                        <div class="card module-card h-100" onclick="acessarModulo('/compras')">
+                        <div class="card module-card h-100" onclick="acessarModulo('/seguranca-trabalho')">
                             <div class="card-body text-center">
-                                <i class="fas fa-shopping-cart fa-3x text-info mb-3"></i>
-                                <h5>Compras</h5>
-                                <p class="text-muted">Gestão de compras</p>
-                                <button class="btn btn-primary btn-sm"><i class="fas fa-arrow-right me-1"></i>Acessar</button>
+                                <i class="fas fa-hard-hat fa-3x text-danger mb-3"></i>
+                                <h5>Segurança do Trabalho</h5>
+                                <p class="text-muted">SST e EPIs</p>
+                                <button class="btn btn-danger btn-sm">
+                                    <i class="fas fa-arrow-right me-1"></i>Acessar
+                                </button>
                             </div>
                         </div>
                     </div>
 
+                    <!-- Gestão à Vista -->
+                    <div class="col-lg-3 col-md-6 mb-4">
+                        <div class="card module-card h-100" onclick="acessarModulo('/gestao-vista')">
+                            <div class="card-body text-center">
+                                <i class="fas fa-chart-line fa-3x text-info mb-3"></i>
+                                <h5>Gestão à Vista</h5>
+                                <p class="text-muted">Indicadores e KPIs</p>
+                                <button class="btn btn-info btn-sm">
+                                    <i class="fas fa-arrow-right me-1"></i>Acessar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Consultoria -->
+                    <div class="col-lg-3 col-md-6 mb-4">
+                        <div class="card module-card h-100" onclick="acessarModulo('/consultoria')">
+                            <div class="card-body text-center">
+                                <i class="fas fa-briefcase fa-3x text-secondary mb-3"></i>
+                                <h5>Consultoria</h5>
+                                <p class="text-muted">Projetos e clientes</p>
+                                <button class="btn btn-secondary btn-sm">
+                                    <i class="fas fa-arrow-right me-1"></i>Acessar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reuniões -->
+                    <div class="col-lg-3 col-md-6 mb-4">
+                        <div class="card module-card h-100" onclick="acessarModulo('/reunioes')">
+                            <div class="card-body text-center">
+                                <i class="fas fa-users-cog fa-3x text-warning mb-3"></i>
+                                <h5>Reuniões</h5>
+                                <p class="text-muted">Atas e follow-up</p>
+                                <button class="btn btn-warning btn-sm">
+                                    <i class="fas fa-arrow-right me-1"></i>Acessar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Financeiro -->
                     <div class="col-lg-3 col-md-6 mb-4">
                         <div class="card module-card h-100" onclick="acessarModulo('/financeiro')">
                             <div class="card-body text-center">
@@ -256,10 +301,23 @@
                         </div>
                     </div>
 
+                    <!-- Compras -->
+                    <div class="col-lg-3 col-md-6 mb-4">
+                        <div class="card module-card h-100" onclick="acessarModulo('/compras')">
+                            <div class="card-body text-center">
+                                <i class="fas fa-shopping-cart fa-3x text-info mb-3"></i>
+                                <h5>Compras</h5>
+                                <p class="text-muted">Gestão de compras</p>
+                                <button class="btn btn-primary btn-sm"><i class="fas fa-arrow-right me-1"></i>Acessar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Relatórios -->
                     <div class="col-lg-3 col-md-6 mb-4">
                         <div class="card module-card h-100" onclick="acessarModulo('/relatorios')">
                             <div class="card-body text-center">
-                                <i class="fas fa-chart-bar fa-3x text-secondary mb-3"></i>
+                                <i class="fas fa-chart-bar fa-3x text-primary mb-3"></i>
                                 <h5>Relatórios</h5>
                                 <p class="text-muted">Analytics e KPIs</p>
                                 <button class="btn btn-primary btn-sm"><i class="fas fa-arrow-right me-1"></i>Acessar</button>
@@ -267,6 +325,7 @@
                         </div>
                     </div>
 
+                    <!-- Configurações -->
                     <div class="col-lg-3 col-md-6 mb-4">
                         <div class="card module-card h-100" onclick="acessarModulo('/configuracoes')">
                             <div class="card-body text-center">
