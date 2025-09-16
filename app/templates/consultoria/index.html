@@ -9,7 +9,7 @@
             <i class="fas fa-briefcase me-2"></i>Dashboard - Consultoria
         </h1>
         <div class="btn-group">
-            <a href="{{ url_for('consultoria.novo_projeto') }}" class="btn btn-success">
+            <a class="btn btn-success" onclick="novoProjeto()">
                 <i class="fas fa-plus me-1"></i>Novo Projeto
             </a>
             <button class="btn btn-outline-primary" onclick="atualizarDados()">
@@ -131,6 +131,73 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="modalNovoProjeto" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-plus me-2"></i>Novo Projeto
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formNovoProjeto">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">Nome do Projeto*</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Cliente*</label>
+                            <select class="form-select" required>
+                                <option value="">Selecione...</option>
+                                <option>Empresa A</option>
+                                <option>Empresa B</option>
+                                <option>Empresa C</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Consultor Responsável*</label>
+                            <select class="form-select" required>
+                                <option value="">Selecione...</option>
+                                <option>João Silva</option>
+                                <option>Maria Santos</option>
+                                <option>Pedro Costa</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Valor do Projeto</label>
+                            <input type="text" class="form-control" placeholder="R$ 0,00">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Data de Início</label>
+                            <input type="date" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Previsão de Conclusão</label>
+                            <input type="date" class="form-control">
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <label class="form-label">Descrição</label>
+                        <textarea class="form-control" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="salvarProjeto()">
+                    <i class="fas fa-save me-1"></i>Salvar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
     <!-- Módulos Principais -->
     <div class="card shadow mb-4">
@@ -268,6 +335,50 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 console.log('Dashboard Consultoria carregado!');
+</script>
+<script>
+function novoProjeto() {
+    new bootstrap.Modal(document.getElementById('modalNovoProjeto')).show();
+}
+
+function editarProjeto(id) {
+    alert(`Editando projeto ${id}`);
+}
+
+function verDetalhes(id) {
+    alert(`Detalhes do projeto ${id}`);
+}
+
+function cronograma(id) {
+    window.location.href = '/consultoria/cronogramas?projeto=' + id;
+}
+
+function relatorio(id) {
+    alert(`Relatório do projeto ${id}`);
+}
+
+function salvarProjeto() {
+    alert('Projeto salvo com sucesso!');
+    bootstrap.Modal.getInstance(document.getElementById('modalNovoProjeto')).hide();
+}
+
+function filtrarProjetos() {
+    // Lógica de filtro aqui
+    console.log('Filtrando projetos...');
+}
+
+function limparFiltros() {
+    document.getElementById('filtroStatus').value = '';
+    document.getElementById('filtroCliente').value = '';
+    document.getElementById('filtroConsultor').value = '';
+    filtrarProjetos();
+}
+
+function exportarProjetos() {
+    alert('Exportando projetos para Excel...');
+}
+
+console.log('Página de Projetos carregada!');
 </script>
 
 <style>
