@@ -179,7 +179,7 @@
                 <div class="row">
                     <!-- RH -->
                     <div class="col-lg-3 col-md-6 mb-4">
-                        <div class="card module-card h-100" onclick="acessarModulo('/rh')">
+                        <div class="card module-card h-100" onclick="acessarModulo('/rh')" >
                             <div class="card-body text-center">
                                 <i class="fas fa-users fa-3x text-info mb-3"></i>
                                 <h5>Recursos Humanos</h5>
@@ -344,6 +344,46 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../static/js/modal_novo_projeto.js"></script>
+
+    <script>
+        // Função para acessar os módulos
+        function acessarModulo(url) {
+            // Adiciona feedback visual ao clique
+            event.currentTarget.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                event.currentTarget.style.transform = '';
+            }, 150);
+            
+            // Redireciona para a URL do módulo
+            window.location.href = url;
+        }
+
+        // Função para atualizar o horário atual
+        function atualizarHorario() {
+            const agora = new Date();
+            const opcoes = {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            const horarioFormatado = agora.toLocaleDateString('pt-BR', opcoes);
+            const elementoHorario = document.getElementById('current-time');
+            if (elementoHorario) {
+                elementoHorario.textContent = horarioFormatado;
+            }
+        }
+
+        // Atualizar horário a cada segundo
+        setInterval(atualizarHorario, 1000);
+        atualizarHorario(); // Chamada inicial
+
+        // Log para debug (remover em produção)
+        console.log('Dashboard carregado com sucesso!');
+        console.log('Função acessarModulo definida');
+    </script>
 
 </body>
 </html>
