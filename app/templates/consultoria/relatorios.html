@@ -1,0 +1,551 @@
+{% extends "base.html" %}
+
+{% block title %}Relatórios - Consultoria{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-chart-line me-2"></i>Relatórios de Consultoria
+        </h1>
+        <div class="btn-group">
+            <button class="btn btn-success" onclick="novoRelatorio()">
+                <i class="fas fa-plus me-1"></i>Novo Relatório
+            </button>
+            <button class="btn btn-outline-primary" onclick="agendarRelatorio()">
+                <i class="fas fa-clock me-1"></i>Agendar
+            </button>
+            <a href="{{ url_for('consultoria.index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Voltar
+            </a>
+        </div>
+    </div>
+
+    <!-- Dashboards Executivos -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2 cursor-pointer" onclick="relatorioFinanceiro()">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Faturamento Total
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 485k</div>
+                            <div class="small text-success">+12% vs mês anterior</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2 cursor-pointer" onclick="relatorioPerformance()">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Taxa de Sucesso
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">94%</div>
+                            <div class="small text-primary">24 projetos concluídos</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-trophy fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2 cursor-pointer" onclick="relatorioClientes()">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Satisfação Cliente
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">4.8/5</div>
+                            <div class="small text-info">98% recomendariam</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-star fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2 cursor-pointer" onclick="relatorioCapacidade()">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Capacidade Utilizada
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">87%</div>
+                            <div class="small text-warning">832h de 960h</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-chart-pie fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tipos de Relatórios -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-chart-bar me-2"></i>Tipos de Relatórios Disponíveis
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <!-- Relatório Financeiro -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow">
+                        <div class="card-body text-center">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-chart-line fa-3x text-success"></i>
+                            </div>
+                            <h5 class="card-title">Relatório Financeiro</h5>
+                            <p class="card-text text-muted">Faturamento, lucratividade e análise de custos por projeto</p>
+                            <ul class="list-unstyled text-start text-sm">
+                                <li><i class="fas fa-check text-success me-2"></i>Receitas por período</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Margem por projeto</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Previsão de faturamento</li>
+                            </ul>
+                            <button class="btn btn-success w-100" onclick="gerarRelatorio('financeiro')">
+                                <i class="fas fa-file-excel me-1"></i>Gerar Relatório
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Relatório de Performance -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow">
+                        <div class="card-body text-center">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-trophy fa-3x text-warning"></i>
+                            </div>
+                            <h5 class="card-title">Performance da Equipe</h5>
+                            <p class="card-text text-muted">Produtividade e eficiência dos consultores</p>
+                            <ul class="list-unstyled text-start text-sm">
+                                <li><i class="fas fa-check text-success me-2"></i>Horas trabalhadas</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Projetos por consultor</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Taxa de conclusão</li>
+                            </ul>
+                            <button class="btn btn-warning w-100" onclick="gerarRelatorio('performance')">
+                                <i class="fas fa-file-pdf me-1"></i>Gerar Relatório
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Relatório de Clientes -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow">
+                        <div class="card-body text-center">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-users fa-3x text-info"></i>
+                            </div>
+                            <h5 class="card-title">Análise de Clientes</h5>
+                            <p class="card-text text-muted">Satisfação, retenção e oportunidades</p>
+                            <ul class="list-unstyled text-start text-sm">
+                                <li><i class="fas fa-check text-success me-2"></i>Satisfação por projeto</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Clientes recorrentes</li>
+                                <li><i class="fas fa-check text-success me-2"></i>NPS Score</li>
+                            </ul>
+                            <button class="btn btn-info w-100" onclick="gerarRelatorio('clientes')">
+                                <i class="fas fa-file-word me-1"></i>Gerar Relatório
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Relatório Operacional -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow">
+                        <div class="card-body text-center">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-cogs fa-3x text-secondary"></i>
+                            </div>
+                            <h5 class="card-title">Relatório Operacional</h5>
+                            <p class="card-text text-muted">Indicadores operacionais e processos</p>
+                            <ul class="list-unstyled text-start text-sm">
+                                <li><i class="fas fa-check text-success me-2"></i>Tempo médio projeto</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Capacidade por área</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Atrasos e gargalos</li>
+                            </ul>
+                            <button class="btn btn-secondary w-100" onclick="gerarRelatorio('operacional')">
+                                <i class="fas fa-file-csv me-1"></i>Gerar Relatório
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Relatório Executivo -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow">
+                        <div class="card-body text-center">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-chart-pie fa-3x text-primary"></i>
+                            </div>
+                            <h5 class="card-title">Dashboard Executivo</h5>
+                            <p class="card-text text-muted">Visão estratégica consolidada</p>
+                            <ul class="list-unstyled text-start text-sm">
+                                <li><i class="fas fa-check text-success me-2"></i>KPIs principais</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Tendências de mercado</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Comparativo anual</li>
+                            </ul>
+                            <button class="btn btn-primary w-100" onclick="gerarRelatorio('executivo')">
+                                <i class="fas fa-presentation me-1"></i>Visualizar Dashboard
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Relatório Customizado -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow">
+                        <div class="card-body text-center">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-wrench fa-3x text-dark"></i>
+                            </div>
+                            <h5 class="card-title">Relatório Customizado</h5>
+                            <p class="card-text text-muted">Configure seus próprios indicadores</p>
+                            <ul class="list-unstyled text-start text-sm">
+                                <li><i class="fas fa-check text-success me-2"></i>Filtros personalizados</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Métricas específicas</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Formato livre</li>
+                            </ul>
+                            <button class="btn btn-dark w-100" onclick="customizarRelatorio()">
+                                <i class="fas fa-cog me-1"></i>Personalizar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Relatórios Recentes -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-history me-2"></i>Relatórios Recentes
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nome do Relatório</th>
+                            <th>Tipo</th>
+                            <th>Data Geração</th>
+                            <th>Solicitado por</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Performance Q1 2024</td>
+                            <td><span class="badge bg-warning">Performance</span></td>
+                            <td>15/04/2024 14:30</td>
+                            <td>Admin</td>
+                            <td><span class="badge bg-success">Pronto</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="baixarRelatorio(1)">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="btn btn-sm btn-info" onclick="visualizar(1)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="compartilhar(1)">
+                                    <i class="fas fa-share"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Financeiro - Março 2024</td>
+                            <td><span class="badge bg-success">Financeiro</span></td>
+                            <td>14/04/2024 09:15</td>
+                            <td>João Silva</td>
+                            <td><span class="badge bg-success">Pronto</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="baixarRelatorio(2)">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="btn btn-sm btn-info" onclick="visualizar(2)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="compartilhar(2)">
+                                    <i class="fas fa-share"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Análise de Clientes 2024</td>
+                            <td><span class="badge bg-info">Clientes</span></td>
+                            <td>13/04/2024 16:45</td>
+                            <td>Maria Santos</td>
+                            <td><span class="badge bg-warning">Processando</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-secondary" disabled>
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos Resumo -->
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Faturamento Mensal - 2024</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="graficoFaturamento"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Projetos por Status</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="graficoProjetos"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Geração de Relatório -->
+<div class="modal fade" id="modalGerarRelatorio" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-chart-line me-2"></i>Gerar Relatório
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formRelatorio">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">Tipo de Relatório*</label>
+                            <select class="form-select" id="tipoRelatorio" required>
+                                <option value="">Selecione...</option>
+                                <option value="financeiro">Relatório Financeiro</option>
+                                <option value="performance">Performance da Equipe</option>
+                                <option value="clientes">Análise de Clientes</option>
+                                <option value="operacional">Relatório Operacional</option>
+                                <option value="executivo">Dashboard Executivo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Período*</label>
+                            <select class="form-select" required>
+                                <option value="">Selecione...</option>
+                                <option value="atual">Mês atual</option>
+                                <option value="anterior">Mês anterior</option>
+                                <option value="trimestre">Trimestre atual</option>
+                                <option value="ano">Ano atual</option>
+                                <option value="customizado">Período customizado</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3" id="periodoCustomizado" style="display: none;">
+                        <div class="col-md-6">
+                            <label class="form-label">Data Inicial</label>
+                            <input type="date" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Data Final</label>
+                            <input type="date" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Formato</label>
+                            <select class="form-select">
+                                <option>Excel (.xlsx)</option>
+                                <option>PDF</option>
+                                <option>Word (.docx)</option>
+                                <option>CSV</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Incluir Gráficos</label>
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" type="checkbox" id="incluirGraficos" checked>
+                                <label class="form-check-label" for="incluirGraficos">
+                                    Sim, incluir gráficos no relatório
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <label class="form-label">Filtros Adicionais</label>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input">
+                                    <label class="form-check-label">Por Consultor</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input">
+                                    <label class="form-check-label">Por Cliente</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input">
+                                    <label class="form-check-label">Por Projeto</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-info" onclick="visualizarPrevia()">
+                    <i class="fas fa-eye me-1"></i>Prévia
+                </button>
+                <button type="button" class="btn btn-success" onclick="processarRelatorio()">
+                    <i class="fas fa-cog me-1"></i>Gerar Relatório
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function novoRelatorio() {
+    new bootstrap.Modal(document.getElementById('modalGerarRelatorio')).show();
+}
+
+function gerarRelatorio(tipo) {
+    document.getElementById('tipoRelatorio').value = tipo;
+    novoRelatorio();
+}
+
+function relatorioFinanceiro() {
+    gerarRelatorio('financeiro');
+}
+
+function relatorioPerformance() {
+    gerarRelatorio('performance');
+}
+
+function relatorioClientes() {
+    gerarRelatorio('clientes');
+}
+
+function relatorioCapacidade() {
+    gerarRelatorio('operacional');
+}
+
+function customizarRelatorio() {
+    alert('Funcionalidade para criar relatórios customizados');
+}
+
+function agendarRelatorio() {
+    alert('Agendar geração automática de relatórios');
+}
+
+function processarRelatorio() {
+    alert('Relatório sendo processado. Você receberá uma notificação quando estiver pronto!');
+    bootstrap.Modal.getInstance(document.getElementById('modalGerarRelatorio')).hide();
+}
+
+function visualizarPrevia() {
+    alert('Prévia do relatório');
+}
+
+function baixarRelatorio(id) {
+    alert(`Baixando relatório ${id}`);
+}
+
+function visualizar(id) {
+    alert(`Visualizando relatório ${id}`);
+}
+
+function compartilhar(id) {
+    alert(`Compartilhando relatório ${id}`);
+}
+
+// Simular gráficos com placeholders
+document.addEventListener('DOMContentLoaded', function() {
+    // Aqui você pode adicionar Chart.js ou outro framework de gráficos
+    console.log('Relatórios carregados!');
+});
+
+console.log('Página de Relatórios carregada!');
+</script>
+
+<style>
+.hover-shadow {
+    transition: all 0.2s ease-in-out;
+}
+
+.hover-shadow:hover {
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+    transform: translateY(-2px);
+}
+
+.cursor-pointer {
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.cursor-pointer:hover {
+    transform: translateY(-2px);
+}
+
+.chart-container {
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fc;
+    border: 2px dashed #dee2e6;
+    border-radius: 5px;
+}
+
+.chart-container::before {
+    content: "Gráfico será carregado aqui";
+    color: #6c757d;
+    font-style: italic;
+}
+</style>
+{% endblock %}

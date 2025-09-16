@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Gestão de Projetos{% endblock %}
+{% block title %}Projetos - Consultoria{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
@@ -9,23 +9,366 @@
             <i class="fas fa-project-diagram me-2"></i>Gestão de Projetos
         </h1>
         <div class="btn-group">
+            <button class="btn btn-success" onclick="novoProjeto()">
+                <i class="fas fa-plus me-1"></i>Novo Projeto
+            </button>
             <a href="{{ url_for('consultoria.index') }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left me-1"></i>Voltar
             </a>
         </div>
     </div>
 
-    <div class="card shadow">
-        <div class="card-body text-center py-5">
-            <i class="fas fa-project-diagram fa-4x text-success mb-4"></i>
-            <h3>Gestão de Projetos</h3>
-            <p class="text-muted">Esta funcionalidade está sendo desenvolvida com todas as ferramentas necessárias para gestão de consultoria.</p>
-            <div class="mt-4">
-                <a href="{{ url_for('consultoria.index') }}" class="btn btn-success me-2">
-                    <i class="fas fa-home me-1"></i>Voltar ao Dashboard
-                </a>
+    <!-- Filtros -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-filter me-2"></i>Filtros
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <label>Status:</label>
+                    <select class="form-select" id="filtroStatus" onchange="filtrarProjetos()">
+                        <option value="">Todos</option>
+                        <option value="Iniciado">Iniciado</option>
+                        <option value="Em Andamento">Em Andamento</option>
+                        <option value="Pausado">Pausado</option>
+                        <option value="Concluído">Concluído</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label>Cliente:</label>
+                    <select class="form-select" id="filtroCliente" onchange="filtrarProjetos()">
+                        <option value="">Todos</option>
+                        <option value="Empresa A">Empresa A</option>
+                        <option value="Empresa B">Empresa B</option>
+                        <option value="Empresa C">Empresa C</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label>Consultor:</label>
+                    <select class="form-select" id="filtroConsultor" onchange="filtrarProjetos()">
+                        <option value="">Todos</option>
+                        <option value="João Silva">João Silva</option>
+                        <option value="Maria Santos">Maria Santos</option>
+                        <option value="Pedro Costa">Pedro Costa</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button class="btn btn-outline-primary me-2" onclick="limparFiltros()">
+                        <i class="fas fa-eraser me-1"></i>Limpar
+                    </button>
+                    <button class="btn btn-outline-success" onclick="exportarProjetos()">
+                        <i class="fas fa-download me-1"></i>Exportar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de Projetos -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-table me-2"></i>Lista de Projetos
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="tabelaProjetos">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome do Projeto</th>
+                            <th>Cliente</th>
+                            <th>Consultor</th>
+                            <th>Status</th>
+                            <th>Início</th>
+                            <th>Previsão</th>
+                            <th>Valor</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>001</td>
+                            <td>Implementação ISO 9001</td>
+                            <td>Empresa A</td>
+                            <td>João Silva</td>
+                            <td><span class="badge bg-success">Em Andamento</span></td>
+                            <td>15/01/2024</td>
+                            <td>15/06/2024</td>
+                            <td>R$ 45.000</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="editarProjeto(1)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-info" onclick="verDetalhes(1)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="cronograma(1)">
+                                    <i class="fas fa-calendar"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>002</td>
+                            <td>Consultoria Lean Manufacturing</td>
+                            <td>Empresa B</td>
+                            <td>Maria Santos</td>
+                            <td><span class="badge bg-info">Iniciado</span></td>
+                            <td>01/02/2024</td>
+                            <td>01/08/2024</td>
+                            <td>R$ 75.000</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="editarProjeto(2)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-info" onclick="verDetalhes(2)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="cronograma(2)">
+                                    <i class="fas fa-calendar"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>003</td>
+                            <td>Auditoria de Processos</td>
+                            <td>Empresa C</td>
+                            <td>Pedro Costa</td>
+                            <td><span class="badge bg-warning">Pausado</span></td>
+                            <td>10/12/2023</td>
+                            <td>10/05/2024</td>
+                            <td>R$ 28.000</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="editarProjeto(3)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-info" onclick="verDetalhes(3)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="cronograma(3)">
+                                    <i class="fas fa-calendar"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>004</td>
+                            <td>Treinamento 5S</td>
+                            <td>Empresa A</td>
+                            <td>João Silva</td>
+                            <td><span class="badge bg-secondary">Concluído</span></td>
+                            <td>05/10/2023</td>
+                            <td>05/12/2023</td>
+                            <td>R$ 15.000</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="editarProjeto(4)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-info" onclick="verDetalhes(4)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="relatorio(4)">
+                                    <i class="fas fa-file-alt"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estatísticas Rápidas -->
+    <div class="row">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Projetos Ativos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">3</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-play fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Concluídos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">1</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Valor Total
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 163.000</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Média Duração
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">4 meses</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clock fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Modal Novo Projeto -->
+<div class="modal fade" id="modalNovoProjeto" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-plus me-2"></i>Novo Projeto
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formNovoProjeto">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">Nome do Projeto*</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Cliente*</label>
+                            <select class="form-select" required>
+                                <option value="">Selecione...</option>
+                                <option>Empresa A</option>
+                                <option>Empresa B</option>
+                                <option>Empresa C</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Consultor Responsável*</label>
+                            <select class="form-select" required>
+                                <option value="">Selecione...</option>
+                                <option>João Silva</option>
+                                <option>Maria Santos</option>
+                                <option>Pedro Costa</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Valor do Projeto</label>
+                            <input type="text" class="form-control" placeholder="R$ 0,00">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Data de Início</label>
+                            <input type="date" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Previsão de Conclusão</label>
+                            <input type="date" class="form-control">
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <label class="form-label">Descrição</label>
+                        <textarea class="form-control" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="salvarProjeto()">
+                    <i class="fas fa-save me-1"></i>Salvar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function novoProjeto() {
+    new bootstrap.Modal(document.getElementById('modalNovoProjeto')).show();
+}
+
+function editarProjeto(id) {
+    alert(`Editando projeto ${id}`);
+}
+
+function verDetalhes(id) {
+    alert(`Detalhes do projeto ${id}`);
+}
+
+function cronograma(id) {
+    window.location.href = '/consultoria/cronogramas?projeto=' + id;
+}
+
+function relatorio(id) {
+    alert(`Relatório do projeto ${id}`);
+}
+
+function salvarProjeto() {
+    alert('Projeto salvo com sucesso!');
+    bootstrap.Modal.getInstance(document.getElementById('modalNovoProjeto')).hide();
+}
+
+function filtrarProjetos() {
+    // Lógica de filtro aqui
+    console.log('Filtrando projetos...');
+}
+
+function limparFiltros() {
+    document.getElementById('filtroStatus').value = '';
+    document.getElementById('filtroCliente').value = '';
+    document.getElementById('filtroConsultor').value = '';
+    filtrarProjetos();
+}
+
+function exportarProjetos() {
+    alert('Exportando projetos para Excel...');
+}
+
+console.log('Página de Projetos carregada!');
+</script>
 {% endblock %}

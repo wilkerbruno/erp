@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Gestão de Clientes{% endblock %}
+{% block title %}Clientes - Consultoria{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
@@ -9,23 +9,404 @@
             <i class="fas fa-users me-2"></i>Gestão de Clientes
         </h1>
         <div class="btn-group">
+            <button class="btn btn-success" onclick="novoCliente()">
+                <i class="fas fa-user-plus me-1"></i>Novo Cliente
+            </button>
+            <button class="btn btn-outline-primary" onclick="importarClientes()">
+                <i class="fas fa-upload me-1"></i>Importar
+            </button>
             <a href="{{ url_for('consultoria.index') }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left me-1"></i>Voltar
             </a>
         </div>
     </div>
 
-    <div class="card shadow">
-        <div class="card-body text-center py-5">
-            <i class="fas fa-users fa-4x text-primary mb-4"></i>
-            <h3>Gestão de Clientes</h3>
-            <p class="text-muted">Esta funcionalidade está sendo desenvolvida com todas as ferramentas necessárias para gestão de consultoria.</p>
-            <div class="mt-4">
-                <a href="{{ url_for('consultoria.index') }}" class="btn btn-primary me-2">
-                    <i class="fas fa-home me-1"></i>Voltar ao Dashboard
-                </a>
+    <!-- Cartões de Estatísticas -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total de Clientes
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">24</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Clientes Ativos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-user-check fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Novos Este Mês
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">3</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-user-plus fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Faturamento Total
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 485k</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros de Busca -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <input type="text" class="form-control" placeholder="Buscar cliente..." id="buscaCliente" onkeyup="buscarClientes()">
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="filtroSegmento" onchange="filtrarClientes()">
+                        <option value="">Todos os Segmentos</option>
+                        <option value="Industrial">Industrial</option>
+                        <option value="Serviços">Serviços</option>
+                        <option value="Comercial">Comercial</option>
+                        <option value="Saúde">Saúde</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="filtroStatus" onchange="filtrarClientes()">
+                        <option value="">Todos os Status</option>
+                        <option value="Ativo">Ativo</option>
+                        <option value="Inativo">Inativo</option>
+                        <option value="Prospect">Prospect</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-outline-secondary w-100" onclick="limparFiltros()">
+                        <i class="fas fa-eraser me-1"></i>Limpar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Clientes -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-table me-2"></i>Lista de Clientes
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="tabelaClientes">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Razão Social</th>
+                            <th>CNPJ</th>
+                            <th>Contato</th>
+                            <th>Telefone</th>
+                            <th>Segmento</th>
+                            <th>Status</th>
+                            <th>Projetos</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>001</td>
+                            <td>ABC Indústria Ltda</td>
+                            <td>12.345.678/0001-90</td>
+                            <td>Carlos Silva</td>
+                            <td>(11) 9999-8888</td>
+                            <td>Industrial</td>
+                            <td><span class="badge bg-success">Ativo</span></td>
+                            <td>3</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="editarCliente(1)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-info" onclick="verProjetos(1)">
+                                    <i class="fas fa-project-diagram"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="historicoCliente(1)">
+                                    <i class="fas fa-history"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>002</td>
+                            <td>XYZ Serviços S.A.</td>
+                            <td>98.765.432/0001-10</td>
+                            <td>Ana Costa</td>
+                            <td>(11) 8888-7777</td>
+                            <td>Serviços</td>
+                            <td><span class="badge bg-success">Ativo</span></td>
+                            <td>2</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="editarCliente(2)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-info" onclick="verProjetos(2)">
+                                    <i class="fas fa-project-diagram"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="historicoCliente(2)">
+                                    <i class="fas fa-history"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>003</td>
+                            <td>DEF Comércio</td>
+                            <td>11.222.333/0001-44</td>
+                            <td>Pedro Santos</td>
+                            <td>(11) 7777-6666</td>
+                            <td>Comercial</td>
+                            <td><span class="badge bg-info">Prospect</span></td>
+                            <td>0</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="editarCliente(3)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="novaOportunidade(3)">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="historicoCliente(3)">
+                                    <i class="fas fa-history"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Modal Novo Cliente -->
+<div class="modal fade" id="modalNovoCliente" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-user-plus me-2"></i>Novo Cliente
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formNovoCliente">
+                    <!-- Dados da Empresa -->
+                    <div class="row">
+                        <div class="col-12">
+                            <h6 class="text-primary">
+                                <i class="fas fa-building me-2"></i>Dados da Empresa
+                            </h6>
+                            <hr>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label class="form-label">Razão Social*</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">CNPJ*</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Nome Fantasia</label>
+                            <input type="text" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Segmento*</label>
+                            <select class="form-select" required>
+                                <option value="">Selecione...</option>
+                                <option>Industrial</option>
+                                <option>Serviços</option>
+                                <option>Comercial</option>
+                                <option>Saúde</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Dados de Contato -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h6 class="text-primary">
+                                <i class="fas fa-user me-2"></i>Contato Principal
+                            </h6>
+                            <hr>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">Nome do Contato*</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Cargo</label>
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Telefone*</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label">E-mail*</label>
+                            <input type="email" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <!-- Endereço -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h6 class="text-primary">
+                                <i class="fas fa-map-marker-alt me-2"></i>Endereço
+                            </h6>
+                            <hr>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label class="form-label">CEP</label>
+                            <input type="text" class="form-control">
+                        </div>
+                        <div class="col-md-7">
+                            <label class="form-label">Endereço</label>
+                            <input type="text" class="form-control">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Número</label>
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Cidade</label>
+                            <input type="text" class="form-control">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Estado</label>
+                            <select class="form-select">
+                                <option value="">Selecione...</option>
+                                <option value="SP">São Paulo</option>
+                                <option value="RJ">Rio de Janeiro</option>
+                                <option value="MG">Minas Gerais</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Status</label>
+                            <select class="form-select">
+                                <option value="Prospect">Prospect</option>
+                                <option value="Ativo">Ativo</option>
+                                <option value="Inativo">Inativo</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="salvarCliente()">
+                    <i class="fas fa-save me-1"></i>Salvar Cliente
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function novoCliente() {
+    new bootstrap.Modal(document.getElementById('modalNovoCliente')).show();
+}
+
+function editarCliente(id) {
+    alert(`Editando cliente ${id}`);
+}
+
+function verProjetos(id) {
+    window.location.href = '/consultoria/projetos?cliente=' + id;
+}
+
+function historicoCliente(id) {
+    alert(`Histórico do cliente ${id}`);
+}
+
+function novaOportunidade(id) {
+    alert(`Nova oportunidade para cliente ${id}`);
+}
+
+function salvarCliente() {
+    alert('Cliente salvo com sucesso!');
+    bootstrap.Modal.getInstance(document.getElementById('modalNovoCliente')).hide();
+}
+
+function buscarClientes() {
+    const termo = document.getElementById('buscaCliente').value;
+    console.log('Buscando:', termo);
+}
+
+function filtrarClientes() {
+    console.log('Filtrando clientes...');
+}
+
+function limparFiltros() {
+    document.getElementById('buscaCliente').value = '';
+    document.getElementById('filtroSegmento').value = '';
+    document.getElementById('filtroStatus').value = '';
+    filtrarClientes();
+}
+
+function importarClientes() {
+    alert('Funcionalidade de importação de clientes');
+}
+
+console.log('Página de Clientes carregada!');
+</script>
 {% endblock %}
