@@ -1,0 +1,5 @@
+
+# Adicione temporariamente ao seu app principal para teste:
+@app.route('/consultoria/relatorios')
+def test_relatorios():
+    return "FUNCIONOU! A rota está ativa."
