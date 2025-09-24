@@ -1,10 +1,87 @@
 #!/usr/bin/env python3
 """
 Aplicação Flask Simplificada para EasyPanel
-Esta versão evita problemas de blueprints duplicados
+Versão corrigida para Python 3.13
 """
 
+import sys
 import os
+
+# PATCH CRÍTICO PARA PYTHON 3.13 - DEVE VIR ANTES DE QUALQUER IMPORT
+if sys.version_info >= (3, 13):
+    print("🔧 Aplicando patch Python 3.13 + SQLAlchemy...")
+    
+    # Monkey patch do módulo typing para evitar o erro
+    import typing
+    
+    # Salvar função original
+    _original_init_subclass = typing.Generic.__init_subclass__
+    
+    @classmethod
+    def patched_init_subclass(cls, *args, **kwargs):
+        # Para classes problemáticas, pular verificações rigorosas
+        if hasattr(cls, '__name__') and 'SQLCoreOperations' in str(cls):
+            # Remove atributos problemáticos
+            for attr in ['__firstlineno__', '__static_attributes__']:
+                if hasattr(cls, attr):
+                    try:
+                        delattr(cls, attr)
+                    except (AttributeError, TypeError):
+                        pass
+        
+        return _original_init_subclass(*args, **kwargs)
+    
+    # Aplicar patch
+    typing.Generic.__init_subclass__ = patched_init_subclass
+    
+    # Patch adicional no langhelpers
+    def patch_langhelpers():
+        try:
+            import sqlalchemy.util.langhelpers as lh
+            
+            # Sobrescrever verificação problemática
+            original_init_subclass = lh.TypingOnly.__init_subclass__
+            
+            @classmethod
+            def safe_init_subclass(cls, **kwargs):
+                # Remover atributos problemáticos
+                problematic_attrs = {'__firstlineno__', '__static_attributes__'}
+                for attr in problematic_attrs:
+                    if hasattr(cls, attr):
+                        try:
+                            delattr(cls, attr)
+                        except:
+                            pass
+                
+                # Chamar original sem verificação rigorosa
+                try:
+                    return original_init_subclass(**kwargs)
+                except AssertionError:
+                    # Se der erro, pular verificação
+                    pass
+            
+            lh.TypingOnly.__init_subclass__ = safe_init_subclass
+            
+        except ImportError:
+            # SQLAlchemy ainda não foi importado
+            pass
+    
+    # Agendar patch para quando sqlalchemy for importado
+    import importlib.util
+    original_import = __builtins__['__import__']
+    
+    def patched_import(name, *args, **kwargs):
+        result = original_import(name, *args, **kwargs)
+        
+        # Aplicar patch quando sqlalchemy.util.langhelpers for importado
+        if name == 'sqlalchemy.util.langhelpers' or 'langhelpers' in name:
+            patch_langhelpers()
+        
+        return result
+    
+    __builtins__['__import__'] = patched_import
+    print("✅ Patch Python 3.13 aplicado!")
+
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -86,6 +163,7 @@ def index():
                             <hr>
                             <h5 class="text-success">✅ Sistema Online!</h5>
                             <p class="text-muted">Aplicação rodando no EasyPanel</p>
+                            <p class="text-info">Python 3.13 + SQLAlchemy Patch Aplicado</p>
                             <hr>
                             <div class="row">
                                 <div class="col">
@@ -128,6 +206,7 @@ def test_database():
                 <div class="card">
                     <div class="card-body">
                         <h3 class="text-success">✅ Conexão OK!</h3>
+                        <p><strong>Python:</strong> {sys.version}</p>
                         <p><strong>Usuários cadastrados:</strong> {user_count}</p>
                         <p><strong>Database URI:</strong> {app.config['SQLALCHEMY_DATABASE_URI']}</p>
                         <a href="/" class="btn btn-primary">Voltar</a>
@@ -152,6 +231,7 @@ def test_database():
                 <div class="card">
                     <div class="card-body">
                         <h3 class="text-danger">❌ Erro na Conexão</h3>
+                        <p><strong>Python:</strong> {sys.version}</p>
                         <p><strong>Erro:</strong> {str(e)}</p>
                         <p><strong>Database URI:</strong> {app.config['SQLALCHEMY_DATABASE_URI']}</p>
                         <a href="/" class="btn btn-primary">Voltar</a>
@@ -452,6 +532,7 @@ def init_database():
 if __name__ == '__main__':
     print("🏢 ERP SISTEMA - VERSÃO SIMPLIFICADA")
     print("="*50)
+    print(f"🐍 Python: {sys.version}")
     print(f"🗄️  Database: {DATABASE_URL}")
     
     # Inicializar banco

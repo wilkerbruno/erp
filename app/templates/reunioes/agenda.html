@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Agenda de Reuniões{% endblock %}
+{% block title %}Agenda - Reuniões{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
@@ -9,23 +9,485 @@
             <i class="fas fa-calendar-alt me-2"></i>Agenda de Reuniões
         </h1>
         <div class="btn-group">
+            <button class="btn btn-success" onclick="novaReuniao()">
+                <i class="fas fa-plus me-1"></i>Nova Reunião
+            </button>
+            <button class="btn btn-outline-info" onclick="importarAgenda()">
+                <i class="fas fa-upload me-1"></i>Importar
+            </button>
             <a href="{{ url_for('reunioes.index') }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left me-1"></i>Voltar
             </a>
         </div>
     </div>
 
-    <div class="card shadow">
-        <div class="card-body text-center py-5">
-            <i class="fas fa-calendar-alt fa-4x text-primary mb-4"></i>
-            <h3>Agenda de Reuniões</h3>
-            <p class="text-muted">Esta funcionalidade está sendo desenvolvida com todas as ferramentas necessárias para gestão de reuniões.</p>
-            <div class="mt-4">
-                <a href="{{ url_for('reunioes.index') }}" class="btn btn-primary me-2">
-                    <i class="fas fa-home me-1"></i>Voltar ao Dashboard
-                </a>
+    <!-- Visão Rápida -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Hoje
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">5</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar-day fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Esta Semana
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">12</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar-week fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Próxima
+                            </div>
+                            <div class="h6 mb-0 font-weight-bold text-gray-800">14:30</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clock fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Salas Ocupadas
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">3/8</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-door-open fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <label>Visualização:</label>
+                    <select class="form-select" id="tipoVisualizacao" onchange="alterarVisualizacao()">
+                        <option value="lista">Lista</option>
+                        <option value="calendario">Calendário</option>
+                        <option value="timeline">Timeline</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label>Período:</label>
+                    <select class="form-select" id="filtroPeriodo" onchange="filtrarPeriodo()">
+                        <option value="hoje">Hoje</option>
+                        <option value="semana" selected>Esta Semana</option>
+                        <option value="mes">Este Mês</option>
+                        <option value="custom">Personalizado</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label>Sala:</label>
+                    <select class="form-select" id="filtroSala" onchange="filtrarSala()">
+                        <option value="">Todas</option>
+                        <option value="sala1">Sala de Reunião 1</option>
+                        <option value="sala2">Sala de Reunião 2</option>
+                        <option value="auditorio">Auditório</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button class="btn btn-outline-primary me-2" onclick="limparFiltros()">
+                        <i class="fas fa-eraser me-1"></i>Limpar
+                    </button>
+                    <button class="btn btn-outline-success" onclick="exportarAgenda()">
+                        <i class="fas fa-download me-1"></i>Exportar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Reuniões -->
+    <div class="card shadow mb-4" id="listaReunioes">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-list me-2"></i>Próximas Reuniões
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="timeline">
+                <!-- Reunião 1 -->
+                <div class="timeline-item">
+                    <div class="timeline-marker bg-primary"></div>
+                    <div class="timeline-content">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="timeline-title">Planejamento Estratégico 2024</h6>
+                                <div class="timeline-details">
+                                    <span class="badge bg-primary me-2">
+                                        <i class="fas fa-clock me-1"></i>14:30 - 16:00
+                                    </span>
+                                    <span class="badge bg-info me-2">
+                                        <i class="fas fa-door-open me-1"></i>Sala de Reunião 1
+                                    </span>
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-users me-1"></i>8 participantes
+                                    </span>
+                                </div>
+                                <p class="text-muted mt-2">Revisão dos objetivos e metas para 2024</p>
+                            </div>
+                            <div class="btn-group">
+                                <button class="btn btn-sm btn-outline-primary" onclick="editarReuniao(1)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-success" onclick="iniciarReuniao(1)">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-info" onclick="verDetalhes(1)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reunião 2 -->
+                <div class="timeline-item">
+                    <div class="timeline-marker bg-warning"></div>
+                    <div class="timeline-content">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="timeline-title">Review Mensal - Vendas</h6>
+                                <div class="timeline-details">
+                                    <span class="badge bg-warning me-2">
+                                        <i class="fas fa-clock me-1"></i>16:30 - 17:30
+                                    </span>
+                                    <span class="badge bg-info me-2">
+                                        <i class="fas fa-door-open me-1"></i>Sala de Reunião 2
+                                    </span>
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-users me-1"></i>5 participantes
+                                    </span>
+                                </div>
+                                <p class="text-muted mt-2">Análise dos resultados de vendas do mês</p>
+                            </div>
+                            <div class="btn-group">
+                                <button class="btn btn-sm btn-outline-primary" onclick="editarReuniao(2)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-success" onclick="iniciarReuniao(2)">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-info" onclick="verDetalhes(2)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reunião 3 -->
+                <div class="timeline-item">
+                    <div class="timeline-marker bg-info"></div>
+                    <div class="timeline-content">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="timeline-title">Treinamento - Novos Colaboradores</h6>
+                                <div class="timeline-details">
+                                    <span class="badge bg-info me-2">
+                                        <i class="fas fa-clock me-1"></i>09:00 - 12:00
+                                    </span>
+                                    <span class="badge bg-info me-2">
+                                        <i class="fas fa-door-open me-1"></i>Auditório
+                                    </span>
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-users me-1"></i>15 participantes
+                                    </span>
+                                </div>
+                                <p class="text-muted mt-2">Integração e apresentação da empresa</p>
+                            </div>
+                            <div class="btn-group">
+                                <button class="btn btn-sm btn-outline-primary" onclick="editarReuniao(3)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-success" onclick="iniciarReuniao(3)">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-info" onclick="verDetalhes(3)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Disponibilidade de Salas -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-door-open me-2"></i>Disponibilidade das Salas - Hoje
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="card border-left-success">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6>Sala de Reunião 1</h6>
+                                    <small class="text-muted">Capacidade: 10 pessoas</small>
+                                </div>
+                                <div>
+                                    <span class="badge bg-success">Disponível</span>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <small class="text-success">
+                                    <i class="fas fa-check me-1"></i>Disponível até 14:00
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <div class="card border-left-danger">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6>Sala de Reunião 2</h6>
+                                    <small class="text-muted">Capacidade: 8 pessoas</small>
+                                </div>
+                                <div>
+                                    <span class="badge bg-danger">Ocupada</span>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <small class="text-danger">
+                                    <i class="fas fa-clock me-1"></i>Ocupada até 15:30
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Modal Nova Reunião -->
+<div class="modal fade" id="modalNovaReuniao" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-plus me-2"></i>Nova Reunião
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formNovaReuniao">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label class="form-label">Título da Reunião*</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Tipo*</label>
+                            <select class="form-select" required>
+                                <option value="">Selecione...</option>
+                                <option>Reunião de Trabalho</option>
+                                <option>Apresentação</option>
+                                <option>Treinamento</option>
+                                <option>Workshop</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Data*</label>
+                            <input type="date" class="form-control" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Hora Início*</label>
+                            <input type="time" class="form-control" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Hora Fim*</label>
+                            <input type="time" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Sala*</label>
+                            <select class="form-select" required>
+                                <option value="">Selecione...</option>
+                                <option>Sala de Reunião 1</option>
+                                <option>Sala de Reunião 2</option>
+                                <option>Auditório</option>
+                                <option>Sala de Treinamento</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Organizador*</label>
+                            <select class="form-select" required>
+                                <option value="">Selecione...</option>
+                                <option>João Silva</option>
+                                <option>Maria Santos</option>
+                                <option>Pedro Costa</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <label class="form-label">Participantes</label>
+                        <textarea class="form-control" rows="2" placeholder="Digite os nomes ou emails dos participantes..."></textarea>
+                    </div>
+                    <div class="mt-3">
+                        <label class="form-label">Pauta/Descrição</label>
+                        <textarea class="form-control" rows="3" placeholder="Descreva a pauta da reunião..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="salvarReuniao()">
+                    <i class="fas fa-save me-1"></i>Agendar Reunião
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function novaReuniao() {
+    new bootstrap.Modal(document.getElementById('modalNovaReuniao')).show();
+}
+
+function editarReuniao(id) {
+    alert(`Editando reunião ${id}`);
+}
+
+function iniciarReuniao(id) {
+    alert(`Iniciando reunião ${id} - redirecionando para sala virtual...`);
+}
+
+function verDetalhes(id) {
+    alert(`Detalhes da reunião ${id}`);
+}
+
+function salvarReuniao() {
+    alert('Reunião agendada com sucesso!');
+    bootstrap.Modal.getInstance(document.getElementById('modalNovaReuniao')).hide();
+}
+
+function alterarVisualizacao() {
+    const tipo = document.getElementById('tipoVisualizacao').value;
+    alert(`Alterando visualização para: ${tipo}`);
+}
+
+function filtrarPeriodo() {
+    console.log('Filtrando por período...');
+}
+
+function filtrarSala() {
+    console.log('Filtrando por sala...');
+}
+
+function limparFiltros() {
+    document.getElementById('tipoVisualizacao').value = 'lista';
+    document.getElementById('filtroPeriodo').value = 'semana';
+    document.getElementById('filtroSala').value = '';
+}
+
+function exportarAgenda() {
+    alert('Exportando agenda para Excel...');
+}
+
+function importarAgenda() {
+    alert('Funcionalidade de importação de agenda');
+}
+
+console.log('Página de Agenda carregada!');
+</script>
+
+<style>
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.timeline-item {
+    position: relative;
+    padding-bottom: 20px;
+    border-left: 2px solid #e9ecef;
+}
+
+.timeline-item:last-child {
+    border-left: none;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -8px;
+    top: 0;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+}
+
+.timeline-content {
+    margin-left: 20px;
+    background: #f8f9fc;
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #e3e6f0;
+}
+
+.timeline-title {
+    color: #5a5c69;
+    margin-bottom: 10px;
+}
+
+.timeline-details .badge {
+    font-size: 0.75rem;
+}
+</style>
 {% endblock %}

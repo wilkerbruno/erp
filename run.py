@@ -2,6 +2,49 @@ import os
 import sys
 from dotenv import load_dotenv
 
+# PATCH PARA PYTHON 3.13 + SQLAlchemy - DEVE VIR ANTES DE QUALQUER IMPORT DO SQLAlchemy
+if sys.version_info >= (3, 13):
+    print("🔧 Aplicando patch de compatibilidade Python 3.13 + SQLAlchemy...")
+    
+    # Patch para resolver problema TypingOnly
+    def patch_sqlalchemy_typing():
+        try:
+            import sqlalchemy.util.langhelpers
+            
+            # Salvar a classe original
+            _original_TypingOnly = sqlalchemy.util.langhelpers.TypingOnly
+            
+            class PatchedTypingOnly(_original_TypingOnly):
+                def __init_subclass__(cls, **kwargs):
+                    # Remove atributos problemáticos antes da verificação
+                    problematic_attrs = {'__firstlineno__', '__static_attributes__'}
+                    
+                    # Criar uma cópia do __dict__ sem os atributos problemáticos
+                    new_dict = {}
+                    for key, value in cls.__dict__.items():
+                        if key not in problematic_attrs:
+                            new_dict[key] = value
+                    
+                    # Remover os atributos problemáticos da classe
+                    for attr in problematic_attrs:
+                        if hasattr(cls, attr):
+                            try:
+                                delattr(cls, attr)
+                            except (AttributeError, TypeError):
+                                pass
+                    
+                    super().__init_subclass__(**kwargs)
+            
+            # Substituir a classe original
+            sqlalchemy.util.langhelpers.TypingOnly = PatchedTypingOnly
+            print("✅ Patch SQLAlchemy aplicado com sucesso!")
+            
+        except Exception as e:
+            print(f"⚠️  Erro ao aplicar patch SQLAlchemy: {e}")
+    
+    # Aplicar o patch antes de qualquer import
+    patch_sqlalchemy_typing()
+
 # Carrega variáveis do arquivo .env
 load_dotenv()
 

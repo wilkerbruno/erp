@@ -1,27 +1,14 @@
-# Flask e extensões
 Flask==2.3.3
 Flask-SQLAlchemy==3.0.5
 Flask-WTF==1.1.1
 Flask-Login==0.6.3
 Flask-Migrate==4.0.5
 
-# Banco de dados
-PyMySQL==1.1.0
-SQLAlchemy==2.0.21
+PyMySQL>=1.1.1
+SQLAlchemy>=2.0.36
 
-# Formulários
 WTForms==3.0.1
-
-# Utilitários
 python-dotenv==1.0.0
 Werkzeug==2.3.7
-
-# Para produção
 gunicorn==21.2.0
-
-# Criptografia
 bcrypt==4.0.1
-
-
-pandas openpyxl xlsxwriter reportlab matplotlib seaborn python-docx
-pandas openpyxl xlsxwriter reportlab matplotlib seaborn python-docx

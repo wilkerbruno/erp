@@ -1,31 +1,576 @@
 {% extends "base.html" %}
 
-{% block title %}Acompanhamento de Ações{% endblock %}
+{% block title %}Ações - Reuniões{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">
-            <i class="fas fa-tasks me-2"></i>Acompanhamento de Ações
+            <i class="fas fa-tasks me-2"></i>Gestão de Ações
         </h1>
         <div class="btn-group">
+            <button class="btn btn-success" onclick="novaAcao()">
+                <i class="fas fa-plus me-1"></i>Nova Ação
+            </button>
+            <button class="btn btn-outline-warning" onclick="followUp()">
+                <i class="fas fa-bell me-1"></i>Follow-up
+            </button>
             <a href="{{ url_for('reunioes.index') }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left me-1"></i>Voltar
             </a>
         </div>
     </div>
 
-    <div class="card shadow">
-        <div class="card-body text-center py-5">
-            <i class="fas fa-tasks fa-4x text-warning mb-4"></i>
-            <h3>Acompanhamento de Ações</h3>
-            <p class="text-muted">Esta funcionalidade está sendo desenvolvida com todas as ferramentas necessárias para gestão de reuniões.</p>
-            <div class="mt-4">
-                <a href="{{ url_for('reunioes.index') }}" class="btn btn-warning me-2">
-                    <i class="fas fa-home me-1"></i>Voltar ao Dashboard
-                </a>
+    <!-- Dashboard de Ações -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Ações Pendentes
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">23</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clock fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                Atrasadas
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">5</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Concluídas
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">87</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Taxa de Conclusão
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">79%</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-chart-pie fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <label>Status:</label>
+                    <select class="form-select" id="filtroStatus" onchange="filtrarAcoes()">
+                        <option value="">Todos</option>
+                        <option value="pendente">Pendente</option>
+                        <option value="andamento">Em Andamento</option>
+                        <option value="concluida">Concluída</option>
+                        <option value="atrasada">Atrasada</option>
+                        <option value="cancelada">Cancelada</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label>Responsável:</label>
+                    <select class="form-select" id="filtroResponsavel" onchange="filtrarAcoes()">
+                        <option value="">Todos</option>
+                        <option value="joao">João Silva</option>
+                        <option value="maria">Maria Santos</option>
+                        <option value="pedro">Pedro Costa</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label>Prioridade:</label>
+                    <select class="form-select" id="filtroPrioridade" onchange="filtrarAcoes()">
+                        <option value="">Todas</option>
+                        <option value="baixa">Baixa</option>
+                        <option value="media">Média</option>
+                        <option value="alta">Alta</option>
+                        <option value="critica">Crítica</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button class="btn btn-outline-secondary me-2" onclick="limparFiltros()">
+                        <i class="fas fa-eraser me-1"></i>Limpar
+                    </button>
+                    <button class="btn btn-outline-success" onclick="exportarAcoes()">
+                        <i class="fas fa-download me-1"></i>Exportar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kanban Board de Ações -->
+    <div class="row mb-4">
+        <!-- Pendentes -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header bg-warning text-white">
+                    <h6 class="m-0">
+                        <i class="fas fa-clock me-2"></i>Pendentes (8)
+                    </h6>
+                </div>
+                <div class="card-body kanban-column" style="min-height: 400px;">
+                    <!-- Ação 1 -->
+                    <div class="card mb-3 kanban-card" draggable="true">
+                        <div class="card-body p-3">
+                            <h6 class="card-title text-truncate">Elaborar proposta comercial</h6>
+                            <p class="card-text small text-muted">Reunião: Planejamento Q2</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">João Silva</small>
+                                <span class="badge bg-danger">Alta</span>
+                            </div>
+                            <div class="mt-2">
+                                <small class="text-danger">
+                                    <i class="fas fa-calendar me-1"></i>Vence: 20/04
+                                </small>
+                            </div>
+                            <div class="btn-group mt-2 w-100">
+                                <button class="btn btn-sm btn-outline-primary" onclick="editarAcao(1)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-success" onclick="iniciarAcao(1)">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Ação 2 -->
+                    <div class="card mb-3 kanban-card" draggable="true">
+                        <div class="card-body p-3">
+                            <h6 class="card-title text-truncate">Revisar processo de vendas</h6>
+                            <p class="card-text small text-muted">Reunião: Review Mensal</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">Maria Santos</small>
+                                <span class="badge bg-warning">Média</span>
+                            </div>
+                            <div class="mt-2">
+                                <small class="text-success">
+                                    <i class="fas fa-calendar me-1"></i>Vence: 25/04
+                                </small>
+                            </div>
+                            <div class="btn-group mt-2 w-100">
+                                <button class="btn btn-sm btn-outline-primary" onclick="editarAcao(2)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-success" onclick="iniciarAcao(2)">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Em Andamento -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="m-0">
+                        <i class="fas fa-spinner me-2"></i>Em Andamento (5)
+                    </h6>
+                </div>
+                <div class="card-body kanban-column" style="min-height: 400px;">
+                    <div class="card mb-3 kanban-card" draggable="true">
+                        <div class="card-body p-3">
+                            <h6 class="card-title text-truncate">Implementar novo sistema</h6>
+                            <p class="card-text small text-muted">Reunião: Tecnologia</p>
+                            <div class="progress mb-2" style="height: 6px;">
+                                <div class="progress-bar bg-primary" style="width: 60%"></div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">Pedro Costa</small>
+                                <span class="badge bg-info">Média</span>
+                            </div>
+                            <div class="btn-group mt-2 w-100">
+                                <button class="btn btn-sm btn-outline-primary" onclick="editarAcao(3)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-success" onclick="concluirAcao(3)">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Revisão -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h6 class="m-0">
+                        <i class="fas fa-search me-2"></i>Em Revisão (3)
+                    </h6>
+                </div>
+                <div class="card-body kanban-column" style="min-height: 400px;">
+                    <div class="card mb-3 kanban-card" draggable="true">
+                        <div class="card-body p-3">
+                            <h6 class="card-title text-truncate">Manual de procedimentos</h6>
+                            <p class="card-text small text-muted">Reunião: Qualidade</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">Ana Lima</small>
+                                <span class="badge bg-success">Baixa</span>
+                            </div>
+                            <div class="btn-group mt-2 w-100">
+                                <button class="btn btn-sm btn-outline-primary" onclick="editarAcao(4)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-success" onclick="aprovarAcao(4)">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Concluídas -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h6 class="m-0">
+                        <i class="fas fa-check me-2"></i>Concluídas (12)
+                    </h6>
+                </div>
+                <div class="card-body kanban-column" style="min-height: 400px;">
+                    <div class="card mb-3 kanban-card">
+                        <div class="card-body p-3">
+                            <h6 class="card-title text-truncate">
+                                <i class="fas fa-check-circle text-success me-1"></i>
+                                Relatório financeiro Q1
+                            </h6>
+                            <p class="card-text small text-muted">Reunião: Diretoria</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">Maria Santos</small>
+                                <small class="text-success">Concluída</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista Detalhada -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-list me-2"></i>Lista Detalhada de Ações
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Ação</th>
+                            <th>Reunião Origem</th>
+                            <th>Responsável</th>
+                            <th>Prazo</th>
+                            <th>Prioridade</th>
+                            <th>Status</th>
+                            <th>Progresso</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ACO-001</td>
+                            <td>Elaborar proposta comercial para cliente X</td>
+                            <td>Planejamento Q2</td>
+                            <td>João Silva</td>
+                            <td><span class="text-danger">20/04/2024</span></td>
+                            <td><span class="badge bg-danger">Alta</span></td>
+                            <td><span class="badge bg-warning">Pendente</span></td>
+                            <td>0%</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="editarAcao(1)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="iniciarAcao(1)">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="btn btn-sm btn-info" onclick="comentarAcao(1)">
+                                    <i class="fas fa-comment"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ACO-002</td>
+                            <td>Implementar novo sistema de CRM</td>
+                            <td>Reunião de Tecnologia</td>
+                            <td>Pedro Costa</td>
+                            <td>30/04/2024</td>
+                            <td><span class="badge bg-info">Média</span></td>
+                            <td><span class="badge bg-primary">Em Andamento</span></td>
+                            <td>
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar bg-primary" style="width: 60%"></div>
+                                </div>
+                                <small>60%</small>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="editarAcao(2)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="atualizarProgresso(2)">
+                                    <i class="fas fa-chart-line"></i>
+                                </button>
+                                <button class="btn btn-sm btn-info" onclick="comentarAcao(2)">
+                                    <i class="fas fa-comment"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Modal Nova Ação -->
+<div class="modal fade" id="modalNovaAcao" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-plus me-2"></i>Nova Ação
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formNovaAcao">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label class="form-label">Descrição da Ação*</label>
+                            <textarea class="form-control" rows="2" required placeholder="Descreva detalhadamente a ação a ser executada..."></textarea>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Reunião de Origem</label>
+                            <select class="form-select">
+                                <option value="">Selecione...</option>
+                                <option>Planejamento Q2</option>
+                                <option>Review Mensal</option>
+                                <option>Reunião de Tecnologia</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Responsável*</label>
+                            <select class="form-select" required>
+                                <option value="">Selecione...</option>
+                                <option>João Silva</option>
+                                <option>Maria Santos</option>
+                                <option>Pedro Costa</option>
+                                <option>Ana Lima</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Data Limite*</label>
+                            <input type="date" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Prioridade*</label>
+                            <select class="form-select" required>
+                                <option value="">Selecione...</option>
+                                <option value="baixa">Baixa</option>
+                                <option value="media">Média</option>
+                                <option value="alta">Alta</option>
+                                <option value="critica">Crítica</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Categoria</label>
+                            <select class="form-select">
+                                <option value="">Selecione...</option>
+                                <option>Comercial</option>
+                                <option>Operacional</option>
+                                <option>Tecnologia</option>
+                                <option>Recursos Humanos</option>
+                                <option>Financeiro</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <label class="form-label">Observações</label>
+                        <textarea class="form-control" rows="2" placeholder="Informações adicionais, dependências, etc..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="salvarAcao()">
+                    <i class="fas fa-save me-1"></i>Criar Ação
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function novaAcao() {
+    new bootstrap.Modal(document.getElementById('modalNovaAcao')).show();
+}
+
+function editarAcao(id) {
+    alert(`Editando ação ${id}`);
+}
+
+function iniciarAcao(id) {
+    if (confirm(`Iniciar execução da ação ${id}?`)) {
+        alert(`Ação ${id} iniciada!`);
+    }
+}
+
+function concluirAcao(id) {
+    if (confirm(`Marcar ação ${id} como concluída?`)) {
+        alert(`Ação ${id} concluída!`);
+    }
+}
+
+function aprovarAcao(id) {
+    if (confirm(`Aprovar ação ${id}?`)) {
+        alert(`Ação ${id} aprovada!`);
+    }
+}
+
+function comentarAcao(id) {
+    const comentario = prompt(`Adicionar comentário à ação ${id}:`);
+    if (comentario) {
+        alert(`Comentário adicionado à ação ${id}`);
+    }
+}
+
+function atualizarProgresso(id) {
+    const progresso = prompt(`Digite o progresso da ação ${id} (0-100%):`);
+    if (progresso) {
+        alert(`Progresso da ação ${id} atualizado para ${progresso}%`);
+    }
+}
+
+function salvarAcao() {
+    alert('Ação criada com sucesso!');
+    bootstrap.Modal.getInstance(document.getElementById('modalNovaAcao')).hide();
+}
+
+function filtrarAcoes() {
+    console.log('Filtrando ações...');
+}
+
+function limparFiltros() {
+    document.getElementById('filtroStatus').value = '';
+    document.getElementById('filtroResponsavel').value = '';
+    document.getElementById('filtroPrioridade').value = '';
+}
+
+function exportarAcoes() {
+    alert('Exportando ações para Excel...');
+}
+
+function followUp() {
+    alert('Enviando notificações de follow-up...');
+}
+
+// Drag and Drop para Kanban
+document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.kanban-card');
+    const columns = document.querySelectorAll('.kanban-column');
+    
+    cards.forEach(card => {
+        card.addEventListener('dragstart', function(e) {
+            e.dataTransfer.setData('text/plain', card.outerHTML);
+            e.dataTransfer.effectAllowed = 'move';
+        });
+    });
+    
+    columns.forEach(column => {
+        column.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        });
+        
+        column.addEventListener('drop', function(e) {
+            e.preventDefault();
+            const cardData = e.dataTransfer.getData('text/plain');
+            // Aqui você implementaria a lógica de mover o card
+            alert('Card movido! (Implementar lógica de salvamento)');
+        });
+    });
+});
+
+console.log('Página de Ações carregada!');
+</script>
+
+<style>
+.kanban-card {
+    cursor: grab;
+    transition: transform 0.2s;
+}
+
+.kanban-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.kanban-card:active {
+    cursor: grabbing;
+}
+
+.kanban-column {
+    min-height: 400px;
+}
+</style>
 {% endblock %}

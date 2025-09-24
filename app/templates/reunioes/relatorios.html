@@ -1,0 +1,565 @@
+{% extends "base.html" %}
+
+{% block title %}Relatórios - Reuniões{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-chart-bar me-2"></i>Relatórios de Reuniões
+        </h1>
+        <div class="btn-group">
+            <button class="btn btn-success" onclick="novoRelatorio()">
+                <i class="fas fa-plus me-1"></i>Novo Relatório
+            </button>
+            <button class="btn btn-outline-primary" onclick="dashboardExecutivo()">
+                <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+            </button>
+            <a href="{{ url_for('reunioes.index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Voltar
+            </a>
+        </div>
+    </div>
+
+    <!-- KPIs Principais -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2 cursor-pointer" onclick="gerarRelatorio('reunioes')">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total Reuniões
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">247</div>
+                            <div class="small text-primary">Este ano</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2 cursor-pointer" onclick="gerarRelatorio('presenca')">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Taxa de Presença
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">87%</div>
+                            <div class="small text-success">+5% vs mês anterior</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-user-check fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2 cursor-pointer" onclick="gerarRelatorio('salas')">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Ocupação Salas
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">68%</div>
+                            <div class="small text-info">Média mensal</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-door-open fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2 cursor-pointer" onclick="gerarRelatorio('acoes')">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Ações Pendentes
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">23</div>
+                            <div class="small text-warning">5 atrasadas</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-tasks fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tipos de Relatórios -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-file-alt me-2"></i>Relatórios Disponíveis
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <!-- Relatório de Reuniões -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow">
+                        <div class="card-body text-center">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-calendar-check fa-3x text-primary"></i>
+                            </div>
+                            <h5 class="card-title">Relatório de Reuniões</h5>
+                            <p class="card-text text-muted">Análise completa das reuniões realizadas</p>
+                            <ul class="list-unstyled text-start text-sm">
+                                <li><i class="fas fa-check text-success me-2"></i>Frequência de reuniões</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Duração média</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Participação por departamento</li>
+                            </ul>
+                            <button class="btn btn-primary w-100" onclick="gerarRelatorio('reunioes')">
+                                <i class="fas fa-file-excel me-1"></i>Gerar Relatório
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Relatório de Presença -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow">
+                        <div class="card-body text-center">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-user-friends fa-3x text-success"></i>
+                            </div>
+                            <h5 class="card-title">Análise de Presença</h5>
+                            <p class="card-text text-muted">Taxa de presença e participação</p>
+                            <ul class="list-unstyled text-start text-sm">
+                                <li><i class="fas fa-check text-success me-2"></i>Taxa de presença geral</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Presença por pessoa</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Tendências mensais</li>
+                            </ul>
+                            <button class="btn btn-success w-100" onclick="gerarRelatorio('presenca')">
+                                <i class="fas fa-file-pdf me-1"></i>Gerar Relatório
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Relatório de Salas -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow">
+                        <div class="card-body text-center">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-door-open fa-3x text-info"></i>
+                            </div>
+                            <h5 class="card-title">Ocupação de Salas</h5>
+                            <p class="card-text text-muted">Utilização dos recursos físicos</p>
+                            <ul class="list-unstyled text-start text-sm">
+                                <li><i class="fas fa-check text-success me-2"></i>Taxa de ocupação</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Horários de pico</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Otimização de espaços</li>
+                            </ul>
+                            <button class="btn btn-info w-100" onclick="gerarRelatorio('salas')">
+                                <i class="fas fa-file-word me-1"></i>Gerar Relatório
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Relatório de Ações -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow">
+                        <div class="card-body text-center">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-tasks fa-3x text-warning"></i>
+                            </div>
+                            <h5 class="card-title">Follow-up de Ações</h5>
+                            <p class="card-text text-muted">Acompanhamento das tarefas definidas</p>
+                            <ul class="list-unstyled text-start text-sm">
+                                <li><i class="fas fa-check text-success me-2"></i>Ações pendentes</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Taxa de conclusão</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Prazos e responsáveis</li>
+                            </ul>
+                            <button class="btn btn-warning w-100" onclick="gerarRelatorio('acoes')">
+                                <i class="fas fa-file-csv me-1"></i>Gerar Relatório
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Relatório de Atas -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow">
+                        <div class="card-body text-center">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-file-alt fa-3x text-secondary"></i>
+                            </div>
+                            <h5 class="card-title">Gestão de Atas</h5>
+                            <p class="card-text text-muted">Status e qualidade das documentações</p>
+                            <ul class="list-unstyled text-start text-sm">
+                                <li><i class="fas fa-check text-success me-2"></i>Atas finalizadas</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Tempo de elaboração</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Workflow de aprovação</li>
+                            </ul>
+                            <button class="btn btn-secondary w-100" onclick="gerarRelatorio('atas')">
+                                <i class="fas fa-file-pdf me-1"></i>Gerar Relatório
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Executivo -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow">
+                        <div class="card-body text-center">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-tachometer-alt fa-3x text-dark"></i>
+                            </div>
+                            <h5 class="card-title">Dashboard Executivo</h5>
+                            <p class="card-text text-muted">Visão estratégica consolidada</p>
+                            <ul class="list-unstyled text-start text-sm">
+                                <li><i class="fas fa-check text-success me-2"></i>KPIs principais</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Tendências e insights</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Comparativos mensais</li>
+                            </ul>
+                            <button class="btn btn-dark w-100" onclick="dashboardExecutivo()">
+                                <i class="fas fa-chart-line me-1"></i>Visualizar Dashboard
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos e Métricas -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Reuniões por Mês - 2024</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="reunioesPorMes" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Reuniões por Departamento</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="reunioesPorDepartamento" width="200" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Relatórios Recentes -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-history me-2"></i>Relatórios Gerados Recentemente
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nome do Relatório</th>
+                            <th>Tipo</th>
+                            <th>Data Geração</th>
+                            <th>Período</th>
+                            <th>Gerado por</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Relatório Mensal - Abril 2024</td>
+                            <td><span class="badge bg-primary">Reuniões</span></td>
+                            <td>15/04/2024 16:30</td>
+                            <td>Abril 2024</td>
+                            <td>João Silva</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="baixarRelatorio('REL-001')">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="btn btn-sm btn-info" onclick="visualizarRelatorio('REL-001')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="compartilharRelatorio('REL-001')">
+                                    <i class="fas fa-share"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Análise de Presença Q1</td>
+                            <td><span class="badge bg-success">Presença</span></td>
+                            <td>12/04/2024 14:20</td>
+                            <td>Q1 2024</td>
+                            <td>Maria Santos</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="baixarRelatorio('REL-002')">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="btn btn-sm btn-info" onclick="visualizarRelatorio('REL-002')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="compartilharRelatorio('REL-002')">
+                                    <i class="fas fa-share"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Ocupação de Salas - Março</td>
+                            <td><span class="badge bg-info">Salas</span></td>
+                            <td>10/04/2024 09:15</td>
+                            <td>Março 2024</td>
+                            <td>Pedro Costa</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="baixarRelatorio('REL-003')">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="btn btn-sm btn-info" onclick="visualizarRelatorio('REL-003')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="compartilharRelatorio('REL-003')">
+                                    <i class="fas fa-share"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Geração de Relatório -->
+<div class="modal fade" id="modalGerarRelatorio" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-chart-bar me-2"></i>Gerar Relatório
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formRelatorio">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">Tipo de Relatório*</label>
+                            <select class="form-select" id="tipoRelatorio" required>
+                                <option value="">Selecione...</option>
+                                <option value="reunioes">Relatório de Reuniões</option>
+                                <option value="presenca">Análise de Presença</option>
+                                <option value="salas">Ocupação de Salas</option>
+                                <option value="acoes">Follow-up de Ações</option>
+                                <option value="atas">Gestão de Atas</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Período*</label>
+                            <select class="form-select" id="periodo" required>
+                                <option value="">Selecione...</option>
+                                <option value="semana">Esta Semana</option>
+                                <option value="mes">Este Mês</option>
+                                <option value="trimestre">Este Trimestre</option>
+                                <option value="ano">Este Ano</option>
+                                <option value="customizado">Período Customizado</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3" id="periodoCustomizado" style="display: none;">
+                        <div class="col-md-6">
+                            <label class="form-label">Data Inicial</label>
+                            <input type="date" class="form-control" id="dataInicial">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Data Final</label>
+                            <input type="date" class="form-control" id="dataFinal">
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Formato</label>
+                            <select class="form-select" id="formato">
+                                <option value="excel">Excel (.xlsx)</option>
+                                <option value="pdf">PDF</option>
+                                <option value="word">Word (.docx)</option>
+                                <option value="csv">CSV</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Incluir Gráficos</label>
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" type="checkbox" id="incluirGraficos" checked>
+                                <label class="form-check-label">
+                                    Sim, incluir visualizações
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <label class="form-label">Filtros Específicos</label>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="filtroDepartamento">
+                                    <label class="form-check-label">Por Departamento</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="filtroSala">
+                                    <label class="form-check-label">Por Sala</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="filtroTipo">
+                                    <label class="form-check-label">Por Tipo de Reunião</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-info" onclick="visualizarPrevia()">
+                    <i class="fas fa-eye me-1"></i>Prévia
+                </button>
+                <button type="button" class="btn btn-success" onclick="processarRelatorio()">
+                    <i class="fas fa-cog me-1"></i>Gerar Relatório
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function novoRelatorio() {
+    new bootstrap.Modal(document.getElementById('modalGerarRelatorio')).show();
+}
+
+function gerarRelatorio(tipo) {
+    document.getElementById('tipoRelatorio').value = tipo;
+    novoRelatorio();
+}
+
+function dashboardExecutivo() {
+    alert('Dashboard Executivo - Visão estratégica das reuniões');
+}
+
+function processarRelatorio() {
+    const tipo = document.getElementById('tipoRelatorio').value;
+    const periodo = document.getElementById('periodo').value;
+    const formato = document.getElementById('formato').value;
+    
+    if (!tipo || !periodo) {
+        alert('Por favor, selecione o tipo de relatório e período.');
+        return;
+    }
+    
+    alert(`Gerando relatório de ${tipo} para ${periodo} em formato ${formato}...`);
+    bootstrap.Modal.getInstance(document.getElementById('modalGerarRelatorio')).hide();
+}
+
+function visualizarPrevia() {
+    const tipo = document.getElementById('tipoRelatorio').value;
+    if (!tipo) {
+        alert('Selecione um tipo de relatório primeiro.');
+        return;
+    }
+    alert(`Prévia do relatório de ${tipo}`);
+}
+
+function baixarRelatorio(id) {
+    alert(`Baixando relatório ${id}`);
+}
+
+function visualizarRelatorio(id) {
+    alert(`Visualizando relatório ${id}`);
+}
+
+function compartilharRelatorio(id) {
+    alert(`Compartilhando relatório ${id}`);
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    // Período customizado
+    document.getElementById('periodo').addEventListener('change', function() {
+        const customDiv = document.getElementById('periodoCustomizado');
+        if (this.value === 'customizado') {
+            customDiv.style.display = 'block';
+        } else {
+            customDiv.style.display = 'none';
+        }
+    });
+    
+    // Simular gráficos (aqui você pode usar Chart.js)
+    console.log('Carregando gráficos simulados...');
+    // Implementar Chart.js aqui se necessário
+});
+
+console.log('Página de Relatórios de Reuniões carregada!');
+</script>
+
+<style>
+.hover-shadow {
+    transition: all 0.2s ease-in-out;
+}
+
+.hover-shadow:hover {
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+    transform: translateY(-2px);
+}
+
+.cursor-pointer {
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.cursor-pointer:hover {
+    transform: translateY(-2px);
+}
+
+.chart-container {
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fc;
+    border: 2px dashed #dee2e6;
+    border-radius: 5px;
+}
+
+.chart-container::before {
+    content: "Gráfico será carregado aqui";
+    color: #6c757d;
+    font-style: italic;
+}
+</style>
+{% endblock %}

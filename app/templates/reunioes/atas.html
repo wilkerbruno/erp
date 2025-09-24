@@ -1,31 +1,452 @@
 {% extends "base.html" %}
 
-{% block title %}Atas de Reunião{% endblock %}
+{% block title %}Atas - Reuniões{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">
-            <i class="fas fa-file-alt me-2"></i>Atas de Reunião
+            <i class="fas fa-file-alt me-2"></i>Gerenciar Atas de Reunião
         </h1>
         <div class="btn-group">
+            <button class="btn btn-success" onclick="novaAta()">
+                <i class="fas fa-plus me-1"></i>Nova Ata
+            </button>
+            <button class="btn btn-outline-info" onclick="templates()">
+                <i class="fas fa-copy me-1"></i>Templates
+            </button>
             <a href="{{ url_for('reunioes.index') }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left me-1"></i>Voltar
             </a>
         </div>
     </div>
 
-    <div class="card shadow">
-        <div class="card-body text-center py-5">
-            <i class="fas fa-file-alt fa-4x text-success mb-4"></i>
-            <h3>Atas de Reunião</h3>
-            <p class="text-muted">Esta funcionalidade está sendo desenvolvida com todas as ferramentas necessárias para gestão de reuniões.</p>
-            <div class="mt-4">
-                <a href="{{ url_for('reunioes.index') }}" class="btn btn-success me-2">
-                    <i class="fas fa-home me-1"></i>Voltar ao Dashboard
-                </a>
+    <!-- Estatísticas -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Atas Finalizadas
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Em Elaboração
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">5</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-edit fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Este Mês
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">8</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Ações Pendentes
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">12</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-tasks fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <input type="text" class="form-control" placeholder="Buscar ata..." id="buscaAta" onkeyup="buscarAtas()">
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="filtroStatus" onchange="filtrarAtas()">
+                        <option value="">Todos os Status</option>
+                        <option value="rascunho">Rascunho</option>
+                        <option value="elaboracao">Em Elaboração</option>
+                        <option value="revisao">Em Revisão</option>
+                        <option value="aprovada">Aprovada</option>
+                        <option value="distribuida">Distribuída</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="filtroPeriodo" onchange="filtrarAtas()">
+                        <option value="">Todos os Períodos</option>
+                        <option value="semana">Esta Semana</option>
+                        <option value="mes">Este Mês</option>
+                        <option value="trimestre">Este Trimestre</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-outline-secondary me-2" onclick="limparFiltros()">
+                        <i class="fas fa-eraser me-1"></i>Limpar
+                    </button>
+                    <button class="btn btn-outline-success" onclick="exportarAtas()">
+                        <i class="fas fa-download me-1"></i>Exportar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Atas -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-table me-2"></i>Atas de Reunião
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="tabelaAtas">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Reunião</th>
+                            <th>Data</th>
+                            <th>Redator</th>
+                            <th>Participantes</th>
+                            <th>Status</th>
+                            <th>Última Atualização</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ATA-001</td>
+                            <td>Planejamento Estratégico 2024</td>
+                            <td>15/04/2024</td>
+                            <td>João Silva</td>
+                            <td>8</td>
+                            <td><span class="badge bg-success">Aprovada</span></td>
+                            <td>16/04/2024 10:30</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="editarAta(1)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-info" onclick="visualizarAta(1)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="baixarAta(1)">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="enviarAta(1)">
+                                    <i class="fas fa-share"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ATA-002</td>
+                            <td>Review Mensal - Vendas</td>
+                            <td>14/04/2024</td>
+                            <td>Maria Santos</td>
+                            <td>5</td>
+                            <td><span class="badge bg-warning">Em Revisão</span></td>
+                            <td>14/04/2024 17:45</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="editarAta(2)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-info" onclick="visualizarAta(2)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="aprovarAta(2)">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ATA-003</td>
+                            <td>Treinamento - Novos Colaboradores</td>
+                            <td>12/04/2024</td>
+                            <td>Pedro Costa</td>
+                            <td>15</td>
+                            <td><span class="badge bg-info">Em Elaboração</span></td>
+                            <td>13/04/2024 09:15</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="editarAta(3)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-info" onclick="visualizarAta(3)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="solicitarRevisao(3)">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Workflow de Aprovação -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-sitemap me-2"></i>Workflow de Aprovação
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-2 text-center">
+                    <div class="workflow-step active">
+                        <i class="fas fa-edit fa-2x text-primary"></i>
+                        <h6 class="mt-2">Rascunho</h6>
+                        <small class="text-muted">Criação inicial</small>
+                    </div>
+                </div>
+                <div class="col-md-2 text-center">
+                    <div class="workflow-step">
+                        <i class="fas fa-pencil-alt fa-2x text-warning"></i>
+                        <h6 class="mt-2">Elaboração</h6>
+                        <small class="text-muted">Redação completa</small>
+                    </div>
+                </div>
+                <div class="col-md-2 text-center">
+                    <div class="workflow-step">
+                        <i class="fas fa-search fa-2x text-info"></i>
+                        <h6 class="mt-2">Revisão</h6>
+                        <small class="text-muted">Verificação</small>
+                    </div>
+                </div>
+                <div class="col-md-2 text-center">
+                    <div class="workflow-step">
+                        <i class="fas fa-check fa-2x text-success"></i>
+                        <h6 class="mt-2">Aprovação</h6>
+                        <small class="text-muted">Validação final</small>
+                    </div>
+                </div>
+                <div class="col-md-2 text-center">
+                    <div class="workflow-step">
+                        <i class="fas fa-share fa-2x text-dark"></i>
+                        <h6 class="mt-2">Distribuição</h6>
+                        <small class="text-muted">Envio aos participantes</small>
+                    </div>
+                </div>
+                <div class="col-md-2 text-center">
+                    <div class="workflow-step">
+                        <i class="fas fa-archive fa-2x text-secondary"></i>
+                        <h6 class="mt-2">Arquivo</h6>
+                        <small class="text-muted">Armazenamento final</small>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Modal Nova Ata -->
+<div class="modal fade" id="modalNovaAta" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-file-alt me-2"></i>Nova Ata de Reunião
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formNovaAta">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label class="form-label">Reunião de Referência*</label>
+                            <select class="form-select" required>
+                                <option value="">Selecione a reunião...</option>
+                                <option>Planejamento Estratégico 2024</option>
+                                <option>Review Mensal - Vendas</option>
+                                <option>Treinamento - Novos Colaboradores</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Redator*</label>
+                            <select class="form-select" required>
+                                <option value="">Selecione...</option>
+                                <option>João Silva</option>
+                                <option>Maria Santos</option>
+                                <option>Pedro Costa</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h6 class="text-primary">
+                            <i class="fas fa-list-ul me-2"></i>Conteúdo da Ata
+                        </h6>
+                        <hr>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <label class="form-label">Objetivo da Reunião</label>
+                        <textarea class="form-control" rows="2" placeholder="Descreva o objetivo principal da reunião..."></textarea>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <label class="form-label">Participantes Presentes</label>
+                        <textarea class="form-control" rows="2" placeholder="Liste os participantes que estiveram presentes..."></textarea>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <label class="form-label">Resumo dos Assuntos Tratados</label>
+                        <textarea class="form-control" rows="4" placeholder="Descreva os principais pontos discutidos..."></textarea>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <label class="form-label">Decisões Tomadas</label>
+                        <textarea class="form-control" rows="3" placeholder="Liste as decisões importantes tomadas durante a reunião..."></textarea>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <label class="form-label">Ações Definidas</label>
+                        <textarea class="form-control" rows="3" placeholder="Liste as ações definidas, responsáveis e prazos..."></textarea>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <label class="form-label">Próximos Passos</label>
+                        <textarea class="form-control" rows="2" placeholder="Defina os próximos passos e próxima reunião..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-warning" onclick="salvarRascunho()">
+                    <i class="fas fa-save me-1"></i>Salvar Rascunho
+                </button>
+                <button type="button" class="btn btn-success" onclick="salvarAta()">
+                    <i class="fas fa-check me-1"></i>Criar Ata
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function novaAta() {
+    new bootstrap.Modal(document.getElementById('modalNovaAta')).show();
+}
+
+function editarAta(id) {
+    alert(`Editando ata ${id}`);
+}
+
+function visualizarAta(id) {
+    alert(`Visualizando ata ${id}`);
+}
+
+function baixarAta(id) {
+    alert(`Baixando ata ${id} em PDF`);
+}
+
+function enviarAta(id) {
+    alert(`Enviando ata ${id} por email`);
+}
+
+function aprovarAta(id) {
+    if (confirm(`Aprovar a ata ${id}?`)) {
+        alert(`Ata ${id} aprovada com sucesso!`);
+    }
+}
+
+function solicitarRevisao(id) {
+    alert(`Solicitando revisão da ata ${id}`);
+}
+
+function salvarAta() {
+    alert('Ata criada com sucesso!');
+    bootstrap.Modal.getInstance(document.getElementById('modalNovaAta')).hide();
+}
+
+function salvarRascunho() {
+    alert('Rascunho salvo!');
+}
+
+function buscarAtas() {
+    const termo = document.getElementById('buscaAta').value;
+    console.log('Buscando:', termo);
+}
+
+function filtrarAtas() {
+    console.log('Filtrando atas...');
+}
+
+function limparFiltros() {
+    document.getElementById('buscaAta').value = '';
+    document.getElementById('filtroStatus').value = '';
+    document.getElementById('filtroPeriodo').value = '';
+}
+
+function exportarAtas() {
+    alert('Exportando atas para Excel...');
+}
+
+function templates() {
+    alert('Templates de atas disponíveis');
+}
+
+console.log('Página de Atas carregada!');
+</script>
+
+<style>
+.workflow-step {
+    padding: 15px;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+.workflow-step.active {
+    background-color: #f8f9fc;
+    border: 1px solid #e3e6f0;
+}
+
+.workflow-step:hover {
+    background-color: #f8f9fc;
+}
+</style>
 {% endblock %}
