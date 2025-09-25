@@ -1,0 +1,568 @@
+{% extends "base.html" %}
+
+{% block title %}Relatórios - Segurança do Trabalho{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-chart-line me-2"></i>Relatórios de Segurança do Trabalho
+        </h1>
+        <div class="btn-group">
+            <button class="btn btn-success" onclick="novoRelatorio()">
+                <i class="fas fa-plus me-1"></i>Novo Relatório
+            </button>
+            <button class="btn btn-outline-primary" onclick="dashboardSST()">
+                <i class="fas fa-tachometer-alt me-1"></i>Dashboard SST
+            </button>
+            <a href="{{ url_for('seguranca.index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Voltar
+            </a>
+        </div>
+    </div>
+
+    <!-- KPIs de Segurança -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2 cursor-pointer" onclick="gerarRelatorio('indicadores')">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Taxa de Frequência
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">2.1</div>
+                            <div class="small text-success">-15% vs ano anterior</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-chart-line fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2 cursor-pointer" onclick="gerarRelatorio('acidentes')">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Dias sem Acidentes
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">247</div>
+                            <div class="small text-primary">Meta: 365 dias</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar-check fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2 cursor-pointer" onclick="gerarRelatorio('treinamentos')">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Compliance Treinamento
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">87%</div>
+                            <div class="small text-warning">Meta: 95%</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-graduation-cap fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2 cursor-pointer" onclick="gerarRelatorio('epi')">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Uso de EPI
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">94%</div>
+                            <div class="small text-info">Conformidade geral</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-hard-hat fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tipos de Relatórios SST -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-file-alt me-2"></i>Relatórios Disponíveis
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <!-- Indicadores de Segurança -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow">
+                        <div class="card-body text-center">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-chart-bar fa-3x text-success"></i>
+                            </div>
+                            <h5 class="card-title">Indicadores de Segurança</h5>
+                            <p class="card-text text-muted">KPIs e métricas de desempenho</p>
+                            <ul class="list-unstyled text-start text-sm">
+                                <li><i class="fas fa-check text-success me-2"></i>Taxa de frequência</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Taxa de gravidade</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Dias perdidos</li>
+                            </ul>
+                            <button class="btn btn-success w-100" onclick="gerarRelatorio('indicadores')">
+                                <i class="fas fa-file-excel me-1"></i>Gerar Relatório
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Acidentes e Incidentes -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow">
+                        <div class="card-body text-center">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-exclamation-triangle fa-3x text-danger"></i>
+                            </div>
+                            <h5 class="card-title">Acidentes e Incidentes</h5>
+                            <p class="card-text text-muted">Análise de ocorrências</p>
+                            <ul class="list-unstyled text-start text-sm">
+                                <li><i class="fas fa-check text-success me-2"></i>Registro de acidentes</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Causas raízes</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Ações corretivas</li>
+                            </ul>
+                            <button class="btn btn-danger w-100" onclick="gerarRelatorio('acidentes')">
+                                <i class="fas fa-file-pdf me-1"></i>Gerar Relatório
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Treinamentos -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow">
+                        <div class="card-body text-center">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-graduation-cap fa-3x text-primary"></i>
+                            </div>
+                            <h5 class="card-title">Treinamentos SST</h5>
+                            <p class="card-text text-muted">Compliance e efetividade</p>
+                            <ul class="list-unstyled text-start text-sm">
+                                <li><i class="fas fa-check text-success me-2"></i>Status dos treinamentos</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Vencimentos NRs</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Efetividade</li>
+                            </ul>
+                            <button class="btn btn-primary w-100" onclick="gerarRelatorio('treinamentos')">
+                                <i class="fas fa-file-word me-1"></i>Gerar Relatório
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EPIs -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow">
+                        <div class="card-body text-center">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-hard-hat fa-3x text-info"></i>
+                            </div>
+                            <h5 class="card-title">Controle de EPIs</h5>
+                            <p class="card-text text-muted">Estoque e conformidade</p>
+                            <ul class="list-unstyled text-start text-sm">
+                                <li><i class="fas fa-check text-success me-2"></i>Controle de estoque</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Entregas e devoluções</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Taxa de uso</li>
+                            </ul>
+                            <button class="btn btn-info w-100" onclick="gerarRelatorio('epi')">
+                                <i class="fas fa-file-csv me-1"></i>Gerar Relatório
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inspeções -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow">
+                        <div class="card-body text-center">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-search fa-3x text-warning"></i>
+                            </div>
+                            <h5 class="card-title">Inspeções de Segurança</h5>
+                            <p class="card-text text-muted">Conformidades e melhorias</p>
+                            <ul class="list-unstyled text-start text-sm">
+                                <li><i class="fas fa-check text-success me-2"></i>Histórico de inspeções</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Não conformidades</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Planos de ação</li>
+                            </ul>
+                            <button class="btn btn-warning w-100" onclick="gerarRelatorio('inspecoes')">
+                                <i class="fas fa-file-excel me-1"></i>Gerar Relatório
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Executivo -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm hover-shadow">
+                        <div class="card-body text-center">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-tachometer-alt fa-3x text-dark"></i>
+                            </div>
+                            <h5 class="card-title">Dashboard Executivo</h5>
+                            <p class="card-text text-muted">Visão estratégica SST</p>
+                            <ul class="list-unstyled text-start text-sm">
+                                <li><i class="fas fa-check text-success me-2"></i>KPIs consolidados</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Benchmarks</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Tendências</li>
+                            </ul>
+                            <button class="btn btn-dark w-100" onclick="dashboardSST()">
+                                <i class="fas fa-chart-pie me-1"></i>Visualizar Dashboard
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Relatórios Regulamentares -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-gavel me-2"></i>Relatórios Regulamentares
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="card border-left-danger">
+                        <div class="card-body">
+                            <h6 class="text-danger">CAT - Comunicação de Acidente</h6>
+                            <p class="text-muted mb-2">Relatório obrigatório para acidentes</p>
+                            <button class="btn btn-danger btn-sm w-100" onclick="relatorioCAT()">
+                                <i class="fas fa-file-medical me-1"></i>Gerar CAT
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="card border-left-warning">
+                        <div class="card-body">
+                            <h6 class="text-warning">RAIS/eSocial</h6>
+                            <p class="text-muted mb-2">Informações para órgãos fiscalizadores</p>
+                            <button class="btn btn-warning btn-sm w-100" onclick="relatorioRAIS()">
+                                <i class="fas fa-file-invoice me-1"></i>Gerar RAIS
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="card border-left-info">
+                        <div class="card-body">
+                            <h6 class="text-info">Estatísticas CIPA</h6>
+                            <p class="text-muted mb-2">Relatórios mensais da CIPA</p>
+                            <button class="btn btn-info btn-sm w-100" onclick="relatorioCIPA()">
+                                <i class="fas fa-users me-1"></i>Gerar CIPA
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="card border-left-success">
+                        <div class="card-body">
+                            <h6 class="text-success">Mapa de Riscos</h6>
+                            <p class="text-muted mb-2">Avaliação dos riscos ambientais</p>
+                            <button class="btn btn-success btn-sm w-100" onclick="relatorioMapaRiscos()">
+                                <i class="fas fa-map me-1"></i>Gerar Mapa
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Histórico de Relatórios -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-history me-2"></i>Relatórios Gerados Recentemente
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nome do Relatório</th>
+                            <th>Tipo</th>
+                            <th>Data Geração</th>
+                            <th>Período</th>
+                            <th>Gerado por</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Indicadores SST - Abril 2024</td>
+                            <td><span class="badge bg-success">Indicadores</span></td>
+                            <td>15/04/2024 14:30</td>
+                            <td>Abril 2024</td>
+                            <td>Carlos Safety</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="baixarRelatorio('REL-SST-001')">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="btn btn-sm btn-info" onclick="visualizarRelatorio('REL-SST-001')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="compartilharRelatorio('REL-SST-001')">
+                                    <i class="fas fa-share"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Controle de EPIs - Q1 2024</td>
+                            <td><span class="badge bg-info">EPI</span></td>
+                            <td>12/04/2024 09:15</td>
+                            <td>Q1 2024</td>
+                            <td>Ana Segura</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="baixarRelatorio('REL-SST-002')">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="btn btn-sm btn-info" onclick="visualizarRelatorio('REL-SST-002')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="compartilharRelatorio('REL-SST-002')">
+                                    <i class="fas fa-share"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Treinamentos NR - Março 2024</td>
+                            <td><span class="badge bg-primary">Treinamentos</span></td>
+                            <td>10/04/2024 16:45</td>
+                            <td>Março 2024</td>
+                            <td>Roberto Fire</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="baixarRelatorio('REL-SST-003')">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="btn btn-sm btn-info" onclick="visualizarRelatorio('REL-SST-003')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="compartilharRelatorio('REL-SST-003')">
+                                    <i class="fas fa-share"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Geração de Relatório -->
+<div class="modal fade" id="modalGerarRelatorio" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-chart-line me-2"></i>Gerar Relatório SST
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formRelatorio">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">Tipo de Relatório*</label>
+                            <select class="form-select" id="tipoRelatorio" required>
+                                <option value="">Selecione...</option>
+                                <option value="indicadores">Indicadores de Segurança</option>
+                                <option value="acidentes">Acidentes e Incidentes</option>
+                                <option value="treinamentos">Treinamentos SST</option>
+                                <option value="epi">Controle de EPIs</option>
+                                <option value="inspecoes">Inspeções de Segurança</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Período*</label>
+                            <select class="form-select" id="periodo" required>
+                                <option value="">Selecione...</option>
+                                <option value="mes">Este Mês</option>
+                                <option value="trimestre">Este Trimestre</option>
+                                <option value="semestre">Este Semestre</option>
+                                <option value="ano">Este Ano</option>
+                                <option value="customizado">Período Customizado</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3" id="periodoCustomizado" style="display: none;">
+                        <div class="col-md-6">
+                            <label class="form-label">Data Inicial</label>
+                            <input type="date" class="form-control" id="dataInicial">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Data Final</label>
+                            <input type="date" class="form-control" id="dataFinal">
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Formato</label>
+                            <select class="form-select" id="formato">
+                                <option value="excel">Excel (.xlsx)</option>
+                                <option value="pdf">PDF</option>
+                                <option value="word">Word (.docx)</option>
+                                <option value="csv">CSV</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Incluir Gráficos</label>
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" type="checkbox" id="incluirGraficos" checked>
+                                <label class="form-check-label">
+                                    Sim, incluir visualizações
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-info" onclick="visualizarPrevia()">
+                    <i class="fas fa-eye me-1"></i>Prévia
+                </button>
+                <button type="button" class="btn btn-success" onclick="processarRelatorio()">
+                    <i class="fas fa-cog me-1"></i>Gerar Relatório
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function novoRelatorio() {
+    new bootstrap.Modal(document.getElementById('modalGerarRelatorio')).show();
+}
+
+function gerarRelatorio(tipo) {
+    document.getElementById('tipoRelatorio').value = tipo;
+    novoRelatorio();
+}
+
+function dashboardSST() {
+    alert('Dashboard Executivo de Segurança do Trabalho');
+}
+
+function relatorioCAT() {
+    alert('Gerando Comunicação de Acidente de Trabalho');
+}
+
+function relatorioRAIS() {
+    alert('Gerando relatório para RAIS/eSocial');
+}
+
+function relatorioCIPA() {
+    alert('Gerando relatório da CIPA');
+}
+
+function relatorioMapaRiscos() {
+    alert('Gerando Mapa de Riscos');
+}
+
+function processarRelatorio() {
+    const tipo = document.getElementById('tipoRelatorio').value;
+    const periodo = document.getElementById('periodo').value;
+    const formato = document.getElementById('formato').value;
+    
+    if (!tipo || !periodo) {
+        alert('Por favor, selecione o tipo de relatório e período.');
+        return;
+    }
+    
+    alert(`Gerando relatório de ${tipo} para ${periodo} em formato ${formato}...`);
+    bootstrap.Modal.getInstance(document.getElementById('modalGerarRelatorio')).hide();
+}
+
+function visualizarPrevia() {
+    const tipo = document.getElementById('tipoRelatorio').value;
+    if (!tipo) {
+        alert('Selecione um tipo de relatório primeiro.');
+        return;
+    }
+    alert(`Prévia do relatório de ${tipo}`);
+}
+
+function baixarRelatorio(id) {
+    alert(`Baixando relatório ${id}`);
+}
+
+function visualizarRelatorio(id) {
+    alert(`Visualizando relatório ${id}`);
+}
+
+function compartilharRelatorio(id) {
+    alert(`Compartilhando relatório ${id}`);
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    // Período customizado
+    document.getElementById('periodo').addEventListener('change', function() {
+        const customDiv = document.getElementById('periodoCustomizado');
+        if (this.value === 'customizado') {
+            customDiv.style.display = 'block';
+        } else {
+            customDiv.style.display = 'none';
+        }
+    });
+});
+
+console.log('Página de Relatórios SST carregada!');
+</script>
+
+<style>
+.hover-shadow {
+    transition: all 0.2s ease-in-out;
+}
+
+.hover-shadow:hover {
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+    transform: translateY(-2px);
+}
+
+.cursor-pointer {
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.cursor-pointer:hover {
+    transform: translateY(-2px);
+}
+</style>
+{% endblock %}

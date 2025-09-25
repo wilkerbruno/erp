@@ -1,0 +1,542 @@
+{% extends "base.html" %}
+
+{% block title %}Documentos - Segurança do Trabalho{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-file-alt me-2"></i>Documentos de Segurança
+        </h1>
+        <div class="btn-group">
+            <button class="btn btn-success" onclick="novoDocumento()">
+                <i class="fas fa-plus me-1"></i>Novo Documento
+            </button>
+            <button class="btn btn-outline-warning" onclick="vencimentos()">
+                <i class="fas fa-calendar-times me-1"></i>Vencimentos
+            </button>
+            <a href="{{ url_for('seguranca.index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Voltar
+            </a>
+        </div>
+    </div>
+
+    <!-- Estatísticas -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total Documentos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">89</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-folder fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Válidos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">76</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                A Vencer (60 dias)
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">8</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar-times fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                Vencidos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">5</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Categorias de Documentos -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-danger">
+                        <i class="fas fa-gavel me-2"></i>Normas Regulamentadoras
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="document-list">
+                        <div class="document-item mb-2">
+                            <span class="badge bg-success me-2">NR-01</span>
+                            <small>Disposições Gerais</small>
+                        </div>
+                        <div class="document-item mb-2">
+                            <span class="badge bg-success me-2">NR-05</span>
+                            <small>CIPA</small>
+                        </div>
+                        <div class="document-item mb-2">
+                            <span class="badge bg-warning me-2">NR-10</span>
+                            <small>Eletricidade</small>
+                        </div>
+                        <div class="document-item mb-2">
+                            <span class="badge bg-success me-2">NR-06</span>
+                            <small>EPI</small>
+                        </div>
+                    </div>
+                    <button class="btn btn-danger btn-sm w-100 mt-2" onclick="gerenciarNormas()">
+                        <i class="fas fa-cog me-1"></i>Gerenciar NRs
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-warning">
+                        <i class="fas fa-certificate me-2"></i>Laudos e Certificados
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="document-list">
+                        <div class="document-item mb-2">
+                            <span class="badge bg-success me-2">PPRA</span>
+                            <small>Válido até 2024</small>
+                        </div>
+                        <div class="document-item mb-2">
+                            <span class="badge bg-warning me-2">PCMSO</span>
+                            <small>Vence em 45 dias</small>
+                        </div>
+                        <div class="document-item mb-2">
+                            <span class="badge bg-success me-2">LTCAT</span>
+                            <small>Válido até 2025</small>
+                        </div>
+                        <div class="document-item mb-2">
+                            <span class="badge bg-danger me-2">ASO</span>
+                            <small>Vencido</small>
+                        </div>
+                    </div>
+                    <button class="btn btn-warning btn-sm w-100 mt-2" onclick="gerenciarLaudos()">
+                        <i class="fas fa-cog me-1"></i>Gerenciar Laudos
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-info">
+                        <i class="fas fa-clipboard-list me-2"></i>Procedimentos
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="document-list">
+                        <div class="document-item mb-2">
+                            <span class="badge bg-info me-2">POP-01</span>
+                            <small>Uso de EPIs</small>
+                        </div>
+                        <div class="document-item mb-2">
+                            <span class="badge bg-info me-2">POP-02</span>
+                            <small>Emergências</small>
+                        </div>
+                        <div class="document-item mb-2">
+                            <span class="badge bg-info me-2">IS-01</span>
+                            <small>Trabalho em Altura</small>
+                        </div>
+                        <div class="document-item mb-2">
+                            <span class="badge bg-info me-2">IS-02</span>
+                            <small>Espaço Confinado</small>
+                        </div>
+                    </div>
+                    <button class="btn btn-info btn-sm w-100 mt-2" onclick="gerenciarProcedimentos()">
+                        <i class="fas fa-cog me-1"></i>Gerenciar POPs
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-success">
+                        <i class="fas fa-file-contract me-2"></i>Licenças
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="document-list">
+                        <div class="document-item mb-2">
+                            <span class="badge bg-success me-2">LO</span>
+                            <small>Licença de Operação</small>
+                        </div>
+                        <div class="document-item mb-2">
+                            <span class="badge bg-success me-2">AVCB</span>
+                            <small>Auto Corpo Bombeiros</small>
+                        </div>
+                        <div class="document-item mb-2">
+                            <span class="badge bg-warning me-2">LI</span>
+                            <small>Licença Instalação</small>
+                        </div>
+                        <div class="document-item mb-2">
+                            <span class="badge bg-success me-2">AMB</span>
+                            <small>Licença Ambiental</small>
+                        </div>
+                    </div>
+                    <button class="btn btn-success btn-sm w-100 mt-2" onclick="gerenciarLicencas()">
+                        <i class="fas fa-cog me-1"></i>Gerenciar Licenças
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de Documentos -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-table me-2"></i>Lista de Documentos
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <select class="form-select" id="filtroTipo">
+                        <option value="">Todos os Tipos</option>
+                        <option value="nr">Normas Regulamentadoras</option>
+                        <option value="laudos">Laudos e Certificados</option>
+                        <option value="procedimentos">Procedimentos</option>
+                        <option value="licencas">Licenças</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="filtroStatus">
+                        <option value="">Todos os Status</option>
+                        <option value="valido">Válido</option>
+                        <option value="vencendo">A Vencer</option>
+                        <option value="vencido">Vencido</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <input type="text" class="form-control" placeholder="Buscar documento..." id="buscaDocumento">
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-outline-secondary me-2" onclick="limparFiltros()">
+                        <i class="fas fa-eraser"></i>
+                    </button>
+                    <button class="btn btn-outline-success" onclick="exportarDocumentos()">
+                        <i class="fas fa-download"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Nome do Documento</th>
+                            <th>Tipo</th>
+                            <th>Data Emissão</th>
+                            <th>Validade</th>
+                            <th>Responsável</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>DOC-001</td>
+                            <td>PPRA - Programa de Prevenção de Riscos Ambientais</td>
+                            <td><span class="badge bg-warning">Laudo</span></td>
+                            <td>15/01/2024</td>
+                            <td class="text-success">15/01/2025</td>
+                            <td>Carlos Safety</td>
+                            <td><span class="badge bg-success">Válido</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="visualizarDoc(1)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="baixarDoc(1)">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="btn btn-sm btn-info" onclick="editarDoc(1)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>DOC-002</td>
+                            <td>PCMSO - Programa de Controle Médico</td>
+                            <td><span class="badge bg-warning">Laudo</span></td>
+                            <td>20/03/2023</td>
+                            <td class="text-warning">20/05/2024</td>
+                            <td>Dr. João Médico</td>
+                            <td><span class="badge bg-warning">A Vencer</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="visualizarDoc(2)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="renovarDoc(2)">
+                                    <i class="fas fa-sync"></i>
+                                </button>
+                                <button class="btn btn-sm btn-info" onclick="editarDoc(2)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>DOC-003</td>
+                            <td>NR-10 - Segurança em Instalações Elétricas</td>
+                            <td><span class="badge bg-danger">NR</span></td>
+                            <td>10/06/2023</td>
+                            <td class="text-success">Permanente</td>
+                            <td>MTPS</td>
+                            <td><span class="badge bg-success">Válido</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="visualizarDoc(3)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="baixarDoc(3)">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alertas de Vencimento -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 bg-warning">
+            <h6 class="m-0 font-weight-bold text-dark">
+                <i class="fas fa-exclamation-triangle me-2"></i>Alertas de Vencimento
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-danger" role="alert">
+                <h6 class="alert-heading">
+                    <i class="fas fa-exclamation-circle me-2"></i>Documentos Vencidos (5)
+                </h6>
+                <ul class="mb-0">
+                    <li>ASO - Atestado de Saúde Ocupacional (Vencido em 15/03/2024)</li>
+                    <li>Licença de Instalação - Setor B (Vencido em 10/04/2024)</li>
+                </ul>
+                <hr>
+                <button class="btn btn-danger btn-sm" onclick="renovarVencidos()">
+                    <i class="fas fa-sync me-1"></i>Renovar Vencidos
+                </button>
+            </div>
+            
+            <div class="alert alert-warning" role="alert">
+                <h6 class="alert-heading">
+                    <i class="fas fa-clock me-2"></i>A Vencer nos Próximos 60 dias (8)
+                </h6>
+                <ul class="mb-0">
+                    <li>PCMSO - Programa de Controle Médico (Vence em 20/05/2024)</li>
+                    <li>AVCB - Auto do Corpo de Bombeiros (Vence em 30/06/2024)</li>
+                </ul>
+                <hr>
+                <button class="btn btn-warning btn-sm" onclick="programarRenovacao()">
+                    <i class="fas fa-calendar me-1"></i>Programar Renovação
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Novo Documento -->
+<div class="modal fade" id="modalNovoDocumento" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-file-alt me-2"></i>Novo Documento
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formNovoDocumento">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label class="form-label">Nome do Documento*</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Código*</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Tipo*</label>
+                            <select class="form-select" required>
+                                <option value="">Selecione...</option>
+                                <option value="nr">Norma Regulamentadora</option>
+                                <option value="laudo">Laudo/Certificado</option>
+                                <option value="procedimento">Procedimento</option>
+                                <option value="licenca">Licença</option>
+                                <option value="outro">Outro</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Responsável*</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Data Emissão*</label>
+                            <input type="date" class="form-control" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Data Validade</label>
+                            <input type="date" class="form-control">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Órgão Emissor</label>
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-12">
+                            <label class="form-label">Arquivo*</label>
+                            <input type="file" class="form-control" accept=".pdf,.doc,.docx" required>
+                            <small class="text-muted">Formatos aceitos: PDF, DOC, DOCX</small>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <label class="form-label">Descrição</label>
+                        <textarea class="form-control" rows="3" placeholder="Descrição do documento, finalidade, etc..."></textarea>
+                    </div>
+                    <div class="mt-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="alertaVencimento">
+                            <label class="form-check-label" for="alertaVencimento">
+                                Configurar alerta de vencimento (30 dias antes)
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="salvarDocumento()">
+                    <i class="fas fa-save me-1"></i>Salvar Documento
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function novoDocumento() {
+    new bootstrap.Modal(document.getElementById('modalNovoDocumento')).show();
+}
+
+function gerenciarNormas() {
+    alert('Gerenciar Normas Regulamentadoras');
+}
+
+function gerenciarLaudos() {
+    alert('Gerenciar Laudos e Certificados');
+}
+
+function gerenciarProcedimentos() {
+    alert('Gerenciar Procedimentos Operacionais');
+}
+
+function gerenciarLicencas() {
+    alert('Gerenciar Licenças');
+}
+
+function visualizarDoc(id) {
+    alert(`Visualizando documento ${id}`);
+}
+
+function baixarDoc(id) {
+    alert(`Baixando documento ${id}`);
+}
+
+function editarDoc(id) {
+    alert(`Editando documento ${id}`);
+}
+
+function renovarDoc(id) {
+    alert(`Renovando documento ${id}`);
+}
+
+function salvarDocumento() {
+    alert('Documento salvo com sucesso!');
+    bootstrap.Modal.getInstance(document.getElementById('modalNovoDocumento')).hide();
+}
+
+function renovarVencidos() {
+    alert('Iniciando processo de renovação dos documentos vencidos');
+}
+
+function programarRenovacao() {
+    alert('Programando renovação dos documentos a vencer');
+}
+
+function vencimentos() {
+    alert('Configurar alertas de vencimento');
+}
+
+function limparFiltros() {
+    document.getElementById('filtroTipo').value = '';
+    document.getElementById('filtroStatus').value = '';
+    document.getElementById('buscaDocumento').value = '';
+}
+
+function exportarDocumentos() {
+    alert('Exportando lista de documentos...');
+}
+
+console.log('Página de Documentos carregada!');
+</script>
+{% endblock %}

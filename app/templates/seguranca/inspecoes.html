@@ -1,0 +1,593 @@
+{% extends "base.html" %}
+
+{% block title %}Inspeções - Segurança do Trabalho{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-search me-2"></i>Inspeções de Segurança
+        </h1>
+        <div class="btn-group">
+            <button class="btn btn-success" onclick="novaInspecao()">
+                <i class="fas fa-plus me-1"></i>Nova Inspeção
+            </button>
+            <button class="btn btn-outline-warning" onclick="naoConformidades()">
+                <i class="fas fa-exclamation-triangle me-1"></i>Não Conformidades
+            </button>
+            <a href="{{ url_for('seguranca.index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Voltar
+            </a>
+        </div>
+    </div>
+
+    <!-- Dashboard de Inspeções -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Inspeções Este Mês
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">42</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clipboard-check fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Aprovadas
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">38</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Com Ressalvas
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">4</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                Não Conformidades
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">12</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-times-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tipos de Inspeção -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-info">
+                        <i class="fas fa-hard-hat me-2"></i>EPIs
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="text-center">
+                        <div class="mb-3">
+                            <div class="progress-ring">
+                                <div class="progress-value">85%</div>
+                            </div>
+                        </div>
+                        <p class="text-muted">Conformidade Geral</p>
+                        <div class="btn-group w-100">
+                            <button class="btn btn-sm btn-info" onclick="inspecaoEPI()">
+                                <i class="fas fa-search"></i> Inspecionar
+                            </button>
+                            <button class="btn btn-sm btn-primary" onclick="relatorioEPI()">
+                                <i class="fas fa-chart-bar"></i> Relatório
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-warning">
+                        <i class="fas fa-cogs me-2"></i>Máquinas
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="text-center">
+                        <div class="mb-3">
+                            <div class="progress-ring warning">
+                                <div class="progress-value">72%</div>
+                            </div>
+                        </div>
+                        <p class="text-muted">Conformidade Geral</p>
+                        <div class="btn-group w-100">
+                            <button class="btn btn-sm btn-warning" onclick="inspecaoMaquinas()">
+                                <i class="fas fa-search"></i> Inspecionar
+                            </button>
+                            <button class="btn btn-sm btn-primary" onclick="relatorioMaquinas()">
+                                <i class="fas fa-chart-bar"></i> Relatório
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-success">
+                        <i class="fas fa-fire-extinguisher me-2"></i>Combate a Incêndio
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="text-center">
+                        <div class="mb-3">
+                            <div class="progress-ring success">
+                                <div class="progress-value">95%</div>
+                            </div>
+                        </div>
+                        <p class="text-muted">Conformidade Geral</p>
+                        <div class="btn-group w-100">
+                            <button class="btn btn-sm btn-success" onclick="inspecaoIncendio()">
+                                <i class="fas fa-search"></i> Inspecionar
+                            </button>
+                            <button class="btn btn-sm btn-primary" onclick="relatorioIncendio()">
+                                <i class="fas fa-chart-bar"></i> Relatório
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card border-left-secondary shadow h-100">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-secondary">
+                        <i class="fas fa-building me-2"></i>Instalações
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="text-center">
+                        <div class="mb-3">
+                            <div class="progress-ring secondary">
+                                <div class="progress-value">88%</div>
+                            </div>
+                        </div>
+                        <p class="text-muted">Conformidade Geral</p>
+                        <div class="btn-group w-100">
+                            <button class="btn btn-sm btn-secondary" onclick="inspecaoInstalacoes()">
+                                <i class="fas fa-search"></i> Inspecionar
+                            </button>
+                            <button class="btn btn-sm btn-primary" onclick="relatorioInstalacoes()">
+                                <i class="fas fa-chart-bar"></i> Relatório
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Inspeções -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-list me-2"></i>Histórico de Inspeções
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <select class="form-select" id="filtroTipo">
+                        <option value="">Todos os Tipos</option>
+                        <option value="epi">EPIs</option>
+                        <option value="maquinas">Máquinas</option>
+                        <option value="incendio">Combate a Incêndio</option>
+                        <option value="instalacoes">Instalações</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="filtroStatus">
+                        <option value="">Todos os Status</option>
+                        <option value="aprovada">Aprovada</option>
+                        <option value="ressalva">Com Ressalva</option>
+                        <option value="reprovada">Reprovada</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <input type="date" class="form-control" id="filtroData">
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-outline-secondary me-2" onclick="limparFiltros()">
+                        <i class="fas fa-eraser"></i>
+                    </button>
+                    <button class="btn btn-outline-success" onclick="exportarInspecoes()">
+                        <i class="fas fa-download"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Tipo</th>
+                            <th>Local/Equipamento</th>
+                            <th>Data</th>
+                            <th>Inspetor</th>
+                            <th>Status</th>
+                            <th>Não Conformidades</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>INS-001</td>
+                            <td><span class="badge bg-info">EPI</span></td>
+                            <td>Almoxarifado - Setor A</td>
+                            <td>15/04/2024</td>
+                            <td>Carlos Safety</td>
+                            <td><span class="badge bg-success">Aprovada</span></td>
+                            <td>0</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="verInspecao(1)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="baixarRelatorio(1)">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>INS-002</td>
+                            <td><span class="badge bg-warning">Máquinas</span></td>
+                            <td>Torno CNC - Linha 2</td>
+                            <td>14/04/2024</td>
+                            <td>Ana Segura</td>
+                            <td><span class="badge bg-warning">Com Ressalva</span></td>
+                            <td>2</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="verInspecao(2)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="verNaoConformidades(2)">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </button>
+                                <button class="btn btn-sm btn-info" onclick="planoAcao(2)">
+                                    <i class="fas fa-tasks"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>INS-003</td>
+                            <td><span class="badge bg-success">Incêndio</span></td>
+                            <td>Extintores - Pavimento 1</td>
+                            <td>12/04/2024</td>
+                            <td>Roberto Fire</td>
+                            <td><span class="badge bg-success">Aprovada</span></td>
+                            <td>0</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="verInspecao(3)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="baixarRelatorio(3)">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Não Conformidades Abertas -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 bg-warning">
+            <h6 class="m-0 font-weight-bold text-dark">
+                <i class="fas fa-exclamation-triangle me-2"></i>Não Conformidades em Aberto
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-6 mb-3">
+                    <div class="card border-left-danger">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="text-danger">Proteção de máquina inadequada</h6>
+                                    <p class="text-muted mb-1">Torno CNC - Linha 2</p>
+                                    <small class="text-muted">Detectada em: 14/04/2024</small>
+                                </div>
+                                <span class="badge bg-danger">Crítica</span>
+                            </div>
+                            <div class="mt-2">
+                                <button class="btn btn-sm btn-warning" onclick="criarPlanoAcao(1)">
+                                    <i class="fas fa-tasks"></i> Plano de Ação
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6 mb-3">
+                    <div class="card border-left-warning">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="text-warning">EPI danificado encontrado</h6>
+                                    <p class="text-muted mb-1">Capacete - Setor B</p>
+                                    <small class="text-muted">Detectada em: 13/04/2024</small>
+                                </div>
+                                <span class="badge bg-warning">Média</span>
+                            </div>
+                            <div class="mt-2">
+                                <button class="btn btn-sm btn-warning" onclick="criarPlanoAcao(2)">
+                                    <i class="fas fa-tasks"></i> Plano de Ação
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Nova Inspeção -->
+<div class="modal fade" id="modalNovaInspecao" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-search me-2"></i>Nova Inspeção
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formNovaInspecao">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">Tipo de Inspeção*</label>
+                            <select class="form-select" required>
+                                <option value="">Selecione...</option>
+                                <option value="epi">EPIs</option>
+                                <option value="maquinas">Máquinas e Equipamentos</option>
+                                <option value="incendio">Sistema de Combate a Incêndio</option>
+                                <option value="instalacoes">Instalações</option>
+                                <option value="eletrica">Instalações Elétricas</option>
+                                <option value="ergonomia">Ergonomia</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Data da Inspeção*</label>
+                            <input type="date" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Local/Equipamento*</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Responsável pela Inspeção*</label>
+                            <select class="form-select" required>
+                                <option value="">Selecione...</option>
+                                <option>Carlos Safety</option>
+                                <option>Ana Segura</option>
+                                <option>Roberto Fire</option>
+                                <option>Maria Protection</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <label class="form-label">Checklist de Verificação</label>
+                        <div class="border p-3 rounded">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="item1">
+                                <label class="form-check-label" for="item1">
+                                    Equipamentos de proteção em bom estado
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="item2">
+                                <label class="form-check-label" for="item2">
+                                    Sinalização adequada e visível
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="item3">
+                                <label class="form-check-label" for="item3">
+                                    Área limpa e organizada
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="item4">
+                                <label class="form-check-label" for="item4">
+                                    Procedimentos de segurança sendo seguidos
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <label class="form-label">Observações</label>
+                        <textarea class="form-control" rows="3" placeholder="Descreva detalhes, não conformidades encontradas, etc..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="salvarInspecao()">
+                    <i class="fas fa-save me-1"></i>Salvar Inspeção
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function novaInspecao() {
+    new bootstrap.Modal(document.getElementById('modalNovaInspecao')).show();
+}
+
+function inspecaoEPI() {
+    alert('Iniciando inspeção de EPIs');
+}
+
+function inspecaoMaquinas() {
+    alert('Iniciando inspeção de máquinas');
+}
+
+function inspecaoIncendio() {
+    alert('Iniciando inspeção de sistema de combate a incêndio');
+}
+
+function inspecaoInstalacoes() {
+    alert('Iniciando inspeção de instalações');
+}
+
+function relatorioEPI() {
+    alert('Relatório de inspeções de EPI');
+}
+
+function relatorioMaquinas() {
+    alert('Relatório de inspeções de máquinas');
+}
+
+function relatorioIncendio() {
+    alert('Relatório de inspeções de combate a incêndio');
+}
+
+function relatorioInstalacoes() {
+    alert('Relatório de inspeções de instalações');
+}
+
+function verInspecao(id) {
+    alert(`Visualizando inspeção ${id}`);
+}
+
+function baixarRelatorio(id) {
+    alert(`Baixando relatório da inspeção ${id}`);
+}
+
+function verNaoConformidades(id) {
+    alert(`Não conformidades da inspeção ${id}`);
+}
+
+function planoAcao(id) {
+    alert(`Criando plano de ação para inspeção ${id}`);
+}
+
+function criarPlanoAcao(id) {
+    alert(`Criando plano de ação para não conformidade ${id}`);
+}
+
+function salvarInspecao() {
+    alert('Inspeção salva com sucesso!');
+    bootstrap.Modal.getInstance(document.getElementById('modalNovaInspecao')).hide();
+}
+
+function limparFiltros() {
+    document.getElementById('filtroTipo').value = '';
+    document.getElementById('filtroStatus').value = '';
+    document.getElementById('filtroData').value = '';
+}
+
+function exportarInspecoes() {
+    alert('Exportando histórico de inspeções...');
+}
+
+function naoConformidades() {
+    alert('Visualizando todas as não conformidades');
+}
+
+console.log('Página de Inspeções carregada!');
+</script>
+
+<style>
+.progress-ring {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: conic-gradient(#4e73df 0% 85%, #e3e6f0 85% 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    position: relative;
+}
+
+.progress-ring.warning {
+    background: conic-gradient(#f6c23e 0% 72%, #e3e6f0 72% 100%);
+}
+
+.progress-ring.success {
+    background: conic-gradient(#1cc88a 0% 95%, #e3e6f0 95% 100%);
+}
+
+.progress-ring.secondary {
+    background: conic-gradient(#6c757d 0% 88%, #e3e6f0 88% 100%);
+}
+
+.progress-ring::before {
+    content: '';
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: white;
+    position: absolute;
+}
+
+.progress-value {
+    font-weight: bold;
+    color: #5a5c69;
+    z-index: 1;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,576 @@
+{% extends "base.html" %}
+
+{% block title %}EPI - Segurança do Trabalho{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-hard-hat me-2"></i>Gestão de EPIs
+        </h1>
+        <div class="btn-group">
+            <button class="btn btn-success" onclick="novoEPI()">
+                <i class="fas fa-plus me-1"></i>Cadastrar EPI
+            </button>
+            <button class="btn btn-outline-info" onclick="entregaEPI()">
+                <i class="fas fa-hand-holding me-1"></i>Entregar EPI
+            </button>
+            <a href="{{ url_for('seguranca.index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Voltar
+            </a>
+        </div>
+    </div>
+
+    <!-- Dashboard EPI -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total em Estoque
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">1.247</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-boxes fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Em Uso
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">892</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-user-check fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Estoque Baixo
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">12</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                Vencidos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">15</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar-times fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Categorias de EPI -->
+    <div class="row mb-4">
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-hard-hat me-2"></i>Proteção da Cabeça
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="epi-item d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <h6 class="mb-1">Capacetes</h6>
+                            <small class="text-muted">Em estoque: 45 | Em uso: 32</small>
+                        </div>
+                        <span class="badge bg-success">OK</span>
+                    </div>
+                    <div class="epi-item d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <h6 class="mb-1">Protetores Auriculares</h6>
+                            <small class="text-muted">Em estoque: 120 | Em uso: 89</small>
+                        </div>
+                        <span class="badge bg-success">OK</span>
+                    </div>
+                    <button class="btn btn-primary btn-sm w-100 mt-2" onclick="gerenciarCategoria('cabeca')">
+                        <i class="fas fa-cog me-1"></i>Gerenciar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-success">
+                        <i class="fas fa-hands me-2"></i>Proteção das Mãos
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="epi-item d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <h6 class="mb-1">Luvas de Segurança</h6>
+                            <small class="text-muted">Em estoque: 78 | Em uso: 156</small>
+                        </div>
+                        <span class="badge bg-warning">Baixo</span>
+                    </div>
+                    <div class="epi-item d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <h6 class="mb-1">Luvas Químicas</h6>
+                            <small class="text-muted">Em estoque: 25 | Em uso: 12</small>
+                        </div>
+                        <span class="badge bg-success">OK</span>
+                    </div>
+                    <button class="btn btn-success btn-sm w-100 mt-2" onclick="gerenciarCategoria('maos')">
+                        <i class="fas fa-cog me-1"></i>Gerenciar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-info">
+                        <i class="fas fa-eye me-2"></i>Proteção Visual
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="epi-item d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <h6 class="mb-1">Óculos de Segurança</h6>
+                            <small class="text-muted">Em estoque: 67 | Em uso: 43</small>
+                        </div>
+                        <span class="badge bg-success">OK</span>
+                    </div>
+                    <div class="epi-item d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <h6 class="mb-1">Máscaras de Solda</h6>
+                            <small class="text-muted">Em estoque: 8 | Em uso: 15</small>
+                        </div>
+                        <span class="badge bg-danger">Crítico</span>
+                    </div>
+                    <button class="btn btn-info btn-sm w-100 mt-2" onclick="gerenciarCategoria('visual')">
+                        <i class="fas fa-cog me-1"></i>Gerenciar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de Estoque -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-warehouse me-2"></i>Controle de Estoque
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <select class="form-select" id="filtroCategoria">
+                        <option value="">Todas as Categorias</option>
+                        <option value="cabeca">Proteção da Cabeça</option>
+                        <option value="maos">Proteção das Mãos</option>
+                        <option value="visual">Proteção Visual</option>
+                        <option value="respiratoria">Proteção Respiratória</option>
+                        <option value="pes">Proteção dos Pés</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="filtroStatus">
+                        <option value="">Todos os Status</option>
+                        <option value="ok">Estoque OK</option>
+                        <option value="baixo">Estoque Baixo</option>
+                        <option value="critico">Estoque Crítico</option>
+                        <option value="vencido">Vencido</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <input type="text" class="form-control" placeholder="Buscar EPI..." id="buscaEPI">
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-outline-secondary me-2" onclick="limparFiltros()">
+                        <i class="fas fa-eraser"></i>
+                    </button>
+                    <button class="btn btn-outline-success" onclick="exportarEstoque()">
+                        <i class="fas fa-download"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>EPI</th>
+                            <th>Categoria</th>
+                            <th>Estoque</th>
+                            <th>Em Uso</th>
+                            <th>Estoque Mínimo</th>
+                            <th>Validade</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>EPI-001</td>
+                            <td>Capacete de Segurança Branco</td>
+                            <td>Proteção da Cabeça</td>
+                            <td>45</td>
+                            <td>32</td>
+                            <td>20</td>
+                            <td>15/12/2025</td>
+                            <td><span class="badge bg-success">OK</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="editarEPI(1)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="entregarEPIItem(1)">
+                                    <i class="fas fa-hand-holding"></i>
+                                </button>
+                                <button class="btn btn-sm btn-info" onclick="historicoEPI(1)">
+                                    <i class="fas fa-history"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>EPI-002</td>
+                            <td>Luvas de Segurança Multiuso</td>
+                            <td>Proteção das Mãos</td>
+                            <td>8</td>
+                            <td>156</td>
+                            <td>50</td>
+                            <td>20/06/2024</td>
+                            <td><span class="badge bg-danger">Crítico</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="editarEPI(2)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="comprarEPI(2)">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                                <button class="btn btn-sm btn-info" onclick="historicoEPI(2)">
+                                    <i class="fas fa-history"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>EPI-003</td>
+                            <td>Óculos de Proteção</td>
+                            <td>Proteção Visual</td>
+                            <td>67</td>
+                            <td>43</td>
+                            <td>30</td>
+                            <td>10/08/2024</td>
+                            <td><span class="badge bg-success">OK</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="editarEPI(3)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="entregarEPIItem(3)">
+                                    <i class="fas fa-hand-holding"></i>
+                                </button>
+                                <button class="btn btn-sm btn-info" onclick="historicoEPI(3)">
+                                    <i class="fas fa-history"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Entregas Recentes -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-history me-2"></i>Entregas Recentes
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Funcionário</th>
+                            <th>EPI Entregue</th>
+                            <th>Quantidade</th>
+                            <th>Validade</th>
+                            <th>Responsável</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>15/04/2024</td>
+                            <td>João Silva</td>
+                            <td>Capacete de Segurança</td>
+                            <td>1</td>
+                            <td>15/12/2025</td>
+                            <td>Carlos Safety</td>
+                            <td><span class="badge bg-success">Entregue</span></td>
+                        </tr>
+                        <tr>
+                            <td>14/04/2024</td>
+                            <td>Maria Santos</td>
+                            <td>Luvas de Segurança</td>
+                            <td>2</td>
+                            <td>20/06/2024</td>
+                            <td>Ana Segura</td>
+                            <td><span class="badge bg-success">Entregue</span></td>
+                        </tr>
+                        <tr>
+                            <td>13/04/2024</td>
+                            <td>Pedro Costa</td>
+                            <td>Óculos de Proteção</td>
+                            <td>1</td>
+                            <td>10/08/2024</td>
+                            <td>Carlos Safety</td>
+                            <td><span class="badge bg-warning">Devolver em 30d</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Novo EPI -->
+<div class="modal fade" id="modalNovoEPI" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-hard-hat me-2"></i>Cadastrar Novo EPI
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formNovoEPI">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">Nome do EPI*</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Código*</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Categoria*</label>
+                            <select class="form-select" required>
+                                <option value="">Selecione...</option>
+                                <option value="cabeca">Proteção da Cabeça</option>
+                                <option value="maos">Proteção das Mãos</option>
+                                <option value="visual">Proteção Visual</option>
+                                <option value="respiratoria">Proteção Respiratória</option>
+                                <option value="pes">Proteção dos Pés</option>
+                                <option value="corpo">Proteção do Corpo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Fabricante</label>
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Quantidade Inicial*</label>
+                            <input type="number" class="form-control" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Estoque Mínimo*</label>
+                            <input type="number" class="form-control" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Validade</label>
+                            <input type="date" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label class="form-label">CA (Certificado de Aprovação)</label>
+                            <input type="text" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Fornecedor</label>
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <label class="form-label">Observações</label>
+                        <textarea class="form-control" rows="2" placeholder="Descrição, especificações técnicas, etc..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="salvarEPI()">
+                    <i class="fas fa-save me-1"></i>Cadastrar EPI
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Entrega de EPI -->
+<div class="modal fade" id="modalEntregaEPI" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-hand-holding me-2"></i>Entregar EPI
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formEntregaEPI">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">Funcionário*</label>
+                            <select class="form-select" required>
+                                <option value="">Selecione...</option>
+                                <option>João Silva - Eletricista</option>
+                                <option>Maria Santos - Operadora</option>
+                                <option>Pedro Costa - Técnico</option>
+                                <option>Ana Lima - Soldadora</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">EPI*</label>
+                            <select class="form-select" required>
+                                <option value="">Selecione...</option>
+                                <option>Capacete de Segurança (45 disponíveis)</option>
+                                <option>Luvas de Segurança (8 disponíveis)</option>
+                                <option>Óculos de Proteção (67 disponíveis)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Quantidade*</label>
+                            <input type="number" class="form-control" value="1" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Data da Entrega*</label>
+                            <input type="date" class="form-control" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Previsão Devolução</label>
+                            <input type="date" class="form-control">
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <label class="form-label">Observações</label>
+                        <textarea class="form-control" rows="2" placeholder="Condições especiais, treinamento realizado, etc..."></textarea>
+                    </div>
+                    <div class="mt-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="treinamentoRealizado" required>
+                            <label class="form-check-label" for="treinamentoRealizado">
+                                Confirmo que o funcionário foi treinado sobre o uso correto do EPI
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="confirmarEntrega()">
+                    <i class="fas fa-check me-1"></i>Confirmar Entrega
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function novoEPI() {
+    new bootstrap.Modal(document.getElementById('modalNovoEPI')).show();
+}
+
+function entregaEPI() {
+    new bootstrap.Modal(document.getElementById('modalEntregaEPI')).show();
+}
+
+function gerenciarCategoria(categoria) {
+    alert(`Gerenciando categoria: ${categoria}`);
+}
+
+function editarEPI(id) {
+    alert(`Editando EPI ${id}`);
+}
+
+function entregarEPIItem(id) {
+    alert(`Entregando EPI ${id}`);
+    entregaEPI();
+}
+
+function historicoEPI(id) {
+    alert(`Histórico do EPI ${id}`);
+}
+
+function comprarEPI(id) {
+    alert(`Solicitando compra do EPI ${id}`);
+}
+
+function salvarEPI() {
+    alert('EPI cadastrado com sucesso!');
+    bootstrap.Modal.getInstance(document.getElementById('modalNovoEPI')).hide();
+}
+
+function confirmarEntrega() {
+    alert('EPI entregue com sucesso!');
+    bootstrap.Modal.getInstance(document.getElementById('modalEntregaEPI')).hide();
+}
+
+function limparFiltros() {
+    document.getElementById('filtroCategoria').value = '';
+    document.getElementById('filtroStatus').value = '';
+    document.getElementById('buscaEPI').value = '';
+}
+
+function exportarEstoque() {
+    alert('Exportando relatório de estoque...');
+}
+
+console.log('Página de EPI carregada!');
+</script>
+{% endblock %}

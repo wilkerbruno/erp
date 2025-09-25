@@ -1,0 +1,531 @@
+{% extends "base.html" %}
+
+{% block title %}Treinamentos - Segurança do Trabalho{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-graduation-cap me-2"></i>Gestão de Treinamentos
+        </h1>
+        <div class="btn-group">
+            <button class="btn btn-success" onclick="novoTreinamento()">
+                <i class="fas fa-plus me-1"></i>Novo Treinamento
+            </button>
+            <button class="btn btn-outline-warning" onclick="alertasVencimento()">
+                <i class="fas fa-exclamation-triangle me-1"></i>Vencimentos
+            </button>
+            <a href="{{ url_for('seguranca.index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Voltar
+            </a>
+        </div>
+    </div>
+
+    <!-- Estatísticas -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Treinamentos Ativos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">24</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-chalkboard-teacher fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Funcionários Treinados
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">187</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-user-graduate fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                A Vencer (30 dias)
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">8</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar-times fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                Vencidos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">3</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-times-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Treinamentos por NR -->
+    <div class="row mb-4">
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-danger">
+                        <i class="fas fa-hard-hat me-2"></i>NR-10 (Eletricidade)
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <small>Funcionários Treinados:</small>
+                            <strong>45/50</strong>
+                        </div>
+                        <div class="progress mt-1">
+                            <div class="progress-bar bg-success" style="width: 90%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <small class="text-muted">Próximo Vencimento:</small>
+                        <br><span class="text-warning">15/05/2024</span>
+                    </div>
+                    
+                    <div class="btn-group w-100">
+                        <button class="btn btn-sm btn-primary" onclick="verDetalhesNR('NR10')">
+                            <i class="fas fa-eye"></i> Detalhes
+                        </button>
+                        <button class="btn btn-sm btn-success" onclick="agendarTreinamento('NR10')">
+                            <i class="fas fa-calendar-plus"></i> Agendar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-warning">
+                        <i class="fas fa-fire-extinguisher me-2"></i>NR-23 (Combate a Incêndio)
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <small>Funcionários Treinados:</small>
+                            <strong>78/80</strong>
+                        </div>
+                        <div class="progress mt-1">
+                            <div class="progress-bar bg-warning" style="width: 97%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <small class="text-muted">Próximo Vencimento:</small>
+                        <br><span class="text-success">20/06/2024</span>
+                    </div>
+                    
+                    <div class="btn-group w-100">
+                        <button class="btn btn-sm btn-primary" onclick="verDetalhesNR('NR23')">
+                            <i class="fas fa-eye"></i> Detalhes
+                        </button>
+                        <button class="btn btn-sm btn-success" onclick="agendarTreinamento('NR23')">
+                            <i class="fas fa-calendar-plus"></i> Agendar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-success">
+                        <i class="fas fa-shield-alt me-2"></i>NR-06 (EPI)
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <small>Funcionários Treinados:</small>
+                            <strong>95/95</strong>
+                        </div>
+                        <div class="progress mt-1">
+                            <div class="progress-bar bg-success" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <small class="text-muted">Próximo Vencimento:</small>
+                        <br><span class="text-success">10/08/2024</span>
+                    </div>
+                    
+                    <div class="btn-group w-100">
+                        <button class="btn btn-sm btn-primary" onclick="verDetalhesNR('NR06')">
+                            <i class="fas fa-eye"></i> Detalhes
+                        </button>
+                        <button class="btn btn-sm btn-success" onclick="agendarTreinamento('NR06')">
+                            <i class="fas fa-calendar-plus"></i> Agendar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista Detalhada -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-list me-2"></i>Lista de Treinamentos
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <select class="form-select" id="filtroNR" onchange="filtrarTreinamentos()">
+                        <option value="">Todas as NRs</option>
+                        <option value="NR05">NR-05 (CIPA)</option>
+                        <option value="NR06">NR-06 (EPI)</option>
+                        <option value="NR10">NR-10 (Eletricidade)</option>
+                        <option value="NR12">NR-12 (Máquinas)</option>
+                        <option value="NR23">NR-23 (Incêndio)</option>
+                        <option value="NR33">NR-33 (Espaço Confinado)</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="filtroStatus" onchange="filtrarTreinamentos()">
+                        <option value="">Todos os Status</option>
+                        <option value="vigente">Vigente</option>
+                        <option value="vencendo">A Vencer</option>
+                        <option value="vencido">Vencido</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <input type="text" class="form-control" placeholder="Buscar funcionário..." id="buscaFuncionario">
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-outline-secondary me-2" onclick="limparFiltros()">
+                        <i class="fas fa-eraser"></i>
+                    </button>
+                    <button class="btn btn-outline-success" onclick="exportarTreinamentos()">
+                        <i class="fas fa-download"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Funcionário</th>
+                            <th>Cargo</th>
+                            <th>NR/Treinamento</th>
+                            <th>Data Realização</th>
+                            <th>Validade</th>
+                            <th>Instrutor</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>João Silva</td>
+                            <td>Eletricista</td>
+                            <td><span class="badge bg-danger">NR-10</span></td>
+                            <td>15/05/2023</td>
+                            <td class="text-warning">15/05/2024</td>
+                            <td>Carlos Safety</td>
+                            <td><span class="badge bg-warning">A Vencer</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="verCertificado(1)">
+                                    <i class="fas fa-certificate"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="renovarTreinamento(1)">
+                                    <i class="fas fa-sync"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Maria Santos</td>
+                            <td>Operadora</td>
+                            <td><span class="badge bg-warning">NR-12</span></td>
+                            <td>20/03/2024</td>
+                            <td class="text-success">20/03/2026</td>
+                            <td>Ana Segura</td>
+                            <td><span class="badge bg-success">Vigente</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="verCertificado(2)">
+                                    <i class="fas fa-certificate"></i>
+                                </button>
+                                <button class="btn btn-sm btn-info" onclick="verDetalhes(2)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Pedro Costa</td>
+                            <td>Técnico Segurança</td>
+                            <td><span class="badge bg-success">NR-06</span></td>
+                            <td>10/01/2024</td>
+                            <td class="text-success">10/01/2025</td>
+                            <td>Roberto Trainer</td>
+                            <td><span class="badge bg-success">Vigente</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="verCertificado(3)">
+                                    <i class="fas fa-certificate"></i>
+                                </button>
+                                <button class="btn btn-sm btn-info" onclick="verDetalhes(3)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cronograma de Treinamentos -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-calendar-alt me-2"></i>Cronograma de Treinamentos - Próximos 90 dias
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-marker bg-warning"></div>
+                    <div class="timeline-content">
+                        <h6>NR-10 - Reciclagem Eletricistas</h6>
+                        <p class="text-muted">15 funcionários | 25/04/2024</p>
+                        <span class="badge bg-warning">Agendado</span>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-marker bg-info"></div>
+                    <div class="timeline-content">
+                        <h6>NR-33 - Espaço Confinado</h6>
+                        <p class="text-muted">8 funcionários | 05/05/2024</p>
+                        <span class="badge bg-info">Planejado</span>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-marker bg-success"></div>
+                    <div class="timeline-content">
+                        <h6>Primeiros Socorros</h6>
+                        <p class="text-muted">20 funcionários | 15/05/2024</p>
+                        <span class="badge bg-success">Confirmado</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Novo Treinamento -->
+<div class="modal fade" id="modalNovoTreinamento" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-graduation-cap me-2"></i>Novo Treinamento
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formNovoTreinamento">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label class="form-label">Título do Treinamento*</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">NR Relacionada*</label>
+                            <select class="form-select" required>
+                                <option value="">Selecione...</option>
+                                <option value="NR05">NR-05 (CIPA)</option>
+                                <option value="NR06">NR-06 (EPI)</option>
+                                <option value="NR10">NR-10 (Eletricidade)</option>
+                                <option value="NR12">NR-12 (Máquinas)</option>
+                                <option value="NR23">NR-23 (Incêndio)</option>
+                                <option value="NR33">NR-33 (Espaço Confinado)</option>
+                                <option value="OUTRO">Outro</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Data*</label>
+                            <input type="date" class="form-control" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Hora Início*</label>
+                            <input type="time" class="form-control" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Duração (horas)*</label>
+                            <input type="number" class="form-control" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Validade (anos)</label>
+                            <select class="form-select">
+                                <option value="1">1 ano</option>
+                                <option value="2">2 anos</option>
+                                <option value="3">3 anos</option>
+                                <option value="5">5 anos</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Instrutor*</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Local</label>
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <label class="form-label">Participantes</label>
+                        <textarea class="form-control" rows="3" placeholder="Liste os funcionários que participarão..."></textarea>
+                    </div>
+                    <div class="mt-3">
+                        <label class="form-label">Conteúdo Programático</label>
+                        <textarea class="form-control" rows="4" placeholder="Descreva o conteúdo do treinamento..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="salvarTreinamento()">
+                    <i class="fas fa-save me-1"></i>Salvar Treinamento
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function novoTreinamento() {
+    new bootstrap.Modal(document.getElementById('modalNovoTreinamento')).show();
+}
+
+function verDetalhesNR(nr) {
+    alert(`Detalhes dos treinamentos da ${nr}`);
+}
+
+function agendarTreinamento(nr) {
+    alert(`Agendando novo treinamento da ${nr}`);
+}
+
+function verCertificado(id) {
+    alert(`Visualizando certificado do treinamento ${id}`);
+}
+
+function renovarTreinamento(id) {
+    alert(`Renovando treinamento ${id}`);
+}
+
+function verDetalhes(id) {
+    alert(`Detalhes do treinamento ${id}`);
+}
+
+function salvarTreinamento() {
+    alert('Treinamento salvo com sucesso!');
+    bootstrap.Modal.getInstance(document.getElementById('modalNovoTreinamento')).hide();
+}
+
+function filtrarTreinamentos() {
+    console.log('Filtrando treinamentos...');
+}
+
+function limparFiltros() {
+    document.getElementById('filtroNR').value = '';
+    document.getElementById('filtroStatus').value = '';
+    document.getElementById('buscaFuncionario').value = '';
+}
+
+function exportarTreinamentos() {
+    alert('Exportando lista de treinamentos...');
+}
+
+function alertasVencimento() {
+    alert('Configurar alertas de vencimento de treinamentos');
+}
+
+console.log('Página de Treinamentos carregada!');
+</script>
+
+<style>
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.timeline-item {
+    position: relative;
+    padding-bottom: 20px;
+    border-left: 2px solid #e9ecef;
+}
+
+.timeline-item:last-child {
+    border-left: none;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -8px;
+    top: 0;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+}
+
+.timeline-content {
+    margin-left: 20px;
+    background: #f8f9fc;
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #e3e6f0;
+}
+</style>
+{% endblock %}
