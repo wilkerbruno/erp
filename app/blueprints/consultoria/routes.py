@@ -165,3 +165,29 @@ def api_estatisticas_dashboard():
 def test():
     """Rota de teste"""
     return "Blueprint consultoria funcionando!"
+
+# ===== NOVAS FUNCIONALIDADES =====
+
+@bp.route('/diagnostico-efo')
+@login_required
+def diagnostico_efo():
+    """Diagnóstico EFO - Empresarial, Financeiro e Operacional"""
+    return render_template('consultoria/diagnostico_efo.html')
+
+@bp.route('/diagnostico-inicial')
+@login_required
+def diagnostico_inicial():
+    """Diagnóstico Inicial - Checklist de Avaliação"""
+    return render_template('consultoria/diagnostico_inicial.html')
+
+@bp.route('/checklist-sfm')
+@login_required
+def checklist_sfm():
+    """Checklist SFM - Shop Floor Management"""
+    return render_template('consultoria/checklist_sfm.html')
+
+@bp.route('/acompanhamento')
+@login_required
+def acompanhamento():
+    """Acompanhamento - Auditorias e Follow-up"""
+    return render_template('consultoria/acompanhamento.html')

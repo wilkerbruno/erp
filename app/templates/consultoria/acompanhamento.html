@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Acompanhamento - Consultoria{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-search-plus me-2"></i>Acompanhamento
+        </h1>
+        <div class="btn-group">
+            <button class="btn btn-success" onclick="novaAuditoria()">
+                <i class="fas fa-plus me-1"></i>Nova Auditoria
+            </button>
+            <a href="{{ url_for('consultoria.index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Voltar
+            </a>
+        </div>
+    </div>
+
+    <div class="alert alert-info">
+        <h5><i class="fas fa-info-circle me-2"></i>Acompanhamento</h5>
+        <p class="mb-0">Auditorias, follow-ups e acompanhamento de projetos de consultoria.</p>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-calendar-check me-2"></i>Acompanhamentos
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="text-center py-5">
+                <i class="fas fa-search-plus fa-5x text-muted mb-3"></i>
+                <h4>Acompanhamento</h4>
+                <p class="text-muted">Funcionalidade em desenvolvimento</p>
+                <button class="btn btn-primary" onclick="novaAuditoria()">
+                    <i class="fas fa-plus me-2"></i>Começar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function novaAuditoria() {
+    alert('Criar nova Auditoria');
+}
+console.log('Acompanhamento carregado');
+</script>
+{% endblock %}
