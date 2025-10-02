@@ -4,13 +4,20 @@
 
 {% block content %}
 <div class="container-fluid">
+    <!-- Header -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">
-            <i class="fas fa-search-plus me-2"></i>Acompanhamento
+            <i class="fas fa-search-plus me-2"></i>Acompanhamento & Auditorias
         </h1>
         <div class="btn-group">
             <button class="btn btn-success" onclick="novaAuditoria()">
                 <i class="fas fa-plus me-1"></i>Nova Auditoria
+            </button>
+            <button class="btn btn-outline-primary" onclick="agendarAuditoria()">
+                <i class="fas fa-calendar-plus me-1"></i>Agendar
+            </button>
+            <button class="btn btn-outline-info" onclick="verCalendario()">
+                <i class="fas fa-calendar me-1"></i>Calendário
             </button>
             <a href="{{ url_for('consultoria.index') }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left me-1"></i>Voltar
@@ -18,36 +25,1188 @@
         </div>
     </div>
 
-    <div class="alert alert-info">
-        <h5><i class="fas fa-info-circle me-2"></i>Acompanhamento</h5>
-        <p class="mb-0">Auditorias, follow-ups e acompanhamento de projetos de consultoria.</p>
+    <!-- Info -->
+    <div class="alert alert-info alert-dismissible fade show">
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <h5 class="alert-heading">
+            <i class="fas fa-info-circle me-2"></i>Sistema de Acompanhamento e Auditorias
+        </h5>
+        <p class="mb-0">
+            <strong>Gestão completa de auditorias</strong> internas e externas, follow-up de projetos, 
+            controle de não conformidades e ações corretivas. Suporta auditorias de 
+            <strong>certificação, manutenção, follow-up e especiais</strong>.
+        </p>
     </div>
 
-    <div class="card shadow">
+    <!-- KPIs Dashboard -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Auditorias Agendadas
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-agendadas">18</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar-check fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Realizadas Este Mês
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-realizadas">45</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Não Conformidades
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-nc">24</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Taxa de Conformidade
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="taxa-conformidade">92%</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-percentage fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tipos de Auditoria -->
+    <div class="card shadow mb-4">
         <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-primary">
-                <i class="fas fa-calendar-check me-2"></i>Acompanhamentos
+                <i class="fas fa-clipboard-list me-2"></i>Tipos de Auditoria
             </h6>
         </div>
         <div class="card-body">
-            <div class="text-center py-5">
-                <i class="fas fa-search-plus fa-5x text-muted mb-3"></i>
-                <h4>Acompanhamento</h4>
-                <p class="text-muted">Funcionalidade em desenvolvimento</p>
-                <button class="btn btn-primary" onclick="novaAuditoria()">
-                    <i class="fas fa-plus me-2"></i>Começar
+            <div class="row">
+                <!-- Auditoria Interna -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card h-100 border-left-primary cursor-pointer" onclick="criarAuditoria('interna')">
+                        <div class="card-body text-center">
+                            <i class="fas fa-building fa-3x text-primary mb-3"></i>
+                            <h6 class="text-primary">Auditoria Interna</h6>
+                            <p class="small text-muted mb-3">Avaliação interna dos processos</p>
+                            <div class="mb-2">
+                                <span class="badge bg-primary">32 realizadas</span>
+                            </div>
+                            <button class="btn btn-primary btn-sm w-100">
+                                <i class="fas fa-plus me-1"></i>Criar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Auditoria Externa -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card h-100 border-left-success cursor-pointer" onclick="criarAuditoria('externa')">
+                        <div class="card-body text-center">
+                            <i class="fas fa-user-tie fa-3x text-success mb-3"></i>
+                            <h6 class="text-success">Auditoria Externa</h6>
+                            <p class="small text-muted mb-3">Certificação e organismos</p>
+                            <div class="mb-2">
+                                <span class="badge bg-success">8 realizadas</span>
+                            </div>
+                            <button class="btn btn-success btn-sm w-100">
+                                <i class="fas fa-plus me-1"></i>Criar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Follow-up -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card h-100 border-left-warning cursor-pointer" onclick="criarAuditoria('followup')">
+                        <div class="card-body text-center">
+                            <i class="fas fa-redo fa-3x text-warning mb-3"></i>
+                            <h6 class="text-warning">Follow-up</h6>
+                            <p class="small text-muted mb-3">Acompanhamento de ações</p>
+                            <div class="mb-2">
+                                <span class="badge bg-warning">15 realizadas</span>
+                            </div>
+                            <button class="btn btn-warning btn-sm w-100">
+                                <i class="fas fa-plus me-1"></i>Criar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Auditoria Especial -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card h-100 border-left-info cursor-pointer" onclick="criarAuditoria('especial')">
+                        <div class="card-body text-center">
+                            <i class="fas fa-star fa-3x text-info mb-3"></i>
+                            <h6 class="text-info">Especial</h6>
+                            <p class="small text-muted mb-3">Auditorias específicas</p>
+                            <div class="mb-2">
+                                <span class="badge bg-info">5 realizadas</span>
+                            </div>
+                            <button class="btn btn-info btn-sm w-100">
+                                <i class="fas fa-plus me-1"></i>Criar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calendário e Próximas Auditorias -->
+    <div class="row mb-4">
+        <div class="col-lg-4">
+            <div class="card shadow">
+                <div class="card-header py-3 bg-primary text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-calendar-day me-2"></i>Próximas Auditorias
+                    </h6>
+                </div>
+                <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                    <div id="listaProximasAuditorias">
+                        <!-- Preenchido dinamicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-chart-bar me-2"></i>Performance de Auditorias
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartAuditorias" height="80"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Não Conformidades Abertas -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-warning">
+                <i class="fas fa-exclamation-triangle me-2"></i>Não Conformidades Abertas
+            </h6>
+            <button class="btn btn-sm btn-warning" onclick="registrarNC()">
+                <i class="fas fa-plus me-1"></i>Registrar NC
+            </button>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Descrição</th>
+                            <th>Tipo</th>
+                            <th>Origem</th>
+                            <th>Responsável</th>
+                            <th>Prazo</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaNCs">
+                        <!-- Preenchido dinamicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos de Acompanhamento -->
+    <div class="row mb-4">
+        <div class="col-lg-6">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-chart-pie me-2"></i>NCs por Categoria
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartNCCategoria" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-chart-line me-2"></i>Evolução de Conformidade
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartEvolucao" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Auditorias -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-list me-2"></i>Histórico de Auditorias
+            </h6>
+            <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-primary active" onclick="filtrarAuditorias('todos')">Todas</button>
+                <button class="btn btn-outline-success" onclick="filtrarAuditorias('concluidas')">Concluídas</button>
+                <button class="btn btn-outline-warning" onclick="filtrarAuditorias('pendentes')">Pendentes</button>
+                <button class="btn btn-outline-info" onclick="filtrarAuditorias('agendadas')">Agendadas</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Tipo</th>
+                            <th>Cliente/Área</th>
+                            <th>Auditor</th>
+                            <th>Data</th>
+                            <th>Status</th>
+                            <th>Conformidade</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaAuditorias">
+                        <!-- Preenchido dinamicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ações Rápidas -->
+    <div class="card shadow">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-bolt me-2"></i>Ações Rápidas
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <button class="btn btn-outline-primary w-100 h-100" onclick="novaAuditoria()">
+                        <i class="fas fa-plus fa-2x mb-2"></i><br>
+                        <strong>Nova Auditoria</strong><br>
+                        <small>Criar auditoria</small>
+                    </button>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <button class="btn btn-outline-success w-100 h-100" onclick="verCalendario()">
+                        <i class="fas fa-calendar fa-2x mb-2"></i><br>
+                        <strong>Calendário</strong><br>
+                        <small>Ver agenda</small>
+                    </button>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <button class="btn btn-outline-warning w-100 h-100" onclick="registrarNC()">
+                        <i class="fas fa-exclamation-triangle fa-2x mb-2"></i><br>
+                        <strong>Registrar NC</strong><br>
+                        <small>Nova não conformidade</small>
+                    </button>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <button class="btn btn-outline-info w-100 h-100" onclick="gerarRelatorios()">
+                        <i class="fas fa-file-pdf fa-2x mb-2"></i><br>
+                        <strong>Relatórios</strong><br>
+                        <small>Gerar documentos</small>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Nova Auditoria -->
+<div class="modal fade" id="modalNovaAuditoria" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-search-plus me-2"></i>Nova Auditoria
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formNovaAuditoria">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="form-label"><strong>Tipo de Auditoria*</strong></label>
+                            <select class="form-select" id="tipoAuditoria" required>
+                                <option value="">Selecione...</option>
+                                <option value="interna">Interna</option>
+                                <option value="externa">Externa</option>
+                                <option value="followup">Follow-up</option>
+                                <option value="especial">Especial</option>
+                                <option value="certificacao">Certificação</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label"><strong>Cliente/Área*</strong></label>
+                            <select class="form-select" id="clienteAuditoria" required>
+                                <option value="">Selecione...</option>
+                                <option value="1">ABC Indústria Ltda</option>
+                                <option value="2">Produção - Linha 1</option>
+                                <option value="3">Qualidade</option>
+                                <option value="4">Logística</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label"><strong>Auditor Líder*</strong></label>
+                            <select class="form-select" id="auditorAuditoria" required>
+                                <option value="">Selecione...</option>
+                                <option value="1">João Silva - Lead Auditor</option>
+                                <option value="2">Maria Santos - Auditora Sênior</option>
+                                <option value="3">Pedro Costa - Auditor</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-3">
+                            <label class="form-label"><strong>Data Prevista*</strong></label>
+                            <input type="date" class="form-control" id="dataAuditoria" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label"><strong>Horário Início</strong></label>
+                            <input type="time" class="form-control" id="horaInicio" value="08:00">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label"><strong>Duração (horas)</strong></label>
+                            <input type="number" class="form-control" id="duracao" value="4" min="1" max="24">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label"><strong>Norma/Padrão</strong></label>
+                            <select class="form-select" id="normaAuditoria">
+                                <option value="">Nenhuma</option>
+                                <option value="iso9001">ISO 9001</option>
+                                <option value="iso14001">ISO 14001</option>
+                                <option value="iso45001">ISO 45001</option>
+                                <option value="iatf16949">IATF 16949</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label class="form-label"><strong>Escopo da Auditoria*</strong></label>
+                            <textarea class="form-control" id="escopoAuditoria" rows="3" required
+                                placeholder="Descreva o escopo, áreas, processos e objetivos da auditoria..."></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label"><strong>Critérios de Auditoria</strong></label>
+                            <textarea class="form-control" id="criteriosAuditoria" rows="3"
+                                placeholder="Normas, procedimentos, requisitos aplicáveis..."></textarea>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-4">
+                            <label class="form-label"><strong>Equipe Auditora</strong></label>
+                            <input type="text" class="form-control" id="equipeAuditoria"
+                                placeholder="Outros auditores (separar por vírgula)">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label"><strong>Auditados/Acompanhantes</strong></label>
+                            <input type="text" class="form-control" id="auditados"
+                                placeholder="Responsáveis das áreas">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label"><strong>Projeto Vinculado</strong></label>
+                            <select class="form-select" id="projetoAuditoria">
+                                <option value="">Nenhum</option>
+                                <option value="1">PRJ-001 - ISO 9001</option>
+                                <option value="2">PRJ-002 - Lean Manufacturing</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-info" onclick="salvarRascunhoAuditoria()">
+                    <i class="fas fa-save me-1"></i>Salvar Rascunho
+                </button>
+                <button type="button" class="btn btn-success" onclick="agendarAuditoriaConfirmar()">
+                    <i class="fas fa-calendar-check me-1"></i>Agendar Auditoria
                 </button>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Modal Registrar NC -->
+<div class="modal fade" id="modalRegistrarNC" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Registrar Não Conformidade
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formRegistrarNC">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label class="form-label"><strong>Descrição da Não Conformidade*</strong></label>
+                            <textarea class="form-control" id="descricaoNC" rows="2" required
+                                placeholder="Descreva a não conformidade identificada..."></textarea>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label"><strong>Tipo*</strong></label>
+                            <select class="form-select" id="tipoNC" required>
+                                <option value="">Selecione...</option>
+                                <option value="maior">Não Conformidade Maior</option>
+                                <option value="menor">Não Conformidade Menor</option>
+                                <option value="observacao">Observação</option>
+                                <option value="oportunidade">Oportunidade de Melhoria</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-4">
+                            <label class="form-label"><strong>Origem*</strong></label>
+                            <select class="form-select" id="origemNC" required>
+                                <option value="">Selecione...</option>
+                                <option value="auditoria">Auditoria</option>
+                                <option value="inspecao">Inspeção</option>
+                                <option value="cliente">Reclamação Cliente</option>
+                                <option value="processo">Monitoramento Processo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label"><strong>Categoria</strong></label>
+                            <select class="form-select" id="categoriaNC">
+                                <option value="qualidade">Qualidade</option>
+                                <option value="processo">Processo</option>
+                                <option value="documentacao">Documentação</option>
+                                <option value="seguranca">Segurança</option>
+                                <option value="ambiental">Ambiental</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label"><strong>Área/Processo</strong></label>
+                            <input type="text" class="form-control" id="areaNC" 
+                                placeholder="Ex: Produção, Qualidade...">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-4">
+                            <label class="form-label"><strong>Responsável*</strong></label>
+                            <select class="form-select" id="responsavelNC" required>
+                                <option value="">Selecione...</option>
+                                <option value="1">João Silva</option>
+                                <option value="2">Maria Santos</option>
+                                <option value="3">Pedro Costa</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label"><strong>Prazo para Ação*</strong></label>
+                            <input type="date" class="form-control" id="prazoNC" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label"><strong>Severidade</strong></label>
+                            <select class="form-select" id="severidadeNC">
+                                <option value="baixa">Baixa</option>
+                                <option value="media">Média</option>
+                                <option value="alta">Alta</option>
+                                <option value="critica">Crítica</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <label class="form-label"><strong>Evidências/Detalhes</strong></label>
+                            <textarea class="form-control" id="evidenciasNC" rows="2"
+                                placeholder="Evidências objetivas, referências de documentos, fotos, etc..."></textarea>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label class="form-label"><strong>Requisito/Cláusula Não Atendida</strong></label>
+                            <input type="text" class="form-control" id="requisitoNC"
+                                placeholder="Ex: ISO 9001:2015 - 8.5.1">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label"><strong>Auditoria Relacionada</strong></label>
+                            <select class="form-select" id="auditoriaNC">
+                                <option value="">Nenhuma</option>
+                                <option value="1">AUD-001 - Auditoria Interna</option>
+                                <option value="2">AUD-002 - Auditoria Externa</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-warning" onclick="salvarNC()">
+                    <i class="fas fa-save me-1"></i>Registrar NC
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Detalhes Auditoria -->
+<div class="modal fade" id="modalDetalhesAuditoria" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-eye me-2"></i>Detalhes da Auditoria
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="detalhesAuditoriaConteudo">
+                <!-- Preenchido dinamicamente -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-success" onclick="gerarRelatorioAuditoria()">
+                    <i class="fas fa-file-pdf me-1"></i>Relatório PDF
+                </button>
+                <button type="button" class="btn btn-primary" onclick="iniciarFollowUp()">
+                    <i class="fas fa-redo me-1"></i>Agendar Follow-up
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+// ===== DADOS MOCKADOS =====
+let auditorias = [
+    {
+        id: 'AUD-001',
+        tipo: 'Interna',
+        cliente: 'Produção - Linha 1',
+        auditor: 'João Silva',
+        data: '2024-04-15',
+        status: 'concluida',
+        conformidade: 94
+    },
+    {
+        id: 'AUD-002',
+        tipo: 'Externa',
+        cliente: 'ABC Indústria Ltda',
+        auditor: 'Maria Santos',
+        data: '2024-04-18',
+        status: 'agendada',
+        conformidade: 0
+    },
+    {
+        id: 'AUD-003',
+        tipo: 'Follow-up',
+        cliente: 'Qualidade',
+        auditor: 'Pedro Costa',
+        data: '2024-04-12',
+        status: 'concluida',
+        conformidade: 88
+    }
+];
+
+let proximasAuditorias = [
+    { id: 'AUD-002', tipo: 'Externa', cliente: 'ABC Indústria', data: '2024-04-18', hora: '08:00' },
+    { id: 'AUD-005', tipo: 'Interna', cliente: 'Logística', data: '2024-04-20', hora: '09:00' },
+    { id: 'AUD-006', tipo: 'Follow-up', cliente: 'Produção', data: '2024-04-22', hora: '14:00' }
+];
+
+let naoConformidades = [
+    {
+        id: 'NC-001',
+        descricao: 'Procedimento desatualizado na área de montagem',
+        tipo: 'Menor',
+        origem: 'Auditoria Interna',
+        responsavel: 'João Silva',
+        prazo: '2024-04-25',
+        status: 'aberta'
+    },
+    {
+        id: 'NC-002',
+        descricao: 'Calibração de equipamento vencida',
+        tipo: 'Maior',
+        origem: 'Inspeção',
+        responsavel: 'Maria Santos',
+        prazo: '2024-04-20',
+        status: 'em_acao'
+    },
+    {
+        id: 'NC-003',
+        descricao: 'Falta de registro de treinamento',
+        tipo: 'Menor',
+        origem: 'Auditoria Externa',
+        responsavel: 'Pedro Costa',
+        prazo: '2024-04-30',
+        status: 'aberta'
+    }
+];
+
+// ===== FUNÇÕES PRINCIPAIS =====
+
 function novaAuditoria() {
-    alert('Criar nova Auditoria');
+    document.getElementById('dataAuditoria').valueAsDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    new bootstrap.Modal(document.getElementById('modalNovaAuditoria')).show();
 }
-console.log('Acompanhamento carregado');
+
+function criarAuditoria(tipo) {
+    document.getElementById('tipoAuditoria').value = tipo;
+    novaAuditoria();
+}
+
+function agendarAuditoriaConfirmar() {
+    const form = document.getElementById('formNovaAuditoria');
+    
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    
+    const tipo = document.getElementById('tipoAuditoria').selectedOptions[0].text;
+    const cliente = document.getElementById('clienteAuditoria').selectedOptions[0].text;
+    const data = document.getElementById('dataAuditoria').value;
+    
+    const novaAud = {
+        id: `AUD-${String(auditorias.length + 1).padStart(3, '0')}`,
+        tipo: tipo,
+        cliente: cliente,
+        auditor: document.getElementById('auditorAuditoria').selectedOptions[0].text,
+        data: data,
+        status: 'agendada',
+        conformidade: 0
+    };
+    
+    auditorias.push(novaAud);
+    
+    bootstrap.Modal.getInstance(document.getElementById('modalNovaAuditoria')).hide();
+    
+    carregarAuditorias();
+    carregarProximasAuditorias();
+    
+    mostrarMensagem('success', 'Auditoria agendada!', `${novaAud.id} - ${tipo} em ${formatarData(data)}`);
+}
+
+function salvarRascunhoAuditoria() {
+    mostrarMensagem('info', 'Rascunho salvo!', 'Você pode continuar depois.');
+    bootstrap.Modal.getInstance(document.getElementById('modalNovaAuditoria')).hide();
+}
+
+function registrarNC() {
+    const prazo = new Date();
+    prazo.setDate(prazo.getDate() + 15);
+    document.getElementById('prazoNC').valueAsDate = prazo;
+    
+    new bootstrap.Modal(document.getElementById('modalRegistrarNC')).show();
+}
+
+function salvarNC() {
+    const form = document.getElementById('formRegistrarNC');
+    
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    
+    const novaNC = {
+        id: `NC-${String(naoConformidades.length + 1).padStart(3, '0')}`,
+        descricao: document.getElementById('descricaoNC').value,
+        tipo: document.getElementById('tipoNC').selectedOptions[0].text,
+        origem: document.getElementById('origemNC').selectedOptions[0].text,
+        responsavel: document.getElementById('responsavelNC').selectedOptions[0].text,
+        prazo: document.getElementById('prazoNC').value,
+        status: 'aberta'
+    };
+    
+    naoConformidades.push(novaNC);
+    
+    bootstrap.Modal.getInstance(document.getElementById('modalRegistrarNC')).hide();
+    
+    carregarNCs();
+    
+    mostrarMensagem('success', 'NC registrada!', `${novaNC.id} - ${novaNC.tipo}`);
+}
+
+function carregarAuditorias(filtro = 'todos') {
+    const tbody = document.getElementById('listaAuditorias');
+    tbody.innerHTML = '';
+    
+    let auditoriasFiltradas = auditorias;
+    
+    if (filtro === 'concluidas') {
+        auditoriasFiltradas = auditorias.filter(a => a.status === 'concluida');
+    } else if (filtro === 'pendentes') {
+        auditoriasFiltradas = auditorias.filter(a => a.status === 'pendente');
+    } else if (filtro === 'agendadas') {
+        auditoriasFiltradas = auditorias.filter(a => a.status === 'agendada');
+    }
+    
+    auditoriasFiltradas.forEach(aud => {
+        const statusBadges = {
+            'concluida': '<span class="badge bg-success">Concluída</span>',
+            'agendada': '<span class="badge bg-info">Agendada</span>',
+            'pendente': '<span class="badge bg-warning">Pendente</span>'
+        };
+        
+        const confColor = aud.conformidade >= 90 ? 'success' : aud.conformidade >= 70 ? 'warning' : 'danger';
+        const confDisplay = aud.conformidade > 0 ? `<span class="badge bg-${confColor} fs-6">${aud.conformidade}%</span>` : '-';
+        
+        const row = `
+            <tr>
+                <td><strong>${aud.id}</strong></td>
+                <td><span class="badge bg-secondary">${aud.tipo}</span></td>
+                <td>${aud.cliente}</td>
+                <td>${aud.auditor}</td>
+                <td>${formatarData(aud.data)}</td>
+                <td>${statusBadges[aud.status]}</td>
+                <td class="text-center">${confDisplay}</td>
+                <td class="text-center">
+                    <button class="btn btn-sm btn-primary" onclick="verDetalhesAuditoria('${aud.id}')" title="Ver">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-sm btn-success" onclick="realizarAuditoria('${aud.id}')" title="Realizar">
+                        <i class="fas fa-clipboard-check"></i>
+                    </button>
+                    <button class="btn btn-sm btn-info" onclick="gerarRelatorioAuditoria('${aud.id}')" title="PDF">
+                        <i class="fas fa-file-pdf"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="excluirAuditoria('${aud.id}')" title="Excluir">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+        
+        tbody.innerHTML += row;
+    });
+}
+
+function carregarProximasAuditorias() {
+    const container = document.getElementById('listaProximasAuditorias');
+    container.innerHTML = '';
+    
+    proximasAuditorias.forEach(aud => {
+        const tipoColors = {
+            'Externa': 'success',
+            'Interna': 'primary',
+            'Follow-up': 'warning'
+        };
+        
+        const card = `
+            <div class="card mb-3 border-left-${tipoColors[aud.tipo] || 'info'}">
+                <div class="card-body py-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>${aud.id}</strong> - ${aud.tipo}
+                            <br><small class="text-muted">${aud.cliente}</small>
+                            <br><small class="text-primary">${formatarData(aud.data)} às ${aud.hora}</small>
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary" onclick="verDetalhesAuditoria('${aud.id}')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        container.innerHTML += card;
+    });
+}
+
+function carregarNCs() {
+    const tbody = document.getElementById('listaNCs');
+    tbody.innerHTML = '';
+    
+    naoConformidades.forEach(nc => {
+        const tipoColors = {
+            'Maior': 'danger',
+            'Menor': 'warning',
+            'Observação': 'info'
+        };
+        
+        const statusBadges = {
+            'aberta': '<span class="badge bg-danger">Aberta</span>',
+            'em_acao': '<span class="badge bg-warning">Em Ação</span>',
+            'fechada': '<span class="badge bg-success">Fechada</span>'
+        };
+        
+        const row = `
+            <tr>
+                <td><strong>${nc.id}</strong></td>
+                <td>${nc.descricao}</td>
+                <td><span class="badge bg-${tipoColors[nc.tipo] || 'secondary'}">${nc.tipo}</span></td>
+                <td>${nc.origem}</td>
+                <td>${nc.responsavel}</td>
+                <td>${formatarData(nc.prazo)}</td>
+                <td>${statusBadges[nc.status]}</td>
+                <td class="text-center">
+                    <button class="btn btn-sm btn-primary" onclick="verDetalhesNC('${nc.id}')" title="Ver">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-sm btn-success" onclick="tratarNC('${nc.id}')" title="Tratar">
+                        <i class="fas fa-tasks"></i>
+                    </button>
+                    <button class="btn btn-sm btn-info" onclick="fecharNC('${nc.id}')" title="Fechar">
+                        <i class="fas fa-check"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+        
+        tbody.innerHTML += row;
+    });
+}
+
+function formatarData(data) {
+    const partes = data.split('-');
+    return `${partes[2]}/${partes[1]}/${partes[0]}`;
+}
+
+function filtrarAuditorias(filtro) {
+    carregarAuditorias(filtro);
+}
+
+function verDetalhesAuditoria(id) {
+    const auditoria = auditorias.find(a => a.id === id);
+    
+    if (!auditoria) return;
+    
+    const conteudo = `
+        <div class="row">
+            <div class="col-md-12 mb-3">
+                <h5 class="border-bottom pb-2">Informações da Auditoria</h5>
+                <div class="row">
+                    <div class="col-md-3">
+                        <strong>ID:</strong> ${auditoria.id}<br>
+                        <strong>Tipo:</strong> ${auditoria.tipo}<br>
+                        <strong>Status:</strong> ${auditoria.status}
+                    </div>
+                    <div class="col-md-3">
+                        <strong>Cliente/Área:</strong> ${auditoria.cliente}<br>
+                        <strong>Auditor:</strong> ${auditoria.auditor}<br>
+                        <strong>Data:</strong> ${formatarData(auditoria.data)}
+                    </div>
+                    <div class="col-md-3">
+                        <strong>Conformidade:</strong> 
+                        <span class="badge bg-success fs-5">${auditoria.conformidade}%</span>
+                    </div>
+                    <div class="col-md-3">
+                        <canvas id="chartMiniRadar" height="100"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-12 mb-3">
+                <h5 class="border-bottom pb-2">Resumo dos Achados</h5>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="card border-left-success">
+                            <div class="card-body py-2 text-center">
+                                <h6>Conformidades</h6>
+                                <div class="h3 text-success">28</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card border-left-danger">
+                            <div class="card-body py-2 text-center">
+                                <h6>NC Maiores</h6>
+                                <div class="h3 text-danger">2</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card border-left-warning">
+                            <div class="card-body py-2 text-center">
+                                <h6>NC Menores</h6>
+                                <div class="h3 text-warning">5</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card border-left-info">
+                            <div class="card-body py-2 text-center">
+                                <h6>Observações</h6>
+                                <div class="h3 text-info">8</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-12 mb-3">
+                <h5 class="border-bottom pb-2">Não Conformidades Identificadas</h5>
+                <ul>
+                    <li class="text-danger"><strong>NC-001 (Maior):</strong> Calibração de equipamento vencida</li>
+                    <li class="text-warning"><strong>NC-002 (Menor):</strong> Procedimento desatualizado</li>
+                    <li class="text-warning"><strong>NC-003 (Menor):</strong> Falta de registro de treinamento</li>
+                </ul>
+            </div>
+            
+            <div class="col-md-12">
+                <h5 class="border-bottom pb-2">Pontos Positivos e Oportunidades</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-success">Pontos Fortes:</h6>
+                        <ul>
+                            <li>Organização e limpeza (5S)</li>
+                            <li>Equipe bem treinada</li>
+                            <li>Documentação acessível</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-info">Oportunidades de Melhoria:</h6>
+                        <ul>
+                            <li>Atualizar procedimentos operacionais</li>
+                            <li>Reforçar cultura de qualidade</li>
+                            <li>Melhorar sistema de indicadores</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('detalhesAuditoriaConteudo').innerHTML = conteudo;
+    
+    new bootstrap.Modal(document.getElementById('modalDetalhesAuditoria')).show();
+}
+
+function realizarAuditoria(id) {
+    mostrarMensagem('info', 'Realizar Auditoria', `Iniciando auditoria ${id}...`);
+}
+
+function excluirAuditoria(id) {
+    if (confirm(`Deseja realmente excluir a auditoria ${id}?`)) {
+        auditorias = auditorias.filter(a => a.id !== id);
+        carregarAuditorias();
+        mostrarMensagem('success', 'Excluída!', 'Auditoria removida.');
+    }
+}
+
+function verDetalhesNC(id) {
+    mostrarMensagem('info', 'Detalhes NC', `Visualizando ${id}`);
+}
+
+function tratarNC(id) {
+    mostrarMensagem('info', 'Tratar NC', `Criando plano de ação para ${id}`);
+}
+
+function fecharNC(id) {
+    if (confirm(`Confirma o fechamento da NC ${id}?`)) {
+        const nc = naoConformidades.find(n => n.id === id);
+        if (nc) nc.status = 'fechada';
+        carregarNCs();
+        mostrarMensagem('success', 'NC Fechada!', `${id} foi encerrada.`);
+    }
+}
+
+function agendarAuditoria() {
+    novaAuditoria();
+}
+
+function verCalendario() {
+    mostrarMensagem('info', 'Calendário', 'Visualizando calendário de auditorias');
+}
+
+function gerarRelatorios() {
+    mostrarMensagem('success', 'Relatórios', 'Gerando relatórios de acompanhamento');
+}
+
+function gerarRelatorioAuditoria(id) {
+    mostrarMensagem('success', 'PDF', `Relatório da auditoria ${id || 'atual'} gerado!`);
+}
+
+function iniciarFollowUp() {
+    mostrarMensagem('info', 'Follow-up', 'Agendando auditoria de follow-up');
+}
+
+function mostrarMensagem(tipo, titulo, mensagem) {
+    alert(`${titulo}
+
+${mensagem}`);
+}
+
+// ===== GRÁFICOS =====
+
+function criarGraficoAuditorias() {
+    const ctx = document.getElementById('chartAuditorias');
+    
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Jan', 'Fev', 'Mar', 'Abr'],
+            datasets: [
+                {
+                    label: 'Auditorias Realizadas',
+                    data: [12, 15, 18, 14],
+                    backgroundColor: '#4e73df'
+                },
+                {
+                    label: 'NCs Identificadas',
+                    data: [8, 10, 12, 9],
+                    backgroundColor: '#f6c23e'
+                },
+                {
+                    label: 'NCs Fechadas',
+                    data: [7, 9, 11, 8],
+                    backgroundColor: '#1cc88a'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+function criarGraficoNCCategoria() {
+    const ctx = document.getElementById('chartNCCategoria');
+    
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Qualidade', 'Processo', 'Documentação', 'Segurança', 'Ambiental'],
+            datasets: [{
+                data: [35, 25, 20, 12, 8],
+                backgroundColor: [
+                    '#4e73df',
+                    '#1cc88a',
+                    '#36b9cc',
+                    '#f6c23e',
+                    '#e74a3b'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+}
+
+function criarGraficoEvolucao() {
+    const ctx = document.getElementById('chartEvolucao');
+    
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Fev', 'Mar', 'Abr'],
+            datasets: [{
+                label: 'Taxa de Conformidade (%)',
+                data: [88, 90, 92, 92],
+                borderColor: '#1cc88a',
+                backgroundColor: 'rgba(28, 200, 138, 0.1)',
+                tension: 0.3,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100
+                }
+            }
+        }
+    });
+}
+
+function atualizarGraficos() {
+    criarGraficoAuditorias();
+    criarGraficoNCCategoria();
+    criarGraficoEvolucao();
+}
+
+// ===== INICIALIZAÇÃO =====
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Acompanhamento carregado!');
+    
+    carregarAuditorias();
+    carregarProximasAuditorias();
+    carregarNCs();
+    criarGraficoAuditorias();
+    criarGraficoNCCategoria();
+    criarGraficoEvolucao();
+});
 </script>
+
+<style>
+.border-left-primary { border-left: 0.25rem solid #4e73df !important; }
+.border-left-success { border-left: 0.25rem solid #1cc88a !important; }
+.border-left-info { border-left: 0.25rem solid #36b9cc !important; }
+.border-left-warning { border-left: 0.25rem solid #f6c23e !important; }
+.border-left-danger { border-left: 0.25rem solid #e74a3b !important; }
+
+.cursor-pointer {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cursor-pointer:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0,0,0,.075);
+}
+</style>
 {% endblock %}

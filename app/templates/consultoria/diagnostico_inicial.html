@@ -4,13 +4,17 @@
 
 {% block content %}
 <div class="container-fluid">
+    <!-- Header -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">
             <i class="fas fa-clipboard-check me-2"></i>Diagnóstico Inicial
         </h1>
         <div class="btn-group">
-            <button class="btn btn-success" onclick="novoChecklist()">
-                <i class="fas fa-plus me-1"></i>Novo Checklist
+            <button class="btn btn-success" onclick="novoDiagnosticoInicial()">
+                <i class="fas fa-plus me-1"></i>Novo Diagnóstico
+            </button>
+            <button class="btn btn-outline-primary" onclick="exportarDados()">
+                <i class="fas fa-file-export me-1"></i>Exportar
             </button>
             <a href="{{ url_for('consultoria.index') }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left me-1"></i>Voltar
@@ -18,36 +22,1119 @@
         </div>
     </div>
 
-    <div class="alert alert-info">
-        <h5><i class="fas fa-info-circle me-2"></i>Diagnóstico Inicial</h5>
-        <p class="mb-0">Checklist completo de avaliação inicial para novos projetos de consultoria.</p>
+    <!-- Info -->
+    <div class="alert alert-info alert-dismissible fade show">
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <h5 class="alert-heading">
+            <i class="fas fa-info-circle me-2"></i>Diagnóstico Inicial - Checklist de Avaliação
+        </h5>
+        <p class="mb-0">
+            Ferramenta de avaliação inicial para novos projetos de consultoria. 
+            Avalia <strong>8 categorias fundamentais</strong> através de checklist com 
+            <strong>conformidade OK/NOK/NA</strong> para identificar oportunidades e prioridades de melhoria.
+        </p>
     </div>
 
-    <div class="card shadow">
+    <!-- KPIs Dashboard -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Diagnósticos Ativos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-ativos">15</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Concluídos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-concluidos">42</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Conformidade Média
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="conformidade-media">74%</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-percentage fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Itens Avaliados
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-itens">1.680</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-tasks fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8 Categorias do Checklist -->
+    <div class="card shadow mb-4">
         <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-primary">
-                <i class="fas fa-list-check me-2"></i>Diagnósticos Iniciais
+                <i class="fas fa-th-large me-2"></i>Categorias de Avaliação
             </h6>
         </div>
         <div class="card-body">
-            <div class="text-center py-5">
-                <i class="fas fa-clipboard-check fa-5x text-muted mb-3"></i>
-                <h4>Diagnóstico Inicial</h4>
-                <p class="text-muted">Funcionalidade em desenvolvimento</p>
-                <button class="btn btn-primary" onclick="novoChecklist()">
-                    <i class="fas fa-plus me-2"></i>Começar
+            <div class="row">
+                <!-- Gestão Estratégica -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card h-100 border-left-primary cursor-pointer" onclick="avaliarCategoria('estrategica')">
+                        <div class="card-body text-center">
+                            <i class="fas fa-chess fa-3x text-primary mb-3"></i>
+                            <h6 class="text-primary">Gestão Estratégica</h6>
+                            <p class="small text-muted">Planejamento e direcionamento</p>
+                            <div class="progress mb-2" style="height: 20px;">
+                                <div class="progress-bar bg-primary" style="width: 85%">85%</div>
+                            </div>
+                            <small class="text-muted">12 itens</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gestão Financeira -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card h-100 border-left-success cursor-pointer" onclick="avaliarCategoria('financeira')">
+                        <div class="card-body text-center">
+                            <i class="fas fa-dollar-sign fa-3x text-success mb-3"></i>
+                            <h6 class="text-success">Gestão Financeira</h6>
+                            <p class="small text-muted">Controles e indicadores</p>
+                            <div class="progress mb-2" style="height: 20px;">
+                                <div class="progress-bar bg-success" style="width: 72%">72%</div>
+                            </div>
+                            <small class="text-muted">15 itens</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gestão de Pessoas -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card h-100 border-left-info cursor-pointer" onclick="avaliarCategoria('pessoas')">
+                        <div class="card-body text-center">
+                            <i class="fas fa-users fa-3x text-info mb-3"></i>
+                            <h6 class="text-info">Gestão de Pessoas</h6>
+                            <p class="small text-muted">RH e desenvolvimento</p>
+                            <div class="progress mb-2" style="height: 20px;">
+                                <div class="progress-bar bg-info" style="width: 68%">68%</div>
+                            </div>
+                            <small class="text-muted">14 itens</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gestão Operacional -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card h-100 border-left-warning cursor-pointer" onclick="avaliarCategoria('operacional')">
+                        <div class="card-body text-center">
+                            <i class="fas fa-cogs fa-3x text-warning mb-3"></i>
+                            <h6 class="text-warning">Gestão Operacional</h6>
+                            <p class="small text-muted">Processos e produção</p>
+                            <div class="progress mb-2" style="height: 20px;">
+                                <div class="progress-bar bg-warning" style="width: 78%">78%</div>
+                            </div>
+                            <small class="text-muted">18 itens</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gestão da Qualidade -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card h-100 border-left-danger cursor-pointer" onclick="avaliarCategoria('qualidade')">
+                        <div class="card-body text-center">
+                            <i class="fas fa-certificate fa-3x text-danger mb-3"></i>
+                            <h6 class="text-danger">Gestão da Qualidade</h6>
+                            <p class="small text-muted">ISO e controles</p>
+                            <div class="progress mb-2" style="height: 20px;">
+                                <div class="progress-bar bg-danger" style="width: 65%">65%</div>
+                            </div>
+                            <small class="text-muted">16 itens</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Compliance -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card h-100 border-left-secondary cursor-pointer" onclick="avaliarCategoria('compliance')">
+                        <div class="card-body text-center">
+                            <i class="fas fa-gavel fa-3x text-secondary mb-3"></i>
+                            <h6 class="text-secondary">Compliance</h6>
+                            <p class="small text-muted">Legal e regulatório</p>
+                            <div class="progress mb-2" style="height: 20px;">
+                                <div class="progress-bar bg-secondary" style="width: 80%">80%</div>
+                            </div>
+                            <small class="text-muted">10 itens</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tecnologia -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card h-100 border-left-dark cursor-pointer" onclick="avaliarCategoria('tecnologia')">
+                        <div class="card-body text-center">
+                            <i class="fas fa-laptop-code fa-3x text-dark mb-3"></i>
+                            <h6 class="text-dark">Tecnologia</h6>
+                            <p class="small text-muted">Sistemas e inovação</p>
+                            <div class="progress mb-2" style="height: 20px;">
+                                <div class="progress-bar bg-dark" style="width: 70%">70%</div>
+                            </div>
+                            <small class="text-muted">13 itens</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Infraestrutura -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card h-100 border-left-primary cursor-pointer" onclick="avaliarCategoria('infraestrutura')">
+                        <div class="card-body text-center">
+                            <i class="fas fa-building fa-3x text-primary mb-3"></i>
+                            <h6 class="text-primary">Infraestrutura</h6>
+                            <p class="small text-muted">Instalações e recursos</p>
+                            <div class="progress mb-2" style="height: 20px;">
+                                <div class="progress-bar bg-primary" style="width: 75%">75%</div>
+                            </div>
+                            <small class="text-muted">12 itens</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-chart-bar me-2"></i>Conformidade por Categoria
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartConformidade" height="80"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-chart-pie me-2"></i>Status Geral
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartStatus" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Diagnósticos -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-list me-2"></i>Diagnósticos Iniciais Realizados
+            </h6>
+            <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-primary active" onclick="filtrarDiagnosticos('todos')">Todos</button>
+                <button class="btn btn-outline-success" onclick="filtrarDiagnosticos('concluidos')">Concluídos</button>
+                <button class="btn btn-outline-warning" onclick="filtrarDiagnosticos('andamento')">Em Andamento</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover" id="tabelaDiagnosticos">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Consultor</th>
+                            <th>Data</th>
+                            <th>Status</th>
+                            <th class="text-center">Progresso</th>
+                            <th class="text-center">Conformidade</th>
+                            <th class="text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaDiagnosticos">
+                        <!-- Preenchido dinamicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ações Rápidas -->
+    <div class="card shadow">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-bolt me-2"></i>Ações Rápidas
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <button class="btn btn-outline-primary w-100 h-100" onclick="novoDiagnosticoInicial()">
+                        <i class="fas fa-plus fa-2x mb-2"></i><br>
+                        <strong>Novo Diagnóstico</strong><br>
+                        <small>Criar avaliação inicial</small>
+                    </button>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <button class="btn btn-outline-success w-100 h-100" onclick="gerarRelatorioConsolidado()">
+                        <i class="fas fa-file-pdf fa-2x mb-2"></i><br>
+                        <strong>Relatório Consolidado</strong><br>
+                        <small>PDF com todos diagnósticos</small>
+                    </button>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <button class="btn btn-outline-info w-100 h-100" onclick="verTemplates()">
+                        <i class="fas fa-file-alt fa-2x mb-2"></i><br>
+                        <strong>Templates</strong><br>
+                        <small>Modelos de checklist</small>
+                    </button>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <button class="btn btn-outline-warning w-100 h-100" onclick="exportarDados()">
+                        <i class="fas fa-download fa-2x mb-2"></i><br>
+                        <strong>Exportar Dados</strong><br>
+                        <small>Excel/CSV</small>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Novo Diagnóstico -->
+<div class="modal fade" id="modalNovoDiagnostico" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-clipboard-check me-2"></i>Novo Diagnóstico Inicial
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formNovoDiagnostico">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label"><strong>Cliente / Empresa*</strong></label>
+                            <select class="form-select" id="clienteDiag" required>
+                                <option value="">Selecione...</option>
+                                <option value="1">ABC Indústria Ltda</option>
+                                <option value="2">XYZ Serviços S.A.</option>
+                                <option value="3">DEF Comércio</option>
+                                <option value="4">GHI Tecnologia</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label"><strong>Consultor Responsável*</strong></label>
+                            <select class="form-select" id="consultorDiag" required>
+                                <option value="">Selecione...</option>
+                                <option value="1">João Silva</option>
+                                <option value="2">Maria Santos</option>
+                                <option value="3">Pedro Costa</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label class="form-label"><strong>Data de Início*</strong></label>
+                            <input type="date" class="form-control" id="dataDiag" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label"><strong>Tipo de Diagnóstico*</strong></label>
+                            <select class="form-select" id="tipoDiag" required>
+                                <option value="completo" selected>Completo (todas categorias)</option>
+                                <option value="rapido">Rápido (categorias principais)</option>
+                                <option value="personalizado">Personalizado</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <label class="form-label"><strong>Objetivo do Diagnóstico</strong></label>
+                            <textarea class="form-control" id="objetivoDiag" rows="3" 
+                                placeholder="Descreva o objetivo e escopo deste diagnóstico inicial..."></textarea>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label class="form-label"><strong>Projeto Vinculado</strong></label>
+                            <select class="form-select" id="projetoDiag">
+                                <option value="">Nenhum</option>
+                                <option value="1">PRJ-001 - ISO 9001</option>
+                                <option value="2">PRJ-002 - Lean Manufacturing</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label"><strong>Prazo Estimado</strong></label>
+                            <select class="form-select" id="prazoDiag">
+                                <option value="1">1 dia</option>
+                                <option value="3" selected>3 dias</option>
+                                <option value="5">5 dias</option>
+                                <option value="7">1 semana</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-info" onclick="salvarRascunho()">
+                    <i class="fas fa-save me-1"></i>Salvar Rascunho
+                </button>
+                <button type="button" class="btn btn-success" onclick="criarEIniciarDiagnostico()">
+                    <i class="fas fa-play me-1"></i>Criar e Iniciar
                 </button>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Modal Avaliar Categoria -->
+<div class="modal fade" id="modalAvaliarCategoria" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header" id="headerCategoria">
+                <h5 class="modal-title" id="tituloCategoria">
+                    <i class="fas fa-clipboard-check me-2"></i>Avaliar Categoria
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-light">
+                    <strong>Legenda:</strong>
+                    <span class="badge bg-success ms-2">OK</span> Conforme
+                    <span class="badge bg-danger ms-2">NOK</span> Não Conforme
+                    <span class="badge bg-secondary ms-2">N/A</span> Não Aplicável
+                </div>
+                
+                <div id="checklistItens">
+                    <!-- Preenchido dinamicamente -->
+                </div>
+                
+                <div class="mt-3">
+                    <label class="form-label"><strong>Observações Gerais</strong></label>
+                    <textarea class="form-control" id="observacoesCategoria" rows="3" 
+                        placeholder="Observações e comentários sobre esta categoria..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="me-auto">
+                    <span class="badge bg-primary fs-6" id="progressoCategoria">0%</span>
+                    <span class="ms-2 text-muted" id="contadorItens">0/0 itens</span>
+                </div>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-success" onclick="salvarAvaliacaoCategoria()">
+                    <i class="fas fa-save me-1"></i>Salvar Avaliação
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Detalhes do Diagnóstico -->
+<div class="modal fade" id="modalDetalhesDiagnostico" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-eye me-2"></i>Detalhes do Diagnóstico
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="detalhesConteudo">
+                <!-- Preenchido dinamicamente -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-success" onclick="gerarRelatorioPDF()">
+                    <i class="fas fa-file-pdf me-1"></i>Gerar PDF
+                </button>
+                <button type="button" class="btn btn-primary" onclick="gerarPlanoAcao()">
+                    <i class="fas fa-tasks me-1"></i>Plano de Ação
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-function novoChecklist() {
-    alert('Criar novo Diagnóstico Inicial');
+// ===== DADOS MOCKADOS =====
+let diagnosticosIniciais = [
+    {
+        id: 'DI-001',
+        cliente: 'ABC Indústria Ltda',
+        consultor: 'João Silva',
+        data: '2024-04-15',
+        status: 'concluido',
+        progresso: 100,
+        conformidade: 85,
+        totalItens: 110,
+        itensAvaliados: 110
+    },
+    {
+        id: 'DI-002',
+        cliente: 'XYZ Serviços S.A.',
+        consultor: 'Maria Santos',
+        data: '2024-04-12',
+        status: 'andamento',
+        progresso: 65,
+        conformidade: 72,
+        totalItens: 110,
+        itensAvaliados: 72
+    },
+    {
+        id: 'DI-003',
+        cliente: 'DEF Comércio',
+        consultor: 'Pedro Costa',
+        data: '2024-04-10',
+        status: 'concluido',
+        progresso: 100,
+        conformidade: 68,
+        totalItens: 110,
+        itensAvaliados: 110
+    }
+];
+
+// Checklist por categoria
+const checklistsCategorias = {
+    estrategica: [
+        'Possui missão, visão e valores formalizados',
+        'Existe planejamento estratégico documentado',
+        'Objetivos e metas são claramente definidos',
+        'Há análise SWOT atualizada',
+        'Estratégias são comunicadas a todos os níveis',
+        'Existe processo de revisão estratégica periódica',
+        'Indicadores estratégicos são acompanhados',
+        'Há alinhamento entre estratégia e operação',
+        'Riscos estratégicos são identificados e gerenciados',
+        'Existe plano de sucessão para cargos-chave',
+        'Benchmarking é realizado regularmente',
+        'Inovação é parte da estratégia da empresa'
+    ],
+    financeira: [
+        'Possui sistema de gestão financeira adequado',
+        'Demonstrativos financeiros são gerados mensalmente',
+        'Fluxo de caixa é controlado diariamente',
+        'Orçamento anual é elaborado e acompanhado',
+        'Contas a pagar e receber são gerenciadas',
+        'Conciliação bancária é feita regularmente',
+        'Controle de custos e despesas está implementado',
+        'Indicadores financeiros são monitorados (ROI, ROE, etc)',
+        'Análise de rentabilidade por produto/serviço existe',
+        'Controles internos financeiros são robustos',
+        'Auditoria interna ou externa é realizada',
+        'Capital de giro é adequadamente gerenciado',
+        'Investimentos são analisados com estudos de viabilidade',
+        'Há política de crédito e cobrança',
+        'Tributos são gerenciados corretamente'
+    ],
+    pessoas: [
+        'Organograma está definido e atualizado',
+        'Descrições de cargos estão formalizadas',
+        'Processo seletivo é estruturado',
+        'Programa de integração existe para novos colaboradores',
+        'Avaliação de desempenho é realizada periodicamente',
+        'Plano de cargos e salários está implementado',
+        'Treinamento e desenvolvimento são planejados',
+        'Política de benefícios está definida',
+        'Clima organizacional é avaliado',
+        'Índice de turnover é monitorado',
+        'Segurança do trabalho é prioridade (CIPA, EPI)',
+        'Há plano de sucessão para funções críticas',
+        'Comunicação interna é efetiva',
+        'Gestão de conflitos possui procedimentos definidos'
+    ],
+    operacional: [
+        'Processos principais estão mapeados',
+        'Fluxogramas de processos estão documentados',
+        'Procedimentos operacionais padrão (POP) existem',
+        'Controle de produção é realizado',
+        'Capacidade produtiva é conhecida e monitorada',
+        'Manutenção preventiva está implementada',
+        'Controle de estoque é eficiente',
+        'Sistema de inventário está implementado',
+        'Logística de entrada e saída é otimizada',
+        'Fornecedores são qualificados e avaliados',
+        'Há gestão de compras estruturada',
+        'Cronogramas de produção são utilizados',
+        'Indicadores operacionais são acompanhados (OEE, etc)',
+        'Melhorias contínuas são incentivadas',
+        'Perdas e desperdícios são medidos',
+        'Layout é adequado ao fluxo de produção',
+        'Há controle de não-conformidades',
+        'Ações corretivas e preventivas são registradas'
+    ],
+    qualidade: [
+        'Existe política da qualidade formalizada',
+        'Sistema de gestão da qualidade está implementado',
+        'Certificações ISO estão em vigor (se aplicável)',
+        'Inspeção de qualidade é realizada',
+        'Critérios de aceitação estão definidos',
+        'Controle estatístico de processos é utilizado',
+        'Auditorias internas são realizadas',
+        'Tratamento de não-conformidades está estruturado',
+        'Ações corretivas são eficazes',
+        'Satisfação do cliente é medida',
+        'Reclamações são registradas e tratadas',
+        'Rastreabilidade de produtos existe',
+        'Calibração de equipamentos é controlada',
+        'Registros da qualidade são mantidos',
+        'Melhoria contínua da qualidade é praticada',
+        'Indicadores de qualidade são acompanhados'
+    ],
+    compliance: [
+        'Licenças e alvarás estão em dia',
+        'Obrigações trabalhistas são cumpridas',
+        'Obrigações fiscais são atendidas',
+        'Legislação ambiental é respeitada',
+        'Normas regulamentadoras são seguidas',
+        'LGPD é observada no tratamento de dados',
+        'Código de ética existe e é divulgado',
+        'Canal de denúncias está disponível',
+        'Contratos são revisados juridicamente',
+        'Propriedade intelectual é protegida'
+    ],
+    tecnologia: [
+        'Sistema de gestão (ERP) está implementado',
+        'Infraestrutura de TI é adequada',
+        'Backup de dados é realizado regularmente',
+        'Segurança da informação é prioridade',
+        'Política de uso de TI existe',
+        'Suporte técnico está disponível',
+        'Atualizações de sistemas são realizadas',
+        'Indicadores de TI são acompanhados',
+        'Investimento em tecnologia é planejado',
+        'Inovação tecnológica é buscada',
+        'Automação de processos é avaliada',
+        'Website/e-commerce está funcional (se aplicável)',
+        'Redes sociais são utilizadas estrategicamente'
+    ],
+    infraestrutura: [
+        'Instalações físicas são adequadas',
+        'Layout facilita o fluxo de trabalho',
+        'Equipamentos são adequados às necessidades',
+        'Manutenção predial é realizada',
+        'Condições de segurança são satisfatórias',
+        'Limpeza e organização são mantidas (5S)',
+        'Sinalização de segurança está presente',
+        'Áreas de risco estão identificadas',
+        'Acessibilidade está em conformidade',
+        'Recursos (água, energia) são adequados',
+        'Vestiários e refeitórios são apropriados',
+        'Capacidade de expansão foi considerada'
+    ]
+};
+
+// ===== FUNÇÕES PRINCIPAIS =====
+
+function novoDiagnosticoInicial() {
+    document.getElementById('dataDiag').valueAsDate = new Date();
+    new bootstrap.Modal(document.getElementById('modalNovoDiagnostico')).show();
 }
-console.log('Diagnóstico Inicial carregado');
+
+function criarEIniciarDiagnostico() {
+    const form = document.getElementById('formNovoDiagnostico');
+    
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    
+    const cliente = document.getElementById('clienteDiag').selectedOptions[0].text;
+    const consultor = document.getElementById('consultorDiag').selectedOptions[0].text;
+    const data = document.getElementById('dataDiag').value;
+    
+    const novoDiag = {
+        id: `DI-${String(diagnosticosIniciais.length + 1).padStart(3, '0')}`,
+        cliente: cliente,
+        consultor: consultor,
+        data: data,
+        status: 'andamento',
+        progresso: 0,
+        conformidade: 0,
+        totalItens: 110,
+        itensAvaliados: 0
+    };
+    
+    diagnosticosIniciais.push(novoDiag);
+    
+    bootstrap.Modal.getInstance(document.getElementById('modalNovoDiagnostico')).hide();
+    
+    carregarDiagnosticos();
+    
+    mostrarMensagem('success', 'Diagnóstico criado!', `ID: ${novoDiag.id} - ${cliente}`);
+    
+    if (confirm('Deseja iniciar a avaliação agora?')) {
+        avaliarCategoria('estrategica');
+    }
+}
+
+function salvarRascunho() {
+    mostrarMensagem('info', 'Rascunho salvo!', 'Você pode continuar depois.');
+    bootstrap.Modal.getInstance(document.getElementById('modalNovoDiagnostico')).hide();
+}
+
+function avaliarCategoria(categoria) {
+    const categorias = {
+        estrategica: { titulo: 'Gestão Estratégica', cor: 'bg-primary', icon: 'fa-chess' },
+        financeira: { titulo: 'Gestão Financeira', cor: 'bg-success', icon: 'fa-dollar-sign' },
+        pessoas: { titulo: 'Gestão de Pessoas', cor: 'bg-info', icon: 'fa-users' },
+        operacional: { titulo: 'Gestão Operacional', cor: 'bg-warning', icon: 'fa-cogs' },
+        qualidade: { titulo: 'Gestão da Qualidade', cor: 'bg-danger', icon: 'fa-certificate' },
+        compliance: { titulo: 'Compliance', cor: 'bg-secondary', icon: 'fa-gavel' },
+        tecnologia: { titulo: 'Tecnologia', cor: 'bg-dark', icon: 'fa-laptop-code' },
+        infraestrutura: { titulo: 'Infraestrutura', cor: 'bg-primary', icon: 'fa-building' }
+    };
+    
+    const config = categorias[categoria];
+    
+    document.getElementById('headerCategoria').className = `modal-header ${config.cor} text-white`;
+    document.getElementById('tituloCategoria').innerHTML = `
+        <i class="fas ${config.icon} me-2"></i>${config.titulo}
+    `;
+    
+    const itens = checklistsCategorias[categoria];
+    let html = '';
+    
+    itens.forEach((item, index) => {
+        html += `
+            <div class="card mb-2 checklist-item">
+                <div class="card-body py-2">
+                    <div class="row align-items-center">
+                        <div class="col-md-7">
+                            <span class="fw-bold">${index + 1}.</span> ${item}
+                        </div>
+                        <div class="col-md-5">
+                            <div class="btn-group w-100" role="group">
+                                <input type="radio" class="btn-check" name="item${index}" id="ok${index}" value="ok" onchange="atualizarProgresso()">
+                                <label class="btn btn-outline-success" for="ok${index}">
+                                    <i class="fas fa-check"></i> OK
+                                </label>
+                                
+                                <input type="radio" class="btn-check" name="item${index}" id="nok${index}" value="nok" onchange="atualizarProgresso()">
+                                <label class="btn btn-outline-danger" for="nok${index}">
+                                    <i class="fas fa-times"></i> NOK
+                                </label>
+                                
+                                <input type="radio" class="btn-check" name="item${index}" id="na${index}" value="na" onchange="atualizarProgresso()">
+                                <label class="btn btn-outline-secondary" for="na${index}">
+                                    N/A
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    document.getElementById('checklistItens').innerHTML = html;
+    document.getElementById('progressoCategoria').textContent = '0%';
+    document.getElementById('contadorItens').textContent = `0/${itens.length} itens`;
+    
+    new bootstrap.Modal(document.getElementById('modalAvaliarCategoria')).show();
+}
+
+function atualizarProgresso() {
+    const totalItens = document.querySelectorAll('.checklist-item').length;
+    const itensRespondidos = document.querySelectorAll('.checklist-item input[type="radio"]:checked').length;
+    
+    const progresso = Math.round((itensRespondidos / totalItens) * 100);
+    
+    document.getElementById('progressoCategoria').textContent = `${progresso}%`;
+    document.getElementById('contadorItens').textContent = `${itensRespondidos}/${totalItens} itens`;
+}
+
+function salvarAvaliacaoCategoria() {
+    const totalItens = document.querySelectorAll('.checklist-item').length;
+    const itensRespondidos = document.querySelectorAll('.checklist-item input[type="radio"]:checked').length;
+    
+    if (itensRespondidos < totalItens) {
+        if (!confirm(`Você respondeu ${itensRespondidos} de ${totalItens} itens. Deseja salvar mesmo assim?`)) {
+            return;
+        }
+    }
+    
+    // Calcular conformidade
+    const itensOK = document.querySelectorAll('.checklist-item input[value="ok"]:checked').length;
+    const itensNOK = document.querySelectorAll('.checklist-item input[value="nok"]:checked').length;
+    const conformidade = Math.round((itensOK / (itensOK + itensNOK)) * 100);
+    
+    mostrarMensagem('success', 'Avaliação salva!', `Conformidade: ${conformidade}% (${itensOK} OK, ${itensNOK} NOK)`);
+    
+    bootstrap.Modal.getInstance(document.getElementById('modalAvaliarCategoria')).hide();
+    
+    // Atualizar gráficos
+    atualizarGraficos();
+}
+
+function carregarDiagnosticos(filtro = 'todos') {
+    const tbody = document.getElementById('listaDiagnosticos');
+    tbody.innerHTML = '';
+    
+    let diagnosticosFiltrados = diagnosticosIniciais;
+    
+    if (filtro === 'concluidos') {
+        diagnosticosFiltrados = diagnosticosIniciais.filter(d => d.status === 'concluido');
+    } else if (filtro === 'andamento') {
+        diagnosticosFiltrados = diagnosticosIniciais.filter(d => d.status === 'andamento');
+    }
+    
+    diagnosticosFiltrados.forEach(diag => {
+        const statusBadge = diag.status === 'concluido' 
+            ? '<span class="badge bg-success">Concluído</span>'
+            : '<span class="badge bg-warning">Em Andamento</span>';
+        
+        const confColor = diag.conformidade >= 80 ? 'success' : diag.conformidade >= 60 ? 'warning' : 'danger';
+        
+        const row = `
+            <tr>
+                <td><strong>${diag.id}</strong></td>
+                <td>${diag.cliente}</td>
+                <td>${diag.consultor}</td>
+                <td>${formatarData(diag.data)}</td>
+                <td>${statusBadge}</td>
+                <td class="text-center">
+                    <div class="progress" style="height: 25px;">
+                        <div class="progress-bar" style="width: ${diag.progresso}%">${diag.progresso}%</div>
+                    </div>
+                </td>
+                <td class="text-center">
+                    <span class="badge bg-${confColor} fs-6">${diag.conformidade}%</span>
+                </td>
+                <td class="text-center">
+                    <button class="btn btn-sm btn-primary" onclick="verDetalhesDiagnostico('${diag.id}')" title="Ver Detalhes">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-sm btn-success" onclick="continuarDiagnostico('${diag.id}')" title="Continuar">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <button class="btn btn-sm btn-info" onclick="gerarRelatorioPDF('${diag.id}')" title="PDF">
+                        <i class="fas fa-file-pdf"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="excluirDiagnostico('${diag.id}')" title="Excluir">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+        
+        tbody.innerHTML += row;
+    });
+}
+
+function formatarData(data) {
+    const partes = data.split('-');
+    return `${partes[2]}/${partes[1]}/${partes[0]}`;
+}
+
+function filtrarDiagnosticos(filtro) {
+    carregarDiagnosticos(filtro);
+}
+
+function verDetalhesDiagnostico(id) {
+    const diagnostico = diagnosticosIniciais.find(d => d.id === id);
+    
+    if (!diagnostico) return;
+    
+    const conteudo = `
+        <div class="row">
+            <div class="col-md-12 mb-3">
+                <h5 class="border-bottom pb-2">Informações Gerais</h5>
+                <div class="row">
+                    <div class="col-md-3">
+                        <strong>ID:</strong> ${diagnostico.id}<br>
+                        <strong>Cliente:</strong> ${diagnostico.cliente}<br>
+                        <strong>Consultor:</strong> ${diagnostico.consultor}
+                    </div>
+                    <div class="col-md-3">
+                        <strong>Data:</strong> ${formatarData(diagnostico.data)}<br>
+                        <strong>Status:</strong> ${diagnostico.status === 'concluido' ? 'Concluído' : 'Em Andamento'}<br>
+                        <strong>Progresso:</strong> ${diagnostico.progresso}%
+                    </div>
+                    <div class="col-md-3">
+                        <strong>Conformidade:</strong> <span class="badge bg-success fs-6">${diagnostico.conformidade}%</span><br>
+                        <strong>Itens Avaliados:</strong> ${diagnostico.itensAvaliados}/${diagnostico.totalItens}<br>
+                    </div>
+                    <div class="col-md-3">
+                        <canvas id="chartRadarDetalhes" height="100"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-12 mb-3">
+                <h5 class="border-bottom pb-2">Conformidade por Categoria</h5>
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <div class="card border-left-primary">
+                            <div class="card-body py-2">
+                                <small>Estratégica</small>
+                                <div class="progress mt-1">
+                                    <div class="progress-bar bg-primary" style="width: 85%">85%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <div class="card border-left-success">
+                            <div class="card-body py-2">
+                                <small>Financeira</small>
+                                <div class="progress mt-1">
+                                    <div class="progress-bar bg-success" style="width: 72%">72%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <div class="card border-left-info">
+                            <div class="card-body py-2">
+                                <small>Pessoas</small>
+                                <div class="progress mt-1">
+                                    <div class="progress-bar bg-info" style="width: 68%">68%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <div class="card border-left-warning">
+                            <div class="card-body py-2">
+                                <small>Operacional</small>
+                                <div class="progress mt-1">
+                                    <div class="progress-bar bg-warning" style="width: 78%">78%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-12">
+                <h5 class="border-bottom pb-2">Principais Não Conformidades</h5>
+                <ul>
+                    <li class="text-danger">Processos operacionais não estão totalmente documentados</li>
+                    <li class="text-danger">Sistema de gestão da qualidade precisa ser melhorado</li>
+                    <li class="text-danger">Indicadores financeiros não são acompanhados regularmente</li>
+                    <li class="text-warning">Treinamento de colaboradores pode ser intensificado</li>
+                </ul>
+            </div>
+            
+            <div class="col-md-12 mt-3">
+                <h5 class="border-bottom pb-2">Recomendações Prioritárias</h5>
+                <ol>
+                    <li>Implementar sistema de gestão da qualidade (ISO 9001)</li>
+                    <li>Documentar e padronizar processos operacionais críticos</li>
+                    <li>Estabelecer rotina de acompanhamento de indicadores</li>
+                    <li>Estruturar programa de treinamento e desenvolvimento</li>
+                    <li>Revisar e atualizar planejamento estratégico</li>
+                </ol>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('detalhesConteudo').innerHTML = conteudo;
+    
+    new bootstrap.Modal(document.getElementById('modalDetalhesDiagnostico')).show();
+}
+
+function continuarDiagnostico(id) {
+    mostrarMensagem('info', 'Continuar', `Continuando diagnóstico ${id}`);
+    avaliarCategoria('estrategica');
+}
+
+function excluirDiagnostico(id) {
+    if (confirm(`Deseja realmente excluir o diagnóstico ${id}?`)) {
+        diagnosticosIniciais = diagnosticosIniciais.filter(d => d.id !== id);
+        carregarDiagnosticos();
+        mostrarMensagem('success', 'Excluído!', 'Diagnóstico removido.');
+    }
+}
+
+function gerarRelatorioConsolidado() {
+    mostrarMensagem('info', 'Relatório', 'Gerando PDF consolidado...');
+}
+
+function gerarRelatorioPDF(id) {
+    mostrarMensagem('success', 'PDF', `Relatório do ${id} gerado!`);
+}
+
+function gerarPlanoAcao() {
+    mostrarMensagem('success', 'Plano de Ação', 'Plano criado com base no diagnóstico!');
+}
+
+function verTemplates() {
+    mostrarMensagem('info', 'Templates', 'Visualizando templates de checklist...');
+}
+
+function exportarDados() {
+    mostrarMensagem('success', 'Exportar', 'Dados exportados para Excel!');
+}
+
+function mostrarMensagem(tipo, titulo, mensagem) {
+    alert(`${titulo}
+
+${mensagem}`);
+}
+
+// ===== GRÁFICOS =====
+
+function criarGraficoConformidade() {
+    const ctx = document.getElementById('chartConformidade');
+    
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Estratégica', 'Financeira', 'Pessoas', 'Operacional', 'Qualidade', 'Compliance', 'Tecnologia', 'Infraestrutura'],
+            datasets: [{
+                label: 'Conformidade (%)',
+                data: [85, 72, 68, 78, 65, 80, 70, 75],
+                backgroundColor: [
+                    '#4e73df',
+                    '#1cc88a',
+                    '#36b9cc',
+                    '#f6c23e',
+                    '#e74a3b',
+                    '#858796',
+                    '#5a5c69',
+                    '#4e73df'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100
+                }
+            }
+        }
+    });
+}
+
+function criarGraficoStatus() {
+    const ctx = document.getElementById('chartStatus');
+    
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Conforme (OK)', 'Não Conforme (NOK)', 'Não Aplicável (N/A)'],
+            datasets: [{
+                data: [74, 18, 8],
+                backgroundColor: [
+                    '#1cc88a',
+                    '#e74a3b',
+                    '#858796'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+}
+
+function atualizarGraficos() {
+    criarGraficoConformidade();
+    criarGraficoStatus();
+}
+
+// ===== INICIALIZAÇÃO =====
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Diagnóstico Inicial carregado!');
+    
+    carregarDiagnosticos();
+    criarGraficoConformidade();
+    criarGraficoStatus();
+});
 </script>
+
+<style>
+.border-left-primary { border-left: 0.25rem solid #4e73df !important; }
+.border-left-success { border-left: 0.25rem solid #1cc88a !important; }
+.border-left-info { border-left: 0.25rem solid #36b9cc !important; }
+.border-left-warning { border-left: 0.25rem solid #f6c23e !important; }
+.border-left-danger { border-left: 0.25rem solid #e74a3b !important; }
+.border-left-secondary { border-left: 0.25rem solid #858796 !important; }
+.border-left-dark { border-left: 0.25rem solid #5a5c69 !important; }
+
+.cursor-pointer {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cursor-pointer:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0,0,0,.075);
+}
+
+.checklist-item {
+    transition: all 0.2s;
+}
+
+.checklist-item:hover {
+    background-color: #f8f9fc;
+}
+
+.btn-check:checked + .btn {
+    font-weight: bold;
+}
+</style>
 {% endblock %}

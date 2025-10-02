@@ -4,13 +4,20 @@
 
 {% block content %}
 <div class="container-fluid">
+    <!-- Header -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">
             <i class="fas fa-industry me-2"></i>Checklist SFM
         </h1>
         <div class="btn-group">
-            <button class="btn btn-success" onclick="novoSFM()">
+            <button class="btn btn-success" onclick="novoChecklistSFM()">
                 <i class="fas fa-plus me-1"></i>Novo Checklist
+            </button>
+            <button class="btn btn-outline-primary" onclick="gerenciarBoards()">
+                <i class="fas fa-clipboard me-1"></i>Boards
+            </button>
+            <button class="btn btn-outline-info" onclick="agendarReunioes()">
+                <i class="fas fa-calendar me-1"></i>Reuniões
             </button>
             <a href="{{ url_for('consultoria.index') }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left me-1"></i>Voltar
@@ -18,36 +25,1225 @@
         </div>
     </div>
 
-    <div class="alert alert-info">
-        <h5><i class="fas fa-info-circle me-2"></i>Checklist SFM</h5>
-        <p class="mb-0">Shop Floor Management - Gestão visual e acompanhamento de chão de fábrica.</p>
+    <!-- Info SFM -->
+    <div class="alert alert-info alert-dismissible fade show">
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <h5 class="alert-heading">
+            <i class="fas fa-info-circle me-2"></i>Shop Floor Management (SFM)
+        </h5>
+        <p class="mb-0">
+            Sistema de <strong>Gestão Visual de Chão de Fábrica</strong> baseado em 
+            <strong>4 pilares fundamentais</strong>: Gestão Visual, Reuniões de Rotina, 
+            Resolução de Problemas e Padrões & Melhoria Contínua. 
+            Promove comunicação eficaz, identificação rápida de problemas e engajamento da equipe.
+        </p>
     </div>
 
-    <div class="card shadow">
+    <!-- KPIs Dashboard -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Boards Ativos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-boards">12</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Taxa de Resolução
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="taxa-resolucao">87%</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Problemas Abertos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="problemas-abertos">24</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Score SFM Médio
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="score-sfm">8.4</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-star fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4 Pilares do SFM -->
+    <div class="card shadow mb-4">
         <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-primary">
-                <i class="fas fa-tasks me-2"></i>Checklists SFM
+                <i class="fas fa-columns me-2"></i>4 Pilares do Shop Floor Management
             </h6>
         </div>
         <div class="card-body">
-            <div class="text-center py-5">
-                <i class="fas fa-industry fa-5x text-muted mb-3"></i>
-                <h4>Checklist SFM</h4>
-                <p class="text-muted">Funcionalidade em desenvolvimento</p>
-                <button class="btn btn-primary" onclick="novoSFM()">
-                    <i class="fas fa-plus me-2"></i>Começar
+            <div class="row">
+                <!-- Pilar 1: Gestão Visual -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card h-100 border-left-primary cursor-pointer" onclick="avaliarPilar('gestao_visual')">
+                        <div class="card-body">
+                            <div class="text-center mb-3">
+                                <i class="fas fa-eye fa-3x text-primary mb-2"></i>
+                                <h5 class="text-primary mb-0">Gestão Visual</h5>
+                            </div>
+                            <hr>
+                            <ul class="list-unstyled small mb-3">
+                                <li><i class="fas fa-check text-success me-2"></i>Quadros de Performance</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Indicadores Visuais</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Sistema de Cores</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Sinalização 5S</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Demarcação de Áreas</li>
+                            </ul>
+                            <div class="progress mb-2" style="height: 25px;">
+                                <div class="progress-bar bg-primary" style="width: 88%">88%</div>
+                            </div>
+                            <div class="text-center">
+                                <button class="btn btn-primary btn-sm w-100">
+                                    <i class="fas fa-clipboard-check me-1"></i>Avaliar Pilar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pilar 2: Reuniões de Rotina -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card h-100 border-left-success cursor-pointer" onclick="avaliarPilar('reunioes')">
+                        <div class="card-body">
+                            <div class="text-center mb-3">
+                                <i class="fas fa-users fa-3x text-success mb-2"></i>
+                                <h5 class="text-success mb-0">Reuniões</h5>
+                            </div>
+                            <hr>
+                            <ul class="list-unstyled small mb-3">
+                                <li><i class="fas fa-check text-success me-2"></i>Daily Meetings</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Pauta Estruturada</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Participação Ativa</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Registro de Ações</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Follow-up Efetivo</li>
+                            </ul>
+                            <div class="progress mb-2" style="height: 25px;">
+                                <div class="progress-bar bg-success" style="width: 85%">85%</div>
+                            </div>
+                            <div class="text-center">
+                                <button class="btn btn-success btn-sm w-100">
+                                    <i class="fas fa-clipboard-check me-1"></i>Avaliar Pilar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pilar 3: Resolução de Problemas -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card h-100 border-left-warning cursor-pointer" onclick="avaliarPilar('problemas')">
+                        <div class="card-body">
+                            <div class="text-center mb-3">
+                                <i class="fas fa-tools fa-3x text-warning mb-2"></i>
+                                <h5 class="text-warning mb-0">Problemas</h5>
+                            </div>
+                            <hr>
+                            <ul class="list-unstyled small mb-3">
+                                <li><i class="fas fa-check text-success me-2"></i>Identificação Rápida</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Análise de Causa Raiz</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Plano de Ação</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Implementação</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Verificação Eficácia</li>
+                            </ul>
+                            <div class="progress mb-2" style="height: 25px;">
+                                <div class="progress-bar bg-warning" style="width: 82%">82%</div>
+                            </div>
+                            <div class="text-center">
+                                <button class="btn btn-warning btn-sm w-100">
+                                    <i class="fas fa-clipboard-check me-1"></i>Avaliar Pilar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pilar 4: Padrões e Kaizen -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card h-100 border-left-info cursor-pointer" onclick="avaliarPilar('padroes')">
+                        <div class="card-body">
+                            <div class="text-center mb-3">
+                                <i class="fas fa-chart-line fa-3x text-info mb-2"></i>
+                                <h5 class="text-info mb-0">Padrões</h5>
+                            </div>
+                            <hr>
+                            <ul class="list-unstyled small mb-3">
+                                <li><i class="fas fa-check text-success me-2"></i>Work Standards</li>
+                                <li><i class="fas fa-check text-success me-2"></i>POPs Atualizados</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Treinamento</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Kaizen Contínuo</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Lições Aprendidas</li>
+                            </ul>
+                            <div class="progress mb-2" style="height: 25px;">
+                                <div class="progress-bar bg-info" style="width: 86%">86%</div>
+                            </div>
+                            <div class="text-center">
+                                <button class="btn btn-info btn-sm w-100">
+                                    <i class="fas fa-clipboard-check me-1"></i>Avaliar Pilar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráfico Radar SFM -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-chart-area me-2"></i>Performance dos Pilares SFM
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartRadarSFM" height="80"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-chart-pie me-2"></i>Status dos Boards
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartStatusBoards" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Boards SFM Ativos -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-clipboard-list me-2"></i>Boards SFM Ativos
+            </h6>
+            <button class="btn btn-sm btn-success" onclick="novoBoard()">
+                <i class="fas fa-plus me-1"></i>Novo Board
+            </button>
+        </div>
+        <div class="card-body">
+            <div class="row" id="listaBoards">
+                <!-- Preenchido dinamicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Problemas e Ações -->
+    <div class="row mb-4">
+        <div class="col-lg-6">
+            <div class="card shadow">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Problemas Abertos
+                    </h6>
+                    <button class="btn btn-sm btn-warning" onclick="novoProblema()">
+                        <i class="fas fa-plus me-1"></i>Novo
+                    </button>
+                </div>
+                <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                    <div id="listaProblemas">
+                        <!-- Preenchido dinamicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card shadow">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-success">
+                        <i class="fas fa-tasks me-2"></i>Ações em Andamento
+                    </h6>
+                    <button class="btn btn-sm btn-success" onclick="novaAcao()">
+                        <i class="fas fa-plus me-1"></i>Nova
+                    </button>
+                </div>
+                <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                    <div id="listaAcoes">
+                        <!-- Preenchido dinamicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Checklists SFM -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-list me-2"></i>Checklists SFM Realizados
+            </h6>
+            <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-primary active" onclick="filtrarChecklists('todos')">Todos</button>
+                <button class="btn btn-outline-success" onclick="filtrarChecklists('aprovados')">Aprovados</button>
+                <button class="btn btn-outline-warning" onclick="filtrarChecklists('pendentes')">Pendentes</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Área/Setor</th>
+                            <th>Auditor</th>
+                            <th>Data</th>
+                            <th>Status</th>
+                            <th class="text-center">Score SFM</th>
+                            <th class="text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaChecklists">
+                        <!-- Preenchido dinamicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ações Rápidas -->
+    <div class="card shadow">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-bolt me-2"></i>Ações Rápidas
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <button class="btn btn-outline-primary w-100 h-100" onclick="novoChecklistSFM()">
+                        <i class="fas fa-plus fa-2x mb-2"></i><br>
+                        <strong>Novo Checklist</strong><br>
+                        <small>Avaliar SFM</small>
+                    </button>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <button class="btn btn-outline-success w-100 h-100" onclick="gerenciarBoards()">
+                        <i class="fas fa-clipboard fa-2x mb-2"></i><br>
+                        <strong>Gerenciar Boards</strong><br>
+                        <small>Quadros visuais</small>
+                    </button>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <button class="btn btn-outline-info w-100 h-100" onclick="agendarReunioes()">
+                        <i class="fas fa-calendar fa-2x mb-2"></i><br>
+                        <strong>Reuniões Diárias</strong><br>
+                        <small>Agendar daily</small>
+                    </button>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <button class="btn btn-outline-warning w-100 h-100" onclick="exportarRelatorio()">
+                        <i class="fas fa-download fa-2x mb-2"></i><br>
+                        <strong>Exportar</strong><br>
+                        <small>Relatórios SFM</small>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Novo Checklist SFM -->
+<div class="modal fade" id="modalNovoChecklist" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-industry me-2"></i>Novo Checklist SFM
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formNovoChecklist">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label"><strong>Área/Setor*</strong></label>
+                            <select class="form-select" id="areaChecklist" required>
+                                <option value="">Selecione...</option>
+                                <option value="producao">Produção</option>
+                                <option value="montagem">Montagem</option>
+                                <option value="logistica">Logística</option>
+                                <option value="qualidade">Qualidade</option>
+                                <option value="manutencao">Manutenção</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label"><strong>Auditor/Avaliador*</strong></label>
+                            <select class="form-select" id="auditorChecklist" required>
+                                <option value="">Selecione...</option>
+                                <option value="1">João Silva - Supervisor</option>
+                                <option value="2">Maria Santos - Coordenadora</option>
+                                <option value="3">Pedro Costa - Gerente</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label class="form-label"><strong>Data da Auditoria*</strong></label>
+                            <input type="date" class="form-control" id="dataChecklist" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label"><strong>Turno</strong></label>
+                            <select class="form-select" id="turnoChecklist">
+                                <option value="manha">Manhã (06:00-14:00)</option>
+                                <option value="tarde">Tarde (14:00-22:00)</option>
+                                <option value="noite">Noite (22:00-06:00)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <label class="form-label"><strong>Objetivo da Avaliação</strong></label>
+                            <textarea class="form-control" id="objetivoChecklist" rows="2" 
+                                placeholder="Descreva o objetivo desta avaliação SFM..."></textarea>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label class="form-label"><strong>Board Vinculado</strong></label>
+                            <select class="form-select" id="boardChecklist">
+                                <option value="">Nenhum</option>
+                                <option value="1">Board Produção - Linha 1</option>
+                                <option value="2">Board Montagem - Área A</option>
+                                <option value="3">Board Qualidade - Inspeção</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label"><strong>Tipo de Avaliação</strong></label>
+                            <select class="form-select" id="tipoChecklist">
+                                <option value="completo" selected>Completa (4 pilares)</option>
+                                <option value="visual">Apenas Gestão Visual</option>
+                                <option value="reunioes">Apenas Reuniões</option>
+                                <option value="personalizado">Personalizada</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-info" onclick="salvarRascunhoChecklist()">
+                    <i class="fas fa-save me-1"></i>Salvar Rascunho
+                </button>
+                <button type="button" class="btn btn-success" onclick="criarEIniciarChecklist()">
+                    <i class="fas fa-play me-1"></i>Criar e Iniciar
                 </button>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Modal Avaliar Pilar -->
+<div class="modal fade" id="modalAvaliarPilar" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header" id="headerPilar">
+                <h5 class="modal-title" id="tituloPilar">
+                    <i class="fas fa-clipboard-check me-2"></i>Avaliar Pilar
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-light">
+                    <strong>Sistema de Avaliação:</strong>
+                    <span class="badge bg-success ms-2">Excelente (9-10)</span>
+                    <span class="badge bg-info ms-2">Bom (7-8)</span>
+                    <span class="badge bg-warning ms-2">Regular (5-6)</span>
+                    <span class="badge bg-danger ms-2">Crítico (0-4)</span>
+                </div>
+                
+                <div id="checklistPilar">
+                    <!-- Preenchido dinamicamente -->
+                </div>
+                
+                <div class="mt-3">
+                    <label class="form-label"><strong>Observações e Recomendações</strong></label>
+                    <textarea class="form-control" id="observacoesPilar" rows="3" 
+                        placeholder="Observações, pontos fortes, oportunidades de melhoria..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="me-auto">
+                    <span class="badge bg-primary fs-6" id="scorePilar">0.0</span>
+                    <span class="ms-2 text-muted" id="contadorPilar">0/0 itens</span>
+                </div>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-success" onclick="salvarAvaliacaoPilar()">
+                    <i class="fas fa-save me-1"></i>Salvar Avaliação
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Novo Problema -->
+<div class="modal fade" id="modalNovoProblema" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Registrar Problema
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formNovoProblema">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label class="form-label"><strong>Descrição do Problema*</strong></label>
+                            <input type="text" class="form-control" id="descProblema" required
+                                placeholder="Descreva o problema identificado">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label"><strong>Severidade*</strong></label>
+                            <select class="form-select" id="severidadeProblema" required>
+                                <option value="baixa">Baixa</option>
+                                <option value="media">Média</option>
+                                <option value="alta" selected>Alta</option>
+                                <option value="critica">Crítica</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-4">
+                            <label class="form-label"><strong>Área</strong></label>
+                            <select class="form-select" id="areaProblema">
+                                <option value="producao">Produção</option>
+                                <option value="qualidade">Qualidade</option>
+                                <option value="manutencao">Manutenção</option>
+                                <option value="seguranca">Segurança</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label"><strong>Responsável</strong></label>
+                            <select class="form-select" id="responsavelProblema">
+                                <option value="">Selecione...</option>
+                                <option value="1">João Silva</option>
+                                <option value="2">Maria Santos</option>
+                                <option value="3">Pedro Costa</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label"><strong>Prazo</strong></label>
+                            <input type="date" class="form-control" id="prazoProblema">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <label class="form-label"><strong>Detalhes Adicionais</strong></label>
+                            <textarea class="form-control" id="detalhesProblema" rows="3" 
+                                placeholder="Causa provável, impacto, urgência, etc..."></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-warning" onclick="salvarProblema()">
+                    <i class="fas fa-save me-1"></i>Registrar Problema
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Nova Ação -->
+<div class="modal fade" id="modalNovaAcao" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-tasks me-2"></i>Nova Ação
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formNovaAcao">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label class="form-label"><strong>Descrição da Ação*</strong></label>
+                            <input type="text" class="form-control" id="descAcao" required
+                                placeholder="O que precisa ser feito?">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label"><strong>Prioridade*</strong></label>
+                            <select class="form-select" id="prioridadeAcao" required>
+                                <option value="normal">Normal</option>
+                                <option value="alta">Alta</option>
+                                <option value="urgente">Urgente</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-4">
+                            <label class="form-label"><strong>Responsável*</strong></label>
+                            <select class="form-select" id="responsavelAcao" required>
+                                <option value="">Selecione...</option>
+                                <option value="1">João Silva</option>
+                                <option value="2">Maria Santos</option>
+                                <option value="3">Pedro Costa</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label"><strong>Prazo*</strong></label>
+                            <input type="date" class="form-control" id="prazoAcao" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label"><strong>Problema Relacionado</strong></label>
+                            <select class="form-select" id="problemaAcao">
+                                <option value="">Nenhum</option>
+                                <option value="1">PRB-001 - Parada de máquina</option>
+                                <option value="2">PRB-002 - Qualidade produto</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <label class="form-label"><strong>Detalhamento</strong></label>
+                            <textarea class="form-control" id="detalhesAcao" rows="2" 
+                                placeholder="Como será feito, recursos necessários..."></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="salvarAcao()">
+                    <i class="fas fa-save me-1"></i>Criar Ação
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-function novoSFM() {
-    alert('Criar novo Checklist SFM');
+// ===== DADOS MOCKADOS =====
+let checklistsSFM = [
+    {
+        id: 'SFM-001',
+        area: 'Produção - Linha 1',
+        auditor: 'João Silva',
+        data: '2024-04-15',
+        status: 'aprovado',
+        scoreSFM: 8.8
+    },
+    {
+        id: 'SFM-002',
+        area: 'Montagem - Área A',
+        auditor: 'Maria Santos',
+        data: '2024-04-14',
+        status: 'pendente',
+        scoreSFM: 7.2
+    },
+    {
+        id: 'SFM-003',
+        area: 'Logística',
+        auditor: 'Pedro Costa',
+        data: '2024-04-12',
+        status: 'aprovado',
+        scoreSFM: 8.4
+    }
+];
+
+let boardsSFM = [
+    { id: 1, nome: 'Board Produção - Linha 1', status: 'ativo', score: 88 },
+    { id: 2, nome: 'Board Montagem - Área A', status: 'ativo', score: 85 },
+    { id: 3, nome: 'Board Qualidade', status: 'ativo', score: 92 },
+    { id: 4, nome: 'Board Logística', status: 'atencao', score: 72 }
+];
+
+let problemasSFM = [
+    { id: 'PRB-001', desc: 'Parada não programada Linha 1', severidade: 'alta', responsavel: 'João Silva', prazo: '2024-04-18' },
+    { id: 'PRB-002', desc: 'Qualidade peça X fora de especificação', severidade: 'critica', responsavel: 'Maria Santos', prazo: '2024-04-16' },
+    { id: 'PRB-003', desc: 'Atraso entrega fornecedor Y', severidade: 'media', responsavel: 'Pedro Costa', prazo: '2024-04-20' }
+];
+
+let acoesSFM = [
+    { id: 'ACO-001', desc: 'Implementar manutenção preventiva', responsavel: 'João Silva', prazo: '2024-04-25', progresso: 60 },
+    { id: 'ACO-002', desc: 'Treinar operadores em novo processo', responsavel: 'Maria Santos', prazo: '2024-04-22', progresso: 40 },
+    { id: 'ACO-003', desc: 'Atualizar POPs da área', responsavel: 'Pedro Costa', prazo: '2024-04-30', progresso: 80 }
+];
+
+// Checklists por pilar
+const checklistsPilares = {
+    gestao_visual: [
+        { item: 'Quadros de performance estão atualizados e visíveis', peso: 10 },
+        { item: 'Indicadores são de fácil compreensão (cores, gráficos)', peso: 10 },
+        { item: 'Sistema de cores (verde/amarelo/vermelho) está implementado', peso: 10 },
+        { item: 'Demarcação de áreas está clara e padronizada', peso: 10 },
+        { item: 'Sinalização de segurança está adequada', peso: 10 },
+        { item: 'Quadro 5S está atualizado e visível', peso: 10 },
+        { item: 'Metas e resultados estão expostos', peso: 10 },
+        { item: 'Informações estão no ponto de uso', peso: 10 },
+        { item: 'Fotos "antes e depois" são utilizadas', peso: 10 },
+        { item: 'Board é atualizado diariamente', peso: 10 }
+    ],
+    reunioes: [
+        { item: 'Reuniões diárias acontecem regularmente', peso: 10 },
+        { item: 'Horário e local são fixos e respeitados', peso: 10 },
+        { item: 'Pauta estruturada é seguida', peso: 10 },
+        { item: 'Participação da equipe é ativa', peso: 10 },
+        { item: 'Tempo de reunião é controlado (15-20 min)', peso: 10 },
+        { item: 'Problemas são levantados e discutidos', peso: 10 },
+        { item: 'Ações são definidas com responsáveis e prazos', peso: 10 },
+        { item: 'Follow-up de ações anteriores é realizado', peso: 10 },
+        { item: 'Ata de reunião é registrada', peso: 10 },
+        { item: 'Líder conduz reunião de forma efetiva', peso: 10 }
+    ],
+    problemas: [
+        { item: 'Problemas são identificados rapidamente', peso: 10 },
+        { item: 'Sistema de registro de problemas existe', peso: 10 },
+        { item: 'Análise de causa raiz é realizada (5 Porquês, Ishikawa)', peso: 10 },
+        { item: 'Planos de ação são estruturados (5W2H)', peso: 10 },
+        { item: 'Responsáveis são claramente definidos', peso: 10 },
+        { item: 'Prazos são estabelecidos e monitorados', peso: 10 },
+        { item: 'Implementação é acompanhada', peso: 10 },
+        { item: 'Eficácia das ações é verificada', peso: 10 },
+        { item: 'Lições aprendidas são registradas', peso: 10 },
+        { item: 'Reincidência de problemas é baixa', peso: 10 }
+    ],
+    padroes: [
+        { item: 'Work Standards estão documentados', peso: 10 },
+        { item: 'POPs estão atualizados e acessíveis', peso: 10 },
+        { item: 'Treinamento em padrões é realizado', peso: 10 },
+        { item: 'Auditoria de aderência aos padrões é feita', peso: 10 },
+        { item: 'Kaizen é praticado regularmente', peso: 10 },
+        { item: 'Sugestões de melhoria são incentivadas', peso: 10 },
+        { item: 'Melhorias implementadas são padronizadas', peso: 10 },
+        { item: 'One Point Lessons (OPL) são utilizados', peso: 10 },
+        { item: 'Lições aprendidas são compartilhadas', peso: 10 },
+        { item: 'Cultura de melhoria contínua é evidente', peso: 10 }
+    ]
+};
+
+// ===== FUNÇÕES PRINCIPAIS =====
+
+function novoChecklistSFM() {
+    document.getElementById('dataChecklist').valueAsDate = new Date();
+    new bootstrap.Modal(document.getElementById('modalNovoChecklist')).show();
 }
-console.log('Checklist SFM carregado');
+
+function criarEIniciarChecklist() {
+    const form = document.getElementById('formNovoChecklist');
+    
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    
+    const area = document.getElementById('areaChecklist').selectedOptions[0].text;
+    const auditor = document.getElementById('auditorChecklist').selectedOptions[0].text;
+    const data = document.getElementById('dataChecklist').value;
+    
+    const novoChecklist = {
+        id: `SFM-${String(checklistsSFM.length + 1).padStart(3, '0')}`,
+        area: area,
+        auditor: auditor,
+        data: data,
+        status: 'pendente',
+        scoreSFM: 0
+    };
+    
+    checklistsSFM.push(novoChecklist);
+    
+    bootstrap.Modal.getInstance(document.getElementById('modalNovoChecklist')).hide();
+    
+    carregarChecklists();
+    
+    mostrarMensagem('success', 'Checklist criado!', `ID: ${novoChecklist.id} - ${area}`);
+    
+    if (confirm('Deseja iniciar a avaliação agora?')) {
+        avaliarPilar('gestao_visual');
+    }
+}
+
+function salvarRascunhoChecklist() {
+    mostrarMensagem('info', 'Rascunho salvo!', 'Você pode continuar depois.');
+    bootstrap.Modal.getInstance(document.getElementById('modalNovoChecklist')).hide();
+}
+
+function avaliarPilar(pilar) {
+    const pilares = {
+        gestao_visual: { titulo: 'Gestão Visual', cor: 'bg-primary', icon: 'fa-eye' },
+        reunioes: { titulo: 'Reuniões de Rotina', cor: 'bg-success', icon: 'fa-users' },
+        problemas: { titulo: 'Resolução de Problemas', cor: 'bg-warning', icon: 'fa-tools' },
+        padroes: { titulo: 'Padrões e Melhoria Contínua', cor: 'bg-info', icon: 'fa-chart-line' }
+    };
+    
+    const config = pilares[pilar];
+    
+    document.getElementById('headerPilar').className = `modal-header ${config.cor} text-white`;
+    document.getElementById('tituloPilar').innerHTML = `
+        <i class="fas ${config.icon} me-2"></i>Pilar: ${config.titulo}
+    `;
+    
+    const itens = checklistsPilares[pilar];
+    let html = '';
+    
+    itens.forEach((item, index) => {
+        html += `
+            <div class="card mb-2 pilar-item">
+                <div class="card-body py-2">
+                    <div class="row align-items-center">
+                        <div class="col-md-7">
+                            <span class="fw-bold">${index + 1}.</span> ${item.item}
+                        </div>
+                        <div class="col-md-5">
+                            <div class="btn-group w-100" role="group">
+                                <input type="radio" class="btn-check" name="pilar${index}" id="p${index}_0" value="0" onchange="atualizarScorePilar()">
+                                <label class="btn btn-outline-danger btn-sm" for="p${index}_0">0-4</label>
+                                
+                                <input type="radio" class="btn-check" name="pilar${index}" id="p${index}_5" value="5" onchange="atualizarScorePilar()">
+                                <label class="btn btn-outline-warning btn-sm" for="p${index}_5">5-6</label>
+                                
+                                <input type="radio" class="btn-check" name="pilar${index}" id="p${index}_7" value="7" onchange="atualizarScorePilar()">
+                                <label class="btn btn-outline-info btn-sm" for="p${index}_7">7-8</label>
+                                
+                                <input type="radio" class="btn-check" name="pilar${index}" id="p${index}_9" value="9" onchange="atualizarScorePilar()">
+                                <label class="btn btn-outline-success btn-sm" for="p${index}_9">9-10</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    document.getElementById('checklistPilar').innerHTML = html;
+    document.getElementById('scorePilar').textContent = '0.0';
+    document.getElementById('contadorPilar').textContent = `0/${itens.length} itens`;
+    
+    new bootstrap.Modal(document.getElementById('modalAvaliarPilar')).show();
+}
+
+function atualizarScorePilar() {
+    const totalItens = document.querySelectorAll('.pilar-item').length;
+    const itensRespondidos = document.querySelectorAll('.pilar-item input[type="radio"]:checked').length;
+    
+    let somaNotas = 0;
+    document.querySelectorAll('.pilar-item input[type="radio"]:checked').forEach(input => {
+        somaNotas += parseInt(input.value);
+    });
+    
+    const score = itensRespondidos > 0 ? (somaNotas / itensRespondidos).toFixed(1) : 0;
+    
+    document.getElementById('scorePilar').textContent = score;
+    document.getElementById('contadorPilar').textContent = `${itensRespondidos}/${totalItens} itens`;
+}
+
+function salvarAvaliacaoPilar() {
+    const totalItens = document.querySelectorAll('.pilar-item').length;
+    const itensRespondidos = document.querySelectorAll('.pilar-item input[type="radio"]:checked').length;
+    
+    if (itensRespondidos < totalItens) {
+        if (!confirm(`Você avaliou ${itensRespondidos} de ${totalItens} itens. Deseja salvar mesmo assim?`)) {
+            return;
+        }
+    }
+    
+    const score = document.getElementById('scorePilar').textContent;
+    
+    mostrarMensagem('success', 'Pilar avaliado!', `Score: ${score}/10`);
+    
+    bootstrap.Modal.getInstance(document.getElementById('modalAvaliarPilar')).hide();
+    
+    atualizarGraficos();
+}
+
+function carregarChecklists(filtro = 'todos') {
+    const tbody = document.getElementById('listaChecklists');
+    tbody.innerHTML = '';
+    
+    let checklistsFiltrados = checklistsSFM;
+    
+    if (filtro === 'aprovados') {
+        checklistsFiltrados = checklistsSFM.filter(c => c.status === 'aprovado');
+    } else if (filtro === 'pendentes') {
+        checklistsFiltrados = checklistsSFM.filter(c => c.status === 'pendente');
+    }
+    
+    checklistsFiltrados.forEach(checklist => {
+        const statusBadge = checklist.status === 'aprovado' 
+            ? '<span class="badge bg-success">Aprovado</span>'
+            : '<span class="badge bg-warning">Pendente</span>';
+        
+        const scoreColor = checklist.scoreSFM >= 8 ? 'success' : checklist.scoreSFM >= 6 ? 'info' : 'warning';
+        
+        const row = `
+            <tr>
+                <td><strong>${checklist.id}</strong></td>
+                <td>${checklist.area}</td>
+                <td>${checklist.auditor}</td>
+                <td>${formatarData(checklist.data)}</td>
+                <td>${statusBadge}</td>
+                <td class="text-center">
+                    <span class="badge bg-${scoreColor} fs-6">${checklist.scoreSFM.toFixed(1)}</span>
+                </td>
+                <td class="text-center">
+                    <button class="btn btn-sm btn-primary" onclick="verDetalhesChecklist('${checklist.id}')" title="Ver">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-sm btn-success" onclick="continuarChecklist('${checklist.id}')" title="Continuar">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <button class="btn btn-sm btn-info" onclick="gerarPDFChecklist('${checklist.id}')" title="PDF">
+                        <i class="fas fa-file-pdf"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="excluirChecklist('${checklist.id}')" title="Excluir">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+        
+        tbody.innerHTML += row;
+    });
+}
+
+function carregarBoards() {
+    const container = document.getElementById('listaBoards');
+    container.innerHTML = '';
+    
+    boardsSFM.forEach(board => {
+        const statusClass = board.status === 'ativo' ? 'success' : 'warning';
+        const statusIcon = board.status === 'ativo' ? 'check-circle' : 'exclamation-triangle';
+        
+        const card = `
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card h-100 cursor-pointer" onclick="verBoard(${board.id})">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h6 class="mb-0">${board.nome}</h6>
+                            <i class="fas fa-${statusIcon} text-${statusClass}"></i>
+                        </div>
+                        <div class="progress mb-2" style="height: 20px;">
+                            <div class="progress-bar bg-${statusClass}" style="width: ${board.score}%">${board.score}%</div>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <small class="text-muted">Score SFM</small>
+                            <span class="badge bg-${statusClass}">${board.score}%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        container.innerHTML += card;
+    });
+}
+
+function carregarProblemas() {
+    const container = document.getElementById('listaProblemas');
+    container.innerHTML = '';
+    
+    problemasSFM.forEach(problema => {
+        const severidadeClass = {
+            'baixa': 'info',
+            'media': 'warning',
+            'alta': 'danger',
+            'critica': 'danger'
+        }[problema.severidade];
+        
+        const card = `
+            <div class="card mb-2">
+                <div class="card-body py-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>${problema.id}</strong> - ${problema.desc}
+                            <br><small class="text-muted">${problema.responsavel} | ${formatarData(problema.prazo)}</small>
+                        </div>
+                        <span class="badge bg-${severidadeClass}">${problema.severidade}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        container.innerHTML += card;
+    });
+}
+
+function carregarAcoes() {
+    const container = document.getElementById('listaAcoes');
+    container.innerHTML = '';
+    
+    acoesSFM.forEach(acao => {
+        const progressoClass = acao.progresso >= 80 ? 'success' : acao.progresso >= 50 ? 'info' : 'warning';
+        
+        const card = `
+            <div class="card mb-2">
+                <div class="card-body py-2">
+                    <div class="mb-1">
+                        <strong>${acao.id}</strong> - ${acao.desc}
+                        <br><small class="text-muted">${acao.responsavel} | ${formatarData(acao.prazo)}</small>
+                    </div>
+                    <div class="progress" style="height: 15px;">
+                        <div class="progress-bar bg-${progressoClass}" style="width: ${acao.progresso}%">${acao.progresso}%</div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        container.innerHTML += card;
+    });
+}
+
+function formatarData(data) {
+    const partes = data.split('-');
+    return `${partes[2]}/${partes[1]}/${partes[0]}`;
+}
+
+function filtrarChecklists(filtro) {
+    carregarChecklists(filtro);
+}
+
+function verDetalhesChecklist(id) {
+    mostrarMensagem('info', 'Detalhes', `Visualizando checklist ${id}`);
+}
+
+function continuarChecklist(id) {
+    mostrarMensagem('info', 'Continuar', `Continuando checklist ${id}`);
+    avaliarPilar('gestao_visual');
+}
+
+function excluirChecklist(id) {
+    if (confirm(`Deseja realmente excluir o checklist ${id}?`)) {
+        checklistsSFM = checklistsSFM.filter(c => c.id !== id);
+        carregarChecklists();
+        mostrarMensagem('success', 'Excluído!', 'Checklist removido.');
+    }
+}
+
+function gerarPDFChecklist(id) {
+    mostrarMensagem('success', 'PDF', `Relatório do ${id} gerado!`);
+}
+
+function verBoard(id) {
+    mostrarMensagem('info', 'Board', `Visualizando board #${id}`);
+}
+
+function novoBoard() {
+    mostrarMensagem('info', 'Novo Board', 'Criando novo board SFM...');
+}
+
+function gerenciarBoards() {
+    mostrarMensagem('info', 'Boards', 'Gerenciamento de boards SFM');
+}
+
+function agendarReunioes() {
+    mostrarMensagem('info', 'Reuniões', 'Agendamento de reuniões diárias');
+}
+
+function novoProblema() {
+    new bootstrap.Modal(document.getElementById('modalNovoProblema')).show();
+}
+
+function salvarProblema() {
+    const form = document.getElementById('formNovoProblema');
+    
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    
+    mostrarMensagem('success', 'Problema registrado!', 'Problema adicionado ao board.');
+    bootstrap.Modal.getInstance(document.getElementById('modalNovoProblema')).hide();
+    
+    carregarProblemas();
+}
+
+function novaAcao() {
+    new bootstrap.Modal(document.getElementById('modalNovaAcao')).show();
+}
+
+function salvarAcao() {
+    const form = document.getElementById('formNovaAcao');
+    
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    
+    mostrarMensagem('success', 'Ação criada!', 'Ação adicionada com sucesso.');
+    bootstrap.Modal.getInstance(document.getElementById('modalNovaAcao')).hide();
+    
+    carregarAcoes();
+}
+
+function exportarRelatorio() {
+    mostrarMensagem('success', 'Exportar', 'Relatório SFM exportado!');
+}
+
+function mostrarMensagem(tipo, titulo, mensagem) {
+    alert(`${titulo}
+
+${mensagem}`);
+}
+
+// ===== GRÁFICOS =====
+
+function criarGraficoRadarSFM() {
+    const ctx = document.getElementById('chartRadarSFM');
+    
+    new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: ['Gestão Visual', 'Reuniões', 'Problemas', 'Padrões'],
+            datasets: [{
+                label: 'Score por Pilar',
+                data: [88, 85, 82, 86],
+                backgroundColor: 'rgba(78, 115, 223, 0.2)',
+                borderColor: 'rgb(78, 115, 223)',
+                pointBackgroundColor: 'rgb(78, 115, 223)',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: 'rgb(78, 115, 223)'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: {
+                    beginAtZero: true,
+                    max: 100
+                }
+            }
+        }
+    });
+}
+
+function criarGraficoStatusBoards() {
+    const ctx = document.getElementById('chartStatusBoards');
+    
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Ativos', 'Atenção', 'Críticos'],
+            datasets: [{
+                data: [8, 3, 1],
+                backgroundColor: [
+                    '#1cc88a',
+                    '#f6c23e',
+                    '#e74a3b'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+}
+
+function atualizarGraficos() {
+    criarGraficoRadarSFM();
+    criarGraficoStatusBoards();
+}
+
+// ===== INICIALIZAÇÃO =====
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Checklist SFM carregado!');
+    
+    carregarChecklists();
+    carregarBoards();
+    carregarProblemas();
+    carregarAcoes();
+    criarGraficoRadarSFM();
+    criarGraficoStatusBoards();
+});
 </script>
+
+<style>
+.border-left-primary { border-left: 0.25rem solid #4e73df !important; }
+.border-left-success { border-left: 0.25rem solid #1cc88a !important; }
+.border-left-info { border-left: 0.25rem solid #36b9cc !important; }
+.border-left-warning { border-left: 0.25rem solid #f6c23e !important; }
+
+.cursor-pointer {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cursor-pointer:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0,0,0,.075);
+}
+
+.pilar-item {
+    transition: all 0.2s;
+}
+
+.pilar-item:hover {
+    background-color: #f8f9fc;
+}
+
+.btn-check:checked + .btn {
+    font-weight: bold;
+}
+</style>
 {% endblock %}
