@@ -1,0 +1,405 @@
+{% extends "base.html" %}
+
+{% block title %}Gestão de Permissões - RH{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-shield-alt me-2"></i>Gestão de Permissões e Níveis de Acesso
+        </h1>
+        <div class="btn-group">
+            <button class="btn btn-success" onclick="novoRole()">
+                <i class="fas fa-plus me-1"></i>Novo Role
+            </button>
+            <button class="btn btn-outline-primary" onclick="exportarPermissoes()">
+                <i class="fas fa-file-export me-1"></i>Exportar
+            </button>
+            <a href="{{ url_for('rh.index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Voltar
+            </a>
+        </div>
+    </div>
+
+    <!-- Info -->
+    <div class="alert alert-info alert-dismissible fade show">
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <h5 class="alert-heading">
+            <i class="fas fa-info-circle me-2"></i>Sistema de Controle de Acesso
+        </h5>
+        <p class="mb-0">
+            Gerencie <strong>Roles (Perfis)</strong>, <strong>Permissões</strong> e 
+            <strong>Níveis de Acesso</strong> por colaborador, cargo ou departamento.
+            Sistema hierárquico com controle granular de funcionalidades.
+        </p>
+    </div>
+
+    <!-- Tabs -->
+    <ul class="nav nav-tabs mb-4" id="permissoesTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="roles-tab" data-bs-toggle="tab" data-bs-target="#roles" type="button">
+                <i class="fas fa-user-shield me-1"></i>Roles (Perfis)
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="permissoes-tab" data-bs-toggle="tab" data-bs-target="#permissoes" type="button">
+                <i class="fas fa-key me-1"></i>Permissões
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="cargos-tab" data-bs-toggle="tab" data-bs-target="#cargos" type="button">
+                <i class="fas fa-briefcase me-1"></i>Cargos
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="departamentos-tab" data-bs-toggle="tab" data-bs-target="#departamentos" type="button">
+                <i class="fas fa-building me-1"></i>Departamentos
+            </button>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="permissoesTabContent">
+        <!-- Tab Roles -->
+        <div class="tab-pane fade show active" id="roles" role="tabpanel">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-user-shield me-2"></i>Roles (Perfis de Acesso)
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div id="listaRoles">
+                        <!-- Preenchido dinamicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Permissões -->
+        <div class="tab-pane fade" id="permissoes" role="tabpanel">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-key me-2"></i>Permissões do Sistema
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div id="listaPermissoes">
+                        <!-- Preenchido dinamicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Cargos -->
+        <div class="tab-pane fade" id="cargos" role="tabpanel">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-briefcase me-2"></i>Roles Padrão por Cargo
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">
+                        Defina qual role será atribuído automaticamente ao criar colaborador com determinado cargo.
+                    </p>
+                    <div id="listaCargosRoles">
+                        <!-- Preenchido dinamicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Departamentos -->
+        <div class="tab-pane fade" id="departamentos" role="tabpanel">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-building me-2"></i>Roles Padrão por Departamento
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">
+                        Defina qual role será atribuído automaticamente ao criar colaborador em determinado departamento.
+                    </p>
+                    <div id="listaDepartamentosRoles">
+                        <!-- Preenchido dinamicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Novo/Editar Role -->
+<div class="modal fade" id="modalRole" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-user-shield me-2"></i><span id="tituloModalRole">Novo Role</span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formRole">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label"><strong>Nome do Role*</strong></label>
+                            <input type="text" class="form-control" id="nomeRole" required
+                                placeholder="Ex: Gerente de RH">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label"><strong>Código*</strong></label>
+                            <input type="text" class="form-control" id="codigoRole" required
+                                placeholder="Ex: gerente_rh">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-9">
+                            <label class="form-label"><strong>Descrição</strong></label>
+                            <input type="text" class="form-control" id="descricaoRole"
+                                placeholder="Breve descrição do perfil">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label"><strong>Nível Hierárquico*</strong></label>
+                            <input type="number" class="form-control" id="nivelRole" value="5" min="0" max="10">
+                            <small class="text-muted">0=baixo, 10=alto</small>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h6 class="border-bottom pb-2">Permissões</h6>
+                            <div id="permissoesCheckboxes">
+                                <!-- Preenchido dinamicamente -->
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="salvarRole()">
+                    <i class="fas fa-save me-1"></i>Salvar Role
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+// ===== DADOS E FUNÇÕES =====
+
+let roles = [];
+let permissoes = {};
+
+function carregarRoles() {
+    fetch('/rh/permissoes/api/roles')
+        .then(r => r.json())
+        .then(data => {
+            roles = data.roles;
+            renderizarRoles();
+        });
+}
+
+function carregarPermissoes() {
+    fetch('/rh/permissoes/api/permissoes')
+        .then(r => r.json())
+        .then(data => {
+            permissoes = data.permissoes;
+            renderizarPermissoes();
+        });
+}
+
+function renderizarRoles() {
+    const container = document.getElementById('listaRoles');
+    container.innerHTML = '';
+    
+    roles.forEach(role => {
+        const nivelColor = role.nivel_hierarquico >= 8 ? 'danger' : 
+                          role.nivel_hierarquico >= 5 ? 'warning' : 'info';
+        
+        const card = `
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h5 class="mb-1">
+                                <i class="fas fa-user-shield text-primary me-2"></i>
+                                ${role.nome}
+                            </h5>
+                            <p class="text-muted mb-0">${role.descricao || 'Sem descrição'}</p>
+                            <small class="text-muted">Código: <code>${role.codigo}</code></small>
+                        </div>
+                        <div class="col-md-3">
+                            <span class="badge bg-${nivelColor} me-2">Nível ${role.nivel_hierarquico}</span>
+                            <span class="badge bg-secondary">${role.permissoes.length} permissões</span>
+                        </div>
+                        <div class="col-md-3 text-end">
+                            <button class="btn btn-sm btn-primary" onclick="editarRole(${role.id})">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            <button class="btn btn-sm btn-info" onclick="verPermissoesRole(${role.id})">
+                                <i class="fas fa-key"></i> Permissões
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.innerHTML += card;
+    });
+}
+
+function renderizarPermissoes() {
+    const container = document.getElementById('listaPermissoes');
+    container.innerHTML = '';
+    
+    for (const [modulo, perms] of Object.entries(permissoes)) {
+        let html = `
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h6 class="mb-0 text-capitalize">
+                        <i class="fas fa-cube me-2"></i>Módulo: ${modulo}
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+        `;
+        
+        perms.forEach(perm => {
+            html += `
+                <div class="col-md-4 mb-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" disabled checked>
+                        <label class="form-check-label">
+                            <strong>${perm.nome}</strong><br>
+                            <small class="text-muted"><code>${perm.codigo}</code></small>
+                        </label>
+                    </div>
+                </div>
+            `;
+        });
+        
+        html += `
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        container.innerHTML += html;
+    }
+}
+
+function novoRole() {
+    document.getElementById('tituloModalRole').textContent = 'Novo Role';
+    document.getElementById('formRole').reset();
+    carregarPermissoesCheckboxes();
+    new bootstrap.Modal(document.getElementById('modalRole')).show();
+}
+
+function carregarPermissoesCheckboxes() {
+    const container = document.getElementById('permissoesCheckboxes');
+    container.innerHTML = '';
+    
+    for (const [modulo, perms] of Object.entries(permissoes)) {
+        let html = `
+            <div class="mb-3">
+                <h6 class="text-capitalize">
+                    <i class="fas fa-cube me-2"></i>${modulo}
+                    <button class="btn btn-sm btn-outline-primary ms-2" onclick="selecionarTodosModulo('${modulo}')">
+                        Selecionar Todos
+                    </button>
+                </h6>
+                <div class="row">
+        `;
+        
+        perms.forEach(perm => {
+            html += `
+                <div class="col-md-4 mb-2">
+                    <div class="form-check">
+                        <input class="form-check-input permissao-check" type="checkbox" 
+                               value="${perm.id}" id="perm_${perm.id}" data-modulo="${modulo}">
+                        <label class="form-check-label" for="perm_${perm.id}">
+                            ${perm.nome}
+                        </label>
+                    </div>
+                </div>
+            `;
+        });
+        
+        html += `
+                </div>
+            </div>
+        `;
+        
+        container.innerHTML += html;
+    }
+}
+
+function selecionarTodosModulo(modulo) {
+    document.querySelectorAll(`.permissao-check[data-modulo="${modulo}"]`).forEach(cb => {
+        cb.checked = true;
+    });
+}
+
+function salvarRole() {
+    const form = document.getElementById('formRole');
+    
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    
+    const permissoesSelecionadas = Array.from(document.querySelectorAll('.permissao-check:checked'))
+        .map(cb => parseInt(cb.value));
+    
+    const dados = {
+        nome: document.getElementById('nomeRole').value,
+        codigo: document.getElementById('codigoRole').value,
+        descricao: document.getElementById('descricaoRole').value,
+        nivel_hierarquico: parseInt(document.getElementById('nivelRole').value),
+        permissoes_ids: permissoesSelecionadas
+    };
+    
+    fetch('/rh/permissoes/api/roles', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(dados)
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert('Role criado com sucesso!');
+            bootstrap.Modal.getInstance(document.getElementById('modalRole')).hide();
+            carregarRoles();
+        } else {
+            alert('Erro: ' + data.message);
+        }
+    });
+}
+
+function editarRole(id) {
+    alert('Editar role ' + id);
+}
+
+function verPermissoesRole(id) {
+    alert('Ver permissões do role ' + id);
+}
+
+function exportarPermissoes() {
+    alert('Exportar configuração de permissões');
+}
+
+// Inicialização
+document.addEventListener('DOMContentLoaded', function() {
+    carregarRoles();
+    carregarPermissoes();
+});
+</script>
+{% endblock %}

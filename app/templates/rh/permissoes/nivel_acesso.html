@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+
+{% block title %}Nível de Acesso - {{ colaborador.nome }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-user-lock me-2"></i>Configurar Nível de Acesso
+        </h1>
+        <a href="{{ url_for('rh.colaboradores') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Voltar
+        </a>
+    </div>
+
+    <!-- Info do Colaborador -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <h5>{{ colaborador.nome }}</h5>
+                    <p class="text-muted mb-0">
+                        <strong>Cargo:</strong> {{ colaborador.cargo.nome if colaborador.cargo else 'Não definido' }} |
+                        <strong>Departamento:</strong> {{ colaborador.departamento.nome if colaborador.departamento else 'Não definido' }}
+                    </p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <span class="badge bg-primary fs-6">ID: {{ colaborador.id }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulário de Configuração -->
+    <div class="card shadow">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-cog me-2"></i>Configuração de Acesso
+            </h6>
+        </div>
+        <div class="card-body">
+            <form id="formNivelAcesso">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="form-label"><strong>Tipo de Acesso*</strong></label>
+                        <select class="form-select" id="tipoAcesso" required>
+                            <option value="completo">Acesso Completo</option>
+                            <option value="limitado" selected>Acesso Limitado</option>
+                            <option value="somente_leitura">Somente Leitura</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label"><strong>Válido Até</strong></label>
+                        <input type="date" class="form-control" id="dataFim">
+                        <small class="text-muted">Deixe vazio para acesso permanente</small>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label"><strong>Status</strong></label>
+                        <select class="form-select" id="statusAcesso">
+                            <option value="true" selected>Ativo</option>
+                            <option value="false">Inativo</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <h6 class="border-bottom pb-2">Roles (Perfis de Acesso)</h6>
+                        <div id="rolesCheckboxes">
+                            <!-- Preenchido dinamicamente -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <h6 class="border-bottom pb-2">Módulos Liberados</h6>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input modulo-check" type="checkbox" value="rh" id="mod_rh">
+                                    <label class="form-check-label" for="mod_rh">
+                                        <i class="fas fa-users me-1"></i>Recursos Humanos
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input modulo-check" type="checkbox" value="consultoria" id="mod_consultoria">
+                                    <label class="form-check-label" for="mod_consultoria">
+                                        <i class="fas fa-briefcase me-1"></i>Consultoria
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input modulo-check" type="checkbox" value="projetos" id="mod_projetos">
+                                    <label class="form-check-label" for="mod_projetos">
+                                        <i class="fas fa-project-diagram me-1"></i>Projetos
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input modulo-check" type="checkbox" value="relatorios" id="mod_relatorios">
+                                    <label class="form-check-label" for="mod_relatorios">
+                                        <i class="fas fa-chart-line me-1"></i>Relatórios
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <label class="form-label"><strong>Observações</strong></label>
+                        <textarea class="form-control" id="observacoes" rows="3"
+                            placeholder="Observações sobre o nível de acesso deste colaborador..."></textarea>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-12 text-end">
+                        <button type="button" class="btn btn-secondary" onclick="history.back()">Cancelar</button>
+                        <button type="button" class="btn btn-success" onclick="salvarNivelAcesso()">
+                            <i class="fas fa-save me-1"></i>Salvar Configuração
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+const colaboradorId = {{ colaborador.id }};
+
+function carregarRoles() {
+    fetch('/rh/permissoes/api/roles')
+        .then(r => r.json())
+        .then(data => {
+            renderizarRolesCheckboxes(data.roles);
+        });
+}
+
+function renderizarRolesCheckboxes(roles) {
+    const container = document.getElementById('rolesCheckboxes');
+    container.innerHTML = '<div class="row">';
+    
+    roles.forEach(role => {
+        const html = `
+            <div class="col-md-4 mb-2">
+                <div class="form-check">
+                    <input class="form-check-input role-check" type="checkbox" value="${role.id}" id="role_${role.id}">
+                    <label class="form-check-label" for="role_${role.id}">
+                        <strong>${role.nome}</strong><br>
+                        <small class="text-muted">${role.descricao || ''}</small>
+                    </label>
+                </div>
+            </div>
+        `;
+        container.innerHTML += html;
+    });
+    
+    container.innerHTML += '</div>';
+}
+
+function carregarNivelAcessoExistente() {
+    fetch(`/rh/permissoes/api/nivel-acesso/${colaboradorId}`)
+        .then(r => r.json())
+        .then(data => {
+            if (data.nivel_acesso) {
+                // Preencher formulário com dados existentes
+                const nivel = data.nivel_acesso;
+                document.getElementById('tipoAcesso').value = nivel.tipo_acesso || 'limitado';
+                document.getElementById('statusAcesso').value = nivel.ativo ? 'true' : 'false';
+                
+                if (nivel.modulos_liberados) {
+                    nivel.modulos_liberados.forEach(mod => {
+                        const checkbox = document.getElementById(`mod_${mod}`);
+                        if (checkbox) checkbox.checked = true;
+                    });
+                }
+            }
+        });
+}
+
+function salvarNivelAcesso() {
+    const rolesIds = Array.from(document.querySelectorAll('.role-check:checked')).map(cb => parseInt(cb.value));
+    const modulosLiberados = Array.from(document.querySelectorAll('.modulo-check:checked')).map(cb => cb.value);
+    
+    const dados = {
+        tipo_acesso: document.getElementById('tipoAcesso').value,
+        modulos_liberados: modulosLiberados,
+        data_fim: document.getElementById('dataFim').value || null,
+        ativo: document.getElementById('statusAcesso').value === 'true',
+        observacoes: document.getElementById('observacoes').value,
+        roles_ids: rolesIds
+    };
+    
+    fetch(`/rh/permissoes/api/nivel-acesso/${colaboradorId}`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(dados)
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert('Nível de acesso configurado com sucesso!');
+            window.location.href = '/rh/colaboradores';
+        } else {
+            alert('Erro: ' + data.message);
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    carregarRoles();
+    carregarNivelAcessoExistente();
+});
+</script>
+{% endblock %}
