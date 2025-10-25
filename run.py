@@ -347,46 +347,58 @@ def create_application():
     
     environment = 'external'
     
+
+
+# ===== PATCH: Flask Markup Compatibility =====
     try:
-        from app import create_app, db
-        
-        print(f"🔧 Criando app WSGI: {environment}")
-        
-        app = create_app(environment)
-        
-        with app.app_context():
-            try:
-                print("🔧 Configurando banco via WSGI...")
-                db.create_all()
-                
-                from app.models.user import User
-                
-                admin = User.query.filter_by(username='admin').first()
-                if not admin:
-                    print("🔧 Criando admin via WSGI...")
-                    admin = User(
-                        username='admin',
-                        email='admin@corrigindoarota.com.br',
-                        perfil='admin',
-                        ativo=True
-                    )
-                    admin.set_password('admin123')
-                    db.session.add(admin)
-                    db.session.commit()
-                    print("✅ Admin criado via WSGI!")
-                
-            except Exception as e:
-                print(f"⚠️  Problema WSGI: {e}")
-        
-        print("✅ Aplicação WSGI pronta!")
-        _app_instance = app
-        return app
-        
+        from markupsafe import Markup
+        import flask
+        if not hasattr(flask, 'Markup'):
+            flask.Markup = Markup
+        print("✅ Patch Flask Markup aplicado!")
+    except ImportError:
+        print("⚠️  markupsafe não encontrado!")
     except Exception as e:
-        print(f"❌ Erro crítico WSGI: {e}")
-        import traceback
-        traceback.print_exc()
-        raise
+        print(f"⚠️  Erro no patch Markup: {e}")
+
+        from app import create_app, db
+            
+        print(f"🔧 Criando app WSGI: {environment}")
+            
+        app = create_app(environment)
+            
+        with app.app_context():
+                try:
+                    print("🔧 Configurando banco via WSGI...")
+                    db.create_all()
+                    
+                    from app.models.user import User
+                    
+                    admin = User.query.filter_by(username='admin').first()
+                    if not admin:
+                        print("🔧 Criando admin via WSGI...")
+                        admin = User(
+                            username='admin',
+                            email='admin@corrigindoarota.com.br',
+                            perfil='admin',
+                            ativo=True
+                        )
+                        admin.set_password('admin123')
+                        db.session.add(admin)
+                        db.session.commit()
+                        print("✅ Admin criado via WSGI!")
+                    
+                except Exception as e:
+                    print(f"⚠️  Problema WSGI: {e}")
+                    print("✅ Aplicação WSGI pronta!")
+                    _app_instance = app
+        return app
+            
+    except Exception as e:
+            print(f"❌ Erro crítico WSGI: {e}")
+            import traceback
+            traceback.print_exc()
+            raise
 
 # Para WSGI servers
 application = create_application()

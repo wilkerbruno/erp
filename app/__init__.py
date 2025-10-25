@@ -2,6 +2,24 @@ from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
+# Patch de compatibilidade Flask Markup
+try:
+    from markupsafe import Markup
+    import flask
+    if not hasattr(flask, 'Markup'):
+        flask.Markup = Markup
+except:
+    pass
+
+# Patch url_encode para werkzeug
+try:
+    from werkzeug import urls
+    if not hasattr(urls, 'url_encode'):
+        from urllib.parse import urlencode
+        urls.url_encode = urlencode
+except:
+    pass
+
 from flask_wtf.csrf import CSRFProtect
 from config import config
 from app.blueprints.producao import bp as producao_bp
