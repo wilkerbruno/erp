@@ -1,0 +1,404 @@
+{% extends "base.html" %}
+
+{% block title %}DRE Gerencial{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-chart-line me-2"></i>DRE Gerencial
+        </h1>
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalImportarDRE">
+            <i class="fas fa-upload me-1"></i>Importar DRE do Contador
+        </button>
+    </div>
+
+    <!-- Cards de Resumo Financeiro -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Receita Bruta (Mês)
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 850.000</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Lucro Bruto
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 425.000</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-hand-holding-usd fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Despesas Totais
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 320.000</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-receipt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Resultado Líquido
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 105.000</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-chart-pie fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráfico de Tendência -->
+    <div class="row mb-4">
+        <div class="col-xl-8">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Evolução Mensal - Últimos 6 Meses</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="graficoEvolucao" width="100" height="30"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Margem de Lucro</h6>
+                </div>
+                <div class="card-body text-center">
+                    <div class="display-4 text-success fw-bold mb-3">50%</div>
+                    <p class="text-muted mb-0">Margem Bruta</p>
+                    <hr>
+                    <div class="h2 text-info fw-bold mb-3">12.4%</div>
+                    <p class="text-muted mb-0">Margem Líquida</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de DREs Importadas -->
+    <div class="card shadow">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">DREs Importadas</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="tabelaDRE">
+                    <thead>
+                        <tr>
+                            <th>Período</th>
+                            <th>Receita Bruta</th>
+                            <th>Receita Líquida</th>
+                            <th>Lucro Bruto</th>
+                            <th>Desp. Operacionais</th>
+                            <th>Resultado Líquido</th>
+                            <th>Importado Em</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Outubro/2025</strong></td>
+                            <td>R$ 850.000,00</td>
+                            <td>R$ 782.500,00</td>
+                            <td class="text-success">R$ 425.000,00</td>
+                            <td class="text-danger">R$ 320.000,00</td>
+                            <td class="text-success"><strong>R$ 105.000,00</strong></td>
+                            <td>04/11/2025 10:30</td>
+                            <td>
+                                <button class="btn btn-sm btn-info" onclick="visualizarDRE(1)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="exportarDRE(1)">
+                                    <i class="fas fa-file-excel"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Setembro/2025</strong></td>
+                            <td>R$ 780.000,00</td>
+                            <td>R$ 718.200,00</td>
+                            <td class="text-success">R$ 390.000,00</td>
+                            <td class="text-danger">R$ 295.000,00</td>
+                            <td class="text-success"><strong>R$ 95.000,00</strong></td>
+                            <td>01/10/2025 14:15</td>
+                            <td>
+                                <button class="btn btn-sm btn-info" onclick="visualizarDRE(2)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="exportarDRE(2)">
+                                    <i class="fas fa-file-excel"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Importar DRE -->
+<div class="modal fade" id="modalImportarDRE" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-upload me-2"></i>Importar DRE do Contador
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formImportarDRE" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Mês de Referência *</label>
+                            <select class="form-select" name="mes" required>
+                                <option value="">Selecione...</option>
+                                <option value="1">Janeiro</option>
+                                <option value="2">Fevereiro</option>
+                                <option value="3">Março</option>
+                                <option value="4">Abril</option>
+                                <option value="5">Maio</option>
+                                <option value="6">Junho</option>
+                                <option value="7">Julho</option>
+                                <option value="8">Agosto</option>
+                                <option value="9">Setembro</option>
+                                <option value="10">Outubro</option>
+                                <option value="11">Novembro</option>
+                                <option value="12">Dezembro</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Ano *</label>
+                            <select class="form-select" name="ano" required>
+                                <option value="2025" selected>2025</option>
+                                <option value="2024">2024</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Arquivo do Contador *</label>
+                        <input type="file" class="form-control" name="arquivo" accept=".xlsx,.xls,.csv,.pdf" required>
+                        <small class="text-muted">Formatos aceitos: Excel (.xlsx, .xls), CSV (.csv), PDF (.pdf)</small>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Dica:</strong> O sistema irá extrair automaticamente os dados do arquivo.
+                        Você também pode preencher manualmente os campos abaixo.
+                    </div>
+
+                    <hr>
+
+                    <h6 class="text-primary mb-3">Ou Preencha Manualmente</h6>
+
+                    <!-- Receitas -->
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Receita Bruta</label>
+                            <input type="number" class="form-control" name="receita_bruta" step="0.01">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Deduções</label>
+                            <input type="number" class="form-control" name="deducoes" step="0.01">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Receita Líquida</label>
+                            <input type="number" class="form-control" name="receita_liquida" step="0.01">
+                        </div>
+                    </div>
+
+                    <!-- Custos -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Custo de Mercadorias</label>
+                            <input type="number" class="form-control" name="custo_mercadorias" step="0.01">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Lucro Bruto</label>
+                            <input type="number" class="form-control" name="lucro_bruto" step="0.01">
+                        </div>
+                    </div>
+
+                    <!-- Despesas -->
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Desp. Vendas</label>
+                            <input type="number" class="form-control" name="despesas_vendas" step="0.01">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Desp. Administrativas</label>
+                            <input type="number" class="form-control" name="despesas_administrativas" step="0.01">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Desp. Financeiras</label>
+                            <input type="number" class="form-control" name="despesas_financeiras" step="0.01">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Rec. Financeiras</label>
+                            <input type="number" class="form-control" name="receitas_financeiras" step="0.01">
+                        </div>
+                    </div>
+
+                    <!-- Resultado -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Resultado Operacional</label>
+                            <input type="number" class="form-control" name="resultado_operacional" step="0.01">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Resultado Líquido</label>
+                            <input type="number" class="form-control" name="resultado_liquido" step="0.01">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Observações</label>
+                        <textarea class="form-control" name="observacoes" rows="2"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="importarDRE()">
+                    <i class="fas fa-upload me-1"></i>Importar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Gráfico de Evolução
+const ctx = document.getElementById('graficoEvolucao').getContext('2d');
+const graficoEvolucao = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ['Mai/25', 'Jun/25', 'Jul/25', 'Ago/25', 'Set/25', 'Out/25'],
+        datasets: [
+            {
+                label: 'Receita Líquida',
+                data: [650000, 720000, 690000, 755000, 718200, 782500],
+                borderColor: 'rgb(54, 162, 235)',
+                backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                tension: 0.4
+            },
+            {
+                label: 'Lucro Bruto',
+                data: [325000, 360000, 345000, 377500, 390000, 425000],
+                borderColor: 'rgb(75, 192, 192)',
+                backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                tension: 0.4
+            },
+            {
+                label: 'Resultado Líquido',
+                data: [82000, 88000, 75000, 92000, 95000, 105000],
+                borderColor: 'rgb(255, 99, 132)',
+                backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                tension: 0.4
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+            title: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function(value) {
+                        return 'R$ ' + value.toLocaleString('pt-BR');
+                    }
+                }
+            }
+        }
+    }
+});
+
+function importarDRE() {
+    const form = document.getElementById('formImportarDRE');
+    const formData = new FormData(form);
+    
+    fetch('/rh/api/dre/importar', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert('DRE importada com sucesso!');
+            bootstrap.Modal.getInstance(document.getElementById('modalImportarDRE')).hide();
+            form.reset();
+            location.reload();
+        } else {
+            alert('Erro: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        alert('Erro ao importar DRE');
+    });
+}
+
+function visualizarDRE(id) {
+    alert('Visualização detalhada da DRE #' + id + ' (em desenvolvimento)');
+}
+
+function exportarDRE(id) {
+    alert('Exportação da DRE #' + id + ' para Excel (em desenvolvimento)');
+}
+</script>
+{% endblock %}

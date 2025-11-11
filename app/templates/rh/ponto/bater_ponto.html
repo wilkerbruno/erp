@@ -1,0 +1,322 @@
+{% extends "base.html" %}
+
+{% block title %}Bater Ponto{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-clock me-2"></i>Bater Ponto
+        </h1>
+        <a href="/rh" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Voltar
+        </a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow">
+                <div class="card-body">
+                    <!-- Relógio -->
+                    <div class="text-center mb-4">
+                        <div id="relogio" class="display-1 text-primary fw-bold">00:00:00</div>
+                        <div id="data" class="h4 text-muted">Carregando...</div>
+                    </div>
+
+                    <!-- Status Localização e Home Office -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        <i class="fas fa-map-marker-alt me-2"></i>Localização
+                                    </h6>
+                                    <div id="statusLocalizacao">
+                                        <span class="badge bg-warning">Aguardando...</span>
+                                    </div>
+                                    <small id="enderecoTexto" class="text-muted d-block mt-2"></small>
+                                    <small id="distanciaEmpresa" class="text-muted d-block"></small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        <i class="fas fa-home me-2"></i>Home Office
+                                    </h6>
+                                    <div id="statusHomeOffice">
+                                        <span class="badge bg-secondary">Verificando...</span>
+                                    </div>
+                                    <div class="form-check form-switch mt-2">
+                                        <input class="form-check-input" type="checkbox" id="checkHomeOffice">
+                                        <label class="form-check-label" for="checkHomeOffice">
+                                            Estou em home office
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botões de Ponto -->
+                    <div class="row mb-4">
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <button class="btn btn-success btn-lg w-100 h-100" onclick="registrarPonto('entrada')">
+                                <i class="fas fa-sign-in-alt d-block mb-2" style="font-size: 2rem;"></i>
+                                <span class="d-block">Entrada</span>
+                            </button>
+                        </div>
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <button class="btn btn-warning btn-lg w-100 h-100" onclick="registrarPonto('saida_almoco')">
+                                <i class="fas fa-utensils d-block mb-2" style="font-size: 2rem;"></i>
+                                <span class="d-block">Saída Almoço</span>
+                            </button>
+                        </div>
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <button class="btn btn-info btn-lg w-100 h-100" onclick="registrarPonto('volta_almoco')">
+                                <i class="fas fa-coffee d-block mb-2" style="font-size: 2rem;"></i>
+                                <span class="d-block">Volta Almoço</span>
+                            </button>
+                        </div>
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <button class="btn btn-danger btn-lg w-100 h-100" onclick="registrarPonto('saida')">
+                                <i class="fas fa-sign-out-alt d-block mb-2" style="font-size: 2rem;"></i>
+                                <span class="d-block">Saída</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Registros de Hoje -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="m-0">
+                                <i class="fas fa-list me-2"></i>Registros de Hoje
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div id="registrosHoje" class="row">
+                                <!-- Será preenchido via JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mapa (opcional) -->
+                    <div class="card mt-3" id="cardMapa" style="display: none;">
+                        <div class="card-header">
+                            <h6 class="m-0">
+                                <i class="fas fa-map me-2"></i>Sua Localização
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div id="mapa" style="height: 300px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let localizacaoAtual = null;
+let colaboradorId = 1; // Deve vir do sistema de login
+
+// Atualizar relógio
+function atualizarRelogio() {
+    const agora = new Date();
+    const horas = String(agora.getHours()).padStart(2, '0');
+    const minutos = String(agora.getMinutes()).padStart(2, '0');
+    const segundos = String(agora.getSeconds()).padStart(2, '0');
+    
+    document.getElementById('relogio').textContent = horas + ':' + minutos + ':' + segundos;
+    
+    const opcoes = { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+    };
+    
+    document.getElementById('data').textContent = agora.toLocaleDateString('pt-BR', opcoes);
+}
+
+// Obter localização
+function obterLocalizacao() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                localizacaoAtual = {
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude
+                };
+                
+                document.getElementById('statusLocalizacao').innerHTML = 
+                    '<span class="badge bg-success">Localização Obtida</span>';
+                
+                // Obter endereço via API reversa
+                obterEndereco(localizacaoAtual.latitude, localizacaoAtual.longitude);
+                
+                // Calcular distância da empresa (exemplo: empresa em -7.13, -34.83)
+                const distancia = calcularDistancia(
+                    localizacaoAtual.latitude, 
+                    localizacaoAtual.longitude,
+                    -7.13, -34.83 // Coordenadas da empresa
+                );
+                
+                document.getElementById('distanciaEmpresa').textContent = 
+                    `Distância da empresa: ${distancia.toFixed(0)}m`;
+            },
+            function(error) {
+                document.getElementById('statusLocalizacao').innerHTML = 
+                    '<span class="badge bg-danger">Erro ao obter localização</span>';
+                console.error('Erro de geolocalização:', error);
+            }
+        );
+    } else {
+        document.getElementById('statusLocalizacao').innerHTML = 
+            '<span class="badge bg-danger">Navegador não suporta geolocalização</span>';
+    }
+}
+
+// Obter endereço via API reversa (OpenStreetMap Nominatim)
+function obterEndereco(lat, lon) {
+    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+        .then(response => response.json())
+        .then(data => {
+            const endereco = data.display_name || 'Endereço não disponível';
+            document.getElementById('enderecoTexto').textContent = endereco;
+        })
+        .catch(error => {
+            console.error('Erro ao obter endereço:', error);
+        });
+}
+
+// Calcular distância entre dois pontos (fórmula de Haversine)
+function calcularDistancia(lat1, lon1, lat2, lon2) {
+    const R = 6371e3; // Raio da Terra em metros
+    const φ1 = lat1 * Math.PI / 180;
+    const φ2 = lat2 * Math.PI / 180;
+    const Δφ = (lat2 - lat1) * Math.PI / 180;
+    const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+    const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+              Math.cos(φ1) * Math.cos(φ2) *
+              Math.sin(Δλ/2) * Math.sin(Δλ/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+    return R * c;
+}
+
+// Carregar registros de hoje
+function carregarRegistrosHoje() {
+    fetch(`/rh/api/ponto/hoje/${colaboradorId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                const div = document.getElementById('registrosHoje');
+                div.innerHTML = '';
+                
+                if (data.registros.length === 0) {
+                    div.innerHTML = '<div class="col-12 text-center text-muted">Nenhum registro hoje</div>';
+                } else {
+                    data.registros.forEach(r => {
+                        const tipoIcon = {
+                            'entrada': 'sign-in-alt text-success',
+                            'saida_almoco': 'utensils text-warning',
+                            'volta_almoco': 'coffee text-info',
+                            'saida': 'sign-out-alt text-danger'
+                        };
+                        
+                        div.innerHTML += `
+                            <div class="col-md-6 col-lg-3 mb-2">
+                                <div class="card ${r.atraso_minutos > 0 ? 'border-warning' : ''}">
+                                    <div class="card-body text-center p-2">
+                                        <i class="fas fa-${tipoIcon[r.tipo]} fa-2x mb-2"></i>
+                                        <div><strong>${r.tipo.replace('_', ' ').toUpperCase()}</strong></div>
+                                        <div class="text-primary"><strong>${r.horario}</strong></div>
+                                        ${r.home_office ? '<span class="badge bg-info">Home Office</span>' : ''}
+                                        ${r.atraso_minutos > 0 ? `<span class="badge bg-warning">${r.atraso_minutos} min atraso</span>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+            }
+        })
+        .catch(error => console.error('Erro:', error));
+}
+
+// Registrar ponto
+function registrarPonto(tipo) {
+    if (!localizacaoAtual) {
+        alert('⚠️ Aguarde a obtenção da localização!');
+        return;
+    }
+    
+    const agora = new Date();
+    const homeOffice = document.getElementById('checkHomeOffice').checked;
+    
+    const dados = {
+        colaborador_id: colaboradorId,
+        data: agora.toISOString().split('T')[0],
+        horario: agora.toTimeString().split(' ')[0],
+        tipo: tipo,
+        latitude: localizacaoAtual.latitude,
+        longitude: localizacaoAtual.longitude,
+        localizacao_texto: document.getElementById('enderecoTexto').textContent,
+        home_office: homeOffice,
+        dispositivo: navigator.userAgent
+    };
+    
+    fetch('/rh/api/registrar-ponto', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dados)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            let mensagem = `✅ Ponto Registrado!\n\nTipo: ${tipo}\nHorário: ${dados.horario}`;
+            
+            if (data.atraso_minutos > 0) {
+                mensagem += `\n⚠️ Atraso: ${data.atraso_minutos} minutos`;
+            }
+            
+            if (homeOffice) {
+                if (data.home_office_autorizado) {
+                    mensagem += '\n✅ Home Office Autorizado';
+                } else {
+                    mensagem += '\n⚠️ Home Office NÃO autorizado pelo gestor';
+                }
+            }
+            
+            alert(mensagem);
+            carregarRegistrosHoje();
+        } else {
+            alert('❌ Erro: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        alert('❌ Erro ao registrar ponto');
+    });
+}
+
+// Inicializar
+document.addEventListener('DOMContentLoaded', function() {
+    setInterval(atualizarRelogio, 1000);
+    atualizarRelogio();
+    obterLocalizacao();
+    carregarRegistrosHoje();
+    
+    // Atualizar registros a cada 30 segundos
+    setInterval(carregarRegistrosHoje, 30000);
+});
+</script>
+{% endblock %}

@@ -1,0 +1,321 @@
+{% extends "base.html" %}
+
+{% block title %}Benefícios{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-gift me-2"></i>Gestão de Benefícios
+        </h1>
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalNovoBeneficio">
+            <i class="fas fa-plus me-1"></i>Novo Benefício
+        </button>
+    </div>
+
+    <!-- Cards de Resumo -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Benefícios Ativos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalBeneficios">0</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-gift fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Colaboradores Beneficiados
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">87</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Custo Total/Mês
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 45.320</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Benefícios por Desempenho
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">12</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-chart-line fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Benefícios -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Benefícios Cadastrados</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="tabelaBeneficios">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Tipo</th>
+                            <th>Valor</th>
+                            <th>Requisitos</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Será preenchido via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Novo Benefício -->
+<div class="modal fade" id="modalNovoBeneficio" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Novo Benefício</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formNovoBeneficio">
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label class="form-label">Nome do Benefício *</label>
+                            <input type="text" class="form-control" name="nome" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Tipo</label>
+                            <select class="form-select" name="tipo">
+                                <option value="vale_alimentacao">Vale Alimentação</option>
+                                <option value="vale_transporte">Vale Transporte</option>
+                                <option value="plano_saude">Plano de Saúde</option>
+                                <option value="auxilio_celular">Auxílio Celular</option>
+                                <option value="bonus">Bônus</option>
+                                <option value="outro">Outro</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Descrição</label>
+                        <textarea class="form-control" name="descricao" rows="2"></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Valor Fixo</label>
+                            <input type="number" class="form-control" name="valor" step="0.01" placeholder="R$ 0,00">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Ou Percentual (%)</label>
+                            <input type="number" class="form-control" name="percentual" step="0.01" placeholder="0%">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Obrigatório?</label>
+                            <select class="form-select" name="obrigatorio">
+                                <option value="false">Não</option>
+                                <option value="true">Sim (Legal)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <hr>
+                    <h6 class="text-primary">Requisitos para Manutenção do Benefício</h6>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="requer_assiduidade" id="reqAssiduidade">
+                                <label class="form-check-label" for="reqAssiduidade">
+                                    Requer Assiduidade
+                                </label>
+                            </div>
+                            <small class="text-muted">Sem faltas</small>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="requer_pontualidade" id="reqPontualidade">
+                                <label class="form-check-label" for="reqPontualidade">
+                                    Requer Pontualidade
+                                </label>
+                            </div>
+                            <small class="text-muted">Sem atrasos</small>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="requer_producao" id="reqProducao">
+                                <label class="form-check-label" for="reqProducao">
+                                    Requer Produção
+                                </label>
+                            </div>
+                            <small class="text-muted">Meta de produtividade</small>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Máx. Faltas/Mês</label>
+                            <input type="number" class="form-control" name="max_faltas_mes" value="0" min="0">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Máx. Atrasos/Mês</label>
+                            <input type="number" class="form-control" name="max_atrasos_mes" value="0" min="0">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Meta Produção</label>
+                            <input type="number" class="form-control" name="meta_producao" step="0.01" placeholder="Valor">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="salvarBeneficio()">
+                    <i class="fas fa-save me-1"></i>Salvar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Carregar benefícios
+function carregarBeneficios() {
+    fetch('/rh/api/beneficios')
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                const tbody = document.querySelector('#tabelaBeneficios tbody');
+                tbody.innerHTML = '';
+                
+                document.getElementById('totalBeneficios').textContent = data.beneficios.length;
+                
+                data.beneficios.forEach(b => {
+                    const requisitos = [];
+                    if (b.requer_assiduidade) requisitos.push('Assiduidade');
+                    if (b.requer_pontualidade) requisitos.push('Pontualidade');
+                    if (b.requer_producao) requisitos.push('Produção');
+                    
+                    const valor = b.valor_fixo ? 
+                        `R$ ${b.valor ? b.valor.toFixed(2) : '0,00'}` : 
+                        `${b.percentual || 0}%`;
+                    
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><strong>${b.nome}</strong></td>
+                            <td>${b.tipo || '-'}</td>
+                            <td>${valor}</td>
+                            <td>
+                                ${requisitos.length > 0 ? 
+                                    requisitos.map(r => `<span class="badge bg-info me-1">${r}</span>`).join('') : 
+                                    '<span class="text-muted">Nenhum</span>'}
+                            </td>
+                            <td>
+                                <span class="badge ${b.ativo ? 'bg-success' : 'bg-danger'}">
+                                    ${b.ativo ? 'Ativo' : 'Inativo'}
+                                </span>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-warning" onclick="editarBeneficio(${b.id})">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+        })
+        .catch(error => console.error('Erro:', error));
+}
+
+// Salvar benefício
+function salvarBeneficio() {
+    const form = document.getElementById('formNovoBeneficio');
+    const formData = new FormData(form);
+    const data = {};
+    
+    formData.forEach((value, key) => {
+        if (key.includes('requer_') || key === 'obrigatorio') {
+            data[key] = value === 'on' || value === 'true';
+        } else {
+            data[key] = value;
+        }
+    });
+    
+    fetch('/rh/beneficios/novo', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert('Benefício criado com sucesso!');
+            bootstrap.Modal.getInstance(document.getElementById('modalNovoBeneficio')).hide();
+            form.reset();
+            carregarBeneficios();
+        } else {
+            alert('Erro: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        alert('Erro ao salvar benefício');
+    });
+}
+
+// Carregar ao iniciar
+document.addEventListener('DOMContentLoaded', carregarBeneficios);
+</script>
+{% endblock %}

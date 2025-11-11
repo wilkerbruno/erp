@@ -36,6 +36,15 @@ login_manager = LoginManager()
 migrate = Migrate()
 csrf = CSRFProtect()
 
+"""
+Blueprint de RH - Recursos Humanos
+"""
+from flask import Blueprint
+
+bp = Blueprint('rh', __name__, url_prefix='/rh')
+
+from app.blueprints.rh import routes
+
 def create_app(config_name='development'):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
@@ -55,6 +64,7 @@ def create_app(config_name='development'):
     from app.blueprints.auth import bp as auth_bp
     from app.blueprints.rh import bp as rh_bp
     from app.blueprints.dashboard import bp as dashboard_bp
+    
     
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(reunioes_bp)

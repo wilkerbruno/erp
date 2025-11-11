@@ -8,6 +8,7 @@
         <h1 class="h3 mb-0 text-gray-800">
             <i class="fas fa-users me-2"></i>Recursos Humanos
         </h1>
+        <span class="badge bg-success">6 Novas Funcionalidades!</span>
     </div>
 
     <!-- Cards de Status -->
@@ -85,13 +86,28 @@
         </div>
     </div>
 
+    <!-- NOVAS FUNCIONALIDADES - Destaque -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <h5 class="alert-heading">
+                    <i class="fas fa-sparkles me-2"></i>Novas Funcionalidades Disponíveis!
+                </h5>
+                <p class="mb-0">
+                    Sistema de Benefícios, Auxílio Celular, Ponto com GPS, Home Office, Holerites Digitais e DRE Gerencial já estão disponíveis!
+                </p>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
     <!-- Seções Principais -->
     <div class="row">
         <!-- Gestão de Colaboradores -->
         <div class="col-lg-6 mb-4">
             <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">
+                <div class="card-header py-3 bg-primary text-white">
+                    <h6 class="m-0 font-weight-bold">
                         <i class="fas fa-users me-2"></i>Gestão de Colaboradores
                     </h6>
                 </div>
@@ -109,26 +125,145 @@
             </div>
         </div>
 
-        <!-- Ponto Eletrônico -->
+        <!-- Sistema de Benefícios - NOVO -->
         <div class="col-lg-6 mb-4">
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">
-                        <i class="fas fa-clock me-2"></i>Ponto Eletrônico
+            <div class="card shadow border-success">
+                <div class="card-header py-3 bg-success text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-gift me-2"></i>Sistema de Benefícios
+                        <span class="badge bg-warning text-dark float-end">NOVO!</span>
                     </h6>
                 </div>
                 <div class="card-body">
-                    <p>Controle de ponto, registros de entrada e saída dos colaboradores.</p>
+                    <p>Gerencie benefícios customizáveis com requisitos de desempenho.</p>
+                    <div class="d-grid gap-2 d-md-flex">
+                        <a href="/rh/beneficios" class="btn btn-success me-md-2">
+                            <i class="fas fa-gift me-1"></i>Ver Benefícios
+                        </a>
+                        <a href="/rh/beneficios" class="btn btn-outline-success">
+                            <i class="fas fa-plus me-1"></i>Criar Benefício
+                        </a>
+                    </div>
+                    <hr>
+                    <div class="small text-muted">
+                        <i class="fas fa-check-circle text-success me-1"></i>Auxílio Celular R$ 50/mês incluído
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ponto e Home Office -->
+    <div class="row">
+        <!-- Ponto Eletrônico com GPS - ATUALIZADO -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow border-info">
+                <div class="card-header py-3 bg-info text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-map-marker-alt me-2"></i>Ponto Eletrônico com GPS
+                        <span class="badge bg-warning text-dark float-end">ATUALIZADO!</span>
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p>Controle de ponto com localização automática e detecção de atrasos.</p>
                     <div class="d-grid gap-2 d-md-flex flex-wrap">
                         <a href="/rh/bater-ponto" class="btn btn-info me-md-2 mb-2">
-                            <i class="fas fa-clock me-1"></i>Bater Ponto
+                            <i class="fas fa-map-marker-alt me-1"></i>Bater Ponto (GPS)
                         </a>
-                        <a href="/rh/gerenciar-ponto" class="btn btn-warning me-md-2 mb-2">
+                        <a href="/rh/gerenciar-ponto" class="btn btn-outline-info me-md-2 mb-2">
                             <i class="fas fa-chart-bar me-1"></i>Gerenciar Ponto
                         </a>
                         <a href="/rh/controle-ponto" class="btn btn-secondary mb-2">
                             <i class="fas fa-cogs me-1"></i>Controle de Ponto
                         </a>
+                    </div>
+                    <hr>
+                    <div class="small text-muted">
+                        <i class="fas fa-satellite-dish text-info me-1"></i>Localização em tempo real
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gestão de Home Office - NOVO -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow border-primary">
+                <div class="card-header py-3 bg-primary text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-home me-2"></i>Gestão de Home Office
+                        <span class="badge bg-warning text-dark float-end">NOVO!</span>
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p>Autorize e gerencie trabalho remoto dos colaboradores.</p>
+                    <div class="d-grid gap-2 d-md-flex">
+                        <a href="/rh/home-office" class="btn btn-primary me-md-2">
+                            <i class="fas fa-home me-1"></i>Gerenciar Home Office
+                        </a>
+                        <a href="/rh/home-office" class="btn btn-outline-primary">
+                            <i class="fas fa-plus me-1"></i>Nova Autorização
+                        </a>
+                    </div>
+                    <hr>
+                    <div class="small text-muted">
+                        <i class="fas fa-calendar-check text-primary me-1"></i>Autorização por dias específicos
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Holerites e DRE -->
+    <div class="row">
+        <!-- Holerites Digitais - NOVO -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow border-warning">
+                <div class="card-header py-3 bg-warning text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-file-invoice-dollar me-2"></i>Holerites Digitais
+                        <span class="badge bg-danger float-end">NOVO!</span>
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p>Gere e gerencie contra-cheques digitais com download em PDF.</p>
+                    <div class="d-grid gap-2 d-md-flex">
+                        <a href="/rh/holerites" class="btn btn-warning me-md-2">
+                            <i class="fas fa-file-invoice-dollar me-1"></i>Ver Holerites
+                        </a>
+                        <a href="/rh/holerites" class="btn btn-outline-warning">
+                            <i class="fas fa-plus me-1"></i>Gerar Holerite
+                        </a>
+                    </div>
+                    <hr>
+                    <div class="small text-muted">
+                        <i class="fas fa-file-pdf text-danger me-1"></i>Download em PDF
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DRE Gerencial - NOVO -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow border-dark">
+                <div class="card-header py-3 bg-dark text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-chart-line me-2"></i>DRE Gerencial
+                        <span class="badge bg-danger float-end">NOVO!</span>
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p>Importe e visualize DRE do contador com gráficos interativos.</p>
+                    <div class="d-grid gap-2 d-md-flex">
+                        <a href="/rh/dre" class="btn btn-dark me-md-2">
+                            <i class="fas fa-chart-line me-1"></i>Ver DRE
+                        </a>
+                        <a href="/rh/dre" class="btn btn-outline-dark">
+                            <i class="fas fa-upload me-1"></i>Importar DRE
+                        </a>
+                    </div>
+                    <hr>
+                    <div class="small text-muted">
+                        <i class="fas fa-file-excel text-success me-1"></i>Importa Excel, CSV ou PDF
                     </div>
                 </div>
             </div>
@@ -171,5 +306,121 @@
             </div>
         </div>
     </div>
+
+    <!-- Resumo das Funcionalidades -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3 bg-light">
+                    <h6 class="m-0 font-weight-bold text-dark">
+                        <i class="fas fa-info-circle me-2"></i>Resumo das Novas Funcionalidades
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="border-start border-success border-3 ps-3">
+                                <h6 class="text-success">
+                                    <i class="fas fa-gift me-2"></i>Benefícios Customizáveis
+                                </h6>
+                                <p class="small text-muted mb-0">
+                                    Crie benefícios com requisitos de desempenho (faltas, atrasos, produção). 
+                                    Inclui auxílio celular de R$ 50/mês.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="border-start border-info border-3 ps-3">
+                                <h6 class="text-info">
+                                    <i class="fas fa-map-marker-alt me-2"></i>Ponto com GPS
+                                </h6>
+                                <p class="small text-muted mb-0">
+                                    Registro de ponto com localização automática, cálculo de distância 
+                                    e detecção de atrasos.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="border-start border-primary border-3 ps-3">
+                                <h6 class="text-primary">
+                                    <i class="fas fa-home me-2"></i>Home Office
+                                </h6>
+                                <p class="small text-muted mb-0">
+                                    Autorize trabalho remoto por dias específicos ou recorrente. 
+                                    Validação automática no ponto.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="border-start border-warning border-3 ps-3">
+                                <h6 class="text-warning">
+                                    <i class="fas fa-file-invoice-dollar me-2"></i>Holerites Digitais
+                                </h6>
+                                <p class="small text-muted mb-0">
+                                    Gere contra-cheques automáticos com vencimentos, descontos e benefícios. 
+                                    Download em PDF.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="border-start border-dark border-3 ps-3">
+                                <h6 class="text-dark">
+                                    <i class="fas fa-chart-line me-2"></i>DRE Gerencial
+                                </h6>
+                                <p class="small text-muted mb-0">
+                                    Importe DRE do contador (Excel/CSV/PDF) e visualize com gráficos 
+                                    interativos de evolução.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="border-start border-secondary border-3 ps-3">
+                                <h6 class="text-secondary">
+                                    <i class="fas fa-check-circle me-2"></i>Sistema Integrado
+                                </h6>
+                                <p class="small text-muted mb-0">
+                                    Todas as funcionalidades integradas com o sistema de colaboradores 
+                                    e permissões existentes.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Estilos adicionais -->
+<style>
+.card {
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.border-left-primary {
+    border-left: 0.25rem solid #4e73df !important;
+}
+
+.border-left-success {
+    border-left: 0.25rem solid #1cc88a !important;
+}
+
+.border-left-warning {
+    border-left: 0.25rem solid #f6c23e !important;
+}
+
+.border-left-info {
+    border-left: 0.25rem solid #36b9cc !important;
+}
+
+.badge {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+}
+</style>
+
 {% endblock %}
