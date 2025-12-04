@@ -1,0 +1,272 @@
+{% extends "base.html" %}
+
+{% block title %}Nova Viagem{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-route me-2"></i>Cadastrar Nova Viagem/Frete
+        </h1>
+        <a href="/frotas/viagens" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Voltar
+        </a>
+    </div>
+
+    <div class="row">
+        <!-- Formulário Principal -->
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <form id="formViagem">
+                        <!-- Veículo e Motorista -->
+                        <h5 class="text-primary mb-3">
+                            <i class="fas fa-truck me-2"></i>Veículo e Motorista
+                        </h5>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Veículo *</label>
+                                <select class="form-select" name="veiculo_id" id="veiculoSelect" required>
+                                    <option value="">Selecione um veículo...</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Motorista *</label>
+                                <select class="form-select" name="motorista_id" id="motoristaSelect" required>
+                                    <option value="">Selecione um motorista...</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <!-- Origem e Destino -->
+                        <h5 class="text-primary mb-3">
+                            <i class="fas fa-map-marked-alt me-2"></i>Origem e Destino
+                        </h5>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label class="form-label">Origem *</label>
+                                <input type="text" class="form-control" name="origem" required
+                                       placeholder="Cidade, Estado - CEP">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label class="form-label">Destino *</label>
+                                <input type="text" class="form-control" name="destino" required
+                                       placeholder="Cidade, Estado - CEP">
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <!-- Datas e Valores -->
+                        <h5 class="text-primary mb-3">
+                            <i class="fas fa-calendar-alt me-2"></i>Datas e Valores
+                        </h5>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Data/Hora Início *</label>
+                                <input type="datetime-local" class="form-control" name="data_inicio" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Previsão de Chegada</label>
+                                <input type="datetime-local" class="form-control" name="data_previsao_chegada">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Distância (km)</label>
+                                <input type="number" class="form-control" name="distancia_km" step="0.1">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Valor do Frete</label>
+                                <input type="number" class="form-control" name="valor_frete" step="0.01"
+                                       placeholder="0,00">
+                            </div>
+                            <div class="col-md-4">
+                                <label>&nbsp;</label>
+                                <button type="button" class="btn btn-info w-100" onclick="cotarFrete()">
+                                    <i class="fas fa-calculator me-2"></i>Cotar Frete
+                                </button>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <!-- Carga -->
+                        <h5 class="text-primary mb-3">
+                            <i class="fas fa-box me-2"></i>Informações da Carga
+                        </h5>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Tipo de Carga</label>
+                                <input type="text" class="form-control" name="tipo_carga" 
+                                       placeholder="Ex: Eletrônicos, Alimentos, etc">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Peso (kg)</label>
+                                <input type="number" class="form-control" name="peso_carga" step="0.01">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label class="form-label">Cliente</label>
+                                <input type="text" class="form-control" name="cliente" 
+                                       placeholder="Nome do cliente/empresa">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label class="form-label">Observações</label>
+                                <textarea class="form-control" name="observacoes" rows="3"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="text-end">
+                            <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                                <i class="fas fa-times me-2"></i>Cancelar
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Iniciar Viagem
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Painel Lateral - Informações -->
+        <div class="col-lg-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 bg-info text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-info-circle me-2"></i>Integração Frete Brás
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p class="small">
+                        Use o botão "Cotar Frete" para obter cotações automáticas via API Frete Brás.
+                    </p>
+                    <div id="resultadoCotacao"></div>
+                </div>
+            </div>
+
+            <div class="card shadow">
+                <div class="card-header py-3 bg-warning text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Importante
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <ul class="small mb-0">
+                        <li>Veículo será marcado como "Em Viagem"</li>
+                        <li>Motorista ficará indisponível</li>
+                        <li>Rastreamento GPS será ativado</li>
+                        <li>Todas as informações podem ser editadas posteriormente</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    carregarVeiculos();
+    carregarMotoristas();
+});
+
+function carregarVeiculos() {
+    fetch('/frotas/api/veiculos?status=ativo')
+        .then(response => response.json())
+        .then(data => {
+            const select = document.getElementById('veiculoSelect');
+            data.veiculos.forEach(veiculo => {
+                select.innerHTML += `<option value="${veiculo.id}">${veiculo.placa} - ${veiculo.marca} ${veiculo.modelo}</option>`;
+            });
+        });
+}
+
+function carregarMotoristas() {
+    fetch('/frotas/api/motoristas?disponivel=true')
+        .then(response => response.json())
+        .then(data => {
+            const select = document.getElementById('motoristaSelect');
+            data.motoristas.forEach(motorista => {
+                select.innerHTML += `<option value="${motorista.id}">${motorista.nome} (CNH: ${motorista.cnh_categoria})</option>`;
+            });
+        });
+}
+
+function cotarFrete() {
+    const origem = document.querySelector('[name="origem"]').value;
+    const destino = document.querySelector('[name="destino"]').value;
+    const peso = document.querySelector('[name="peso_carga"]').value;
+    
+    if (!origem || !destino || !peso) {
+        alert('Preencha origem, destino e peso para cotar o frete.');
+        return;
+    }
+    
+    // Mostrar loading
+    const resultadoDiv = document.getElementById('resultadoCotacao');
+    resultadoDiv.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Cotando...</div>';
+    
+    // Simular cotação (implementar API real)
+    setTimeout(() => {
+        const valorCotado = (Math.random() * 1000 + 500).toFixed(2);
+        resultadoDiv.innerHTML = `
+            <div class="alert alert-success mb-0">
+                <strong>Valor Cotado:</strong><br>
+                R$ ${valorCotado}
+                <hr>
+                <button class="btn btn-sm btn-success w-100" onclick="aplicarCotacao(${valorCotado})">
+                    Aplicar Valor
+                </button>
+            </div>
+        `;
+    }, 1500);
+}
+
+function aplicarCotacao(valor) {
+    document.querySelector('[name="valor_frete"]').value = valor;
+}
+
+document.getElementById('formViagem').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData.entries());
+    
+    fetch('/frotas/viagens/nova', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.status === 'success') {
+            alert('Viagem iniciada com sucesso!');
+            window.location.href = '/frotas/viagens';
+        } else {
+            alert('Erro: ' + result.message);
+        }
+    })
+    .catch(error => {
+        alert('Erro ao iniciar viagem: ' + error);
+    });
+});
+</script>
+{% endblock %}

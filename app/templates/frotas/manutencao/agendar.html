@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}Agendar Manutenção{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-calendar-plus me-2"></i>Agendar Manutenção
+        </h1>
+        <a href="/frotas/manutencao" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Voltar
+        </a>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <form id="formManutencao">
+                <!-- Informações Básicas -->
+                <h5 class="text-primary mb-3">
+                    <i class="fas fa-info-circle me-2"></i>Informações Básicas
+                </h5>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Veículo *</label>
+                        <select class="form-select" name="veiculo_id" required>
+                            <option value="">Selecione um veículo...</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Tipo de Manutenção *</label>
+                        <select class="form-select" name="tipo" required>
+                            <option value="">Selecione...</option>
+                            <option value="preventiva">Preventiva</option>
+                            <option value="corretiva">Corretiva</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label class="form-label">Descrição dos Serviços *</label>
+                        <textarea class="form-control" name="descricao" rows="3" required
+                                  placeholder="Descreva os serviços que serão realizados..."></textarea>
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- Data e Local -->
+                <h5 class="text-primary mb-3">
+                    <i class="fas fa-calendar-alt me-2"></i>Data e Local
+                </h5>
+                
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Data Agendada *</label>
+                        <input type="date" class="form-control" name="data_agendada" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">KM do Veículo</label>
+                        <input type="number" class="form-control" name="km_veiculo" placeholder="Ex: 50000">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Oficina</label>
+                        <input type="text" class="form-control" name="oficina" 
+                               placeholder="Nome da oficina">
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- Valores -->
+                <h5 class="text-primary mb-3">
+                    <i class="fas fa-dollar-sign me-2"></i>Valores
+                </h5>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Valor Estimado</label>
+                        <input type="number" class="form-control" name="valor_estimado" 
+                               step="0.01" placeholder="0,00">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Indisponibilizar Veículo?</label>
+                        <select class="form-select" name="indisponibilizar_veiculo">
+                            <option value="false">Não</option>
+                            <option value="true">Sim</option>
+                        </select>
+                        <small class="text-muted">Veículo ficará com status "Em Manutenção"</small>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label class="form-label">Observações</label>
+                        <textarea class="form-control" name="observacoes" rows="2"></textarea>
+                    </div>
+                </div>
+
+                <div class="text-end">
+                    <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Agendar Manutenção
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    carregarVeiculos();
+});
+
+function carregarVeiculos() {
+    fetch('/frotas/api/veiculos')
+        .then(response => response.json())
+        .then(data => {
+            const select = document.querySelector('[name="veiculo_id"]');
+            data.veiculos.forEach(veiculo => {
+                select.innerHTML += `<option value="${veiculo.id}">${veiculo.placa} - ${veiculo.marca} ${veiculo.modelo}</option>`;
+            });
+        });
+}
+
+document.getElementById('formManutencao').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData.entries());
+    data.indisponibilizar_veiculo = data.indisponibilizar_veiculo === 'true';
+    
+    fetch('/frotas/manutencao/agendar', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.status === 'success') {
+            alert('Manutenção agendada com sucesso!');
+            window.location.href = '/frotas/manutencao';
+        } else {
+            alert('Erro: ' + result.message);
+        }
+    })
+    .catch(error => {
+        alert('Erro ao agendar manutenção: ' + error);
+    });
+});
+</script>
+{% endblock %}

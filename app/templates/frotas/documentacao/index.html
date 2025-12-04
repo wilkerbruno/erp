@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block title %}Documentação de Veículos{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-file-alt me-2"></i>Documentação de Veículos
+        </h1>
+        <a href="/frotas/documentacao/alertas" class="btn btn-warning">
+            <i class="fas fa-bell me-2"></i>Ver Alertas
+        </a>
+    </div>
+
+    <!-- Cards de Status -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                        Documentos Regulares
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">32</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                        Vencendo (30 dias)
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">8</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                        Vencidos
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">3</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                        IPVA Pendente
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">5</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de Documentação -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-list me-2"></i>Status da Documentação
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="tabelaDocumentacao">
+                    <thead>
+                        <tr>
+                            <th>Veículo</th>
+                            <th>CRLV</th>
+                            <th>IPVA 2025</th>
+                            <th>Licenciamento</th>
+                            <th>Seguro</th>
+                            <th>Multas Pendentes</th>
+                            <th>Status Geral</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Exemplo 1: Tudo OK -->
+                        <tr>
+                            <td><strong>ABC-1234</strong></td>
+                            <td><span class="badge bg-success">15/03/2026</span></td>
+                            <td><span class="badge bg-success">Pago</span></td>
+                            <td><span class="badge bg-success">15/03/2026</span></td>
+                            <td><span class="badge bg-success">Ativo</span></td>
+                            <td><span class="badge bg-success">0</span></td>
+                            <td><span class="badge bg-success">Regular</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-info" onclick="verDetalhes('ABC-1234')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        
+                        <!-- Exemplo 2: Vencendo -->
+                        <tr>
+                            <td><strong>DEF-5678</strong></td>
+                            <td><span class="badge bg-warning">20/12/2025</span></td>
+                            <td><span class="badge bg-success">Pago</span></td>
+                            <td><span class="badge bg-warning">20/12/2025</span></td>
+                            <td><span class="badge bg-warning">Vencendo</span></td>
+                            <td><span class="badge bg-warning">2</span></td>
+                            <td><span class="badge bg-warning">Atenção</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-info" onclick="verDetalhes('DEF-5678')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="renovar('DEF-5678')">
+                                    <i class="fas fa-sync"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        
+                        <!-- Exemplo 3: Irregular -->
+                        <tr class="table-danger">
+                            <td><strong>GHI-9012</strong></td>
+                            <td><span class="badge bg-danger">Vencido</span></td>
+                            <td><span class="badge bg-danger">Pendente</span></td>
+                            <td><span class="badge bg-danger">Vencido</span></td>
+                            <td><span class="badge bg-danger">Vencido</span></td>
+                            <td><span class="badge bg-danger">5</span></td>
+                            <td><span class="badge bg-danger">Irregular</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-info" onclick="verDetalhes('GHI-9012')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="regularizar('GHI-9012')">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resumo de Multas -->
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3 bg-danger text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-exclamation-circle me-2"></i>Multas Pendentes
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Veículo</th>
+                                    <th>Data</th>
+                                    <th>Infração</th>
+                                    <th>Valor</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>GHI-9012</td>
+                                    <td>05/10/2025</td>
+                                    <td>Excesso de velocidade</td>
+                                    <td>R$ 195,23</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary">Pagar</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>DEF-5678</td>
+                                    <td>12/10/2025</td>
+                                    <td>Estacionamento irregular</td>
+                                    <td>R$ 130,16</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary">Pagar</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <hr>
+                    <div class="text-end">
+                        <strong>Total Pendente: R$ 1.523,45</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3 bg-info text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-calendar-alt me-2"></i>Próximos Vencimentos
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <strong>ABC-1234</strong> - IPVA 3ª Parcela
+                                </div>
+                                <span class="badge bg-warning">15/12/2025</span>
+                            </div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <strong>DEF-5678</strong> - Renovação CRLV
+                                </div>
+                                <span class="badge bg-warning">20/12/2025</span>
+                            </div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <strong>JKL-3456</strong> - Licenciamento
+                                </div>
+                                <span class="badge bg-info">10/01/2026</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function verDetalhes(placa) {
+    window.location.href = `/frotas/documentacao/${placa}`;
+}
+
+function renovar(placa) {
+    alert(`Iniciando processo de renovação para ${placa}`);
+}
+
+function regularizar(placa) {
+    if (confirm(`Deseja regularizar a documentação de ${placa}?`)) {
+        alert('Funcionalidade em desenvolvimento');
+    }
+}
+</script>
+{% endblock %}

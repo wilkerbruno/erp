@@ -1,0 +1,484 @@
+{% extends "base.html" %}
+
+{% block title %}Gestão de Frotas{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-truck me-2"></i>Gestão de Frotas
+        </h1>
+        <span class="badge bg-success">10 Funcionalidades Integradas!</span>
+    </div>
+
+    <!-- Cards de Status -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total de Veículos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">45</div>
+                            <div class="small text-muted">32 Próprios | 13 Terceiros</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-truck fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Em Operação
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">38</div>
+                            <div class="small text-muted">7 Em Manutenção</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Viagens Ativas
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">23</div>
+                            <div class="small text-muted">R$ 127.500 em fretes</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-route fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Motoristas Ativos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">52</div>
+                            <div class="small text-muted">12 Disponíveis</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-id-card fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOVAS FUNCIONALIDADES - Destaque -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <h5 class="alert-heading">
+                    <i class="fas fa-sparkles me-2"></i>Sistema Completo de Gestão de Frotas!
+                </h5>
+                <p class="mb-0">
+                    Rastreamento GPS, Integração Frete Brás, Controle de Manutenção, Gestão de Seguros, Abastecimento e muito mais!
+                </p>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Seções Principais -->
+    <div class="row">
+        <!-- Gestão de Veículos -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3 bg-primary text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-truck me-2"></i>Gestão de Veículos
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p>Cadastre e gerencie veículos próprios e terceiros da frota.</p>
+                    <div class="d-grid gap-2 d-md-flex">
+                        <a href="/frotas/veiculos" class="btn btn-primary me-md-2">
+                            <i class="fas fa-list me-1"></i>Ver Veículos
+                        </a>
+                        <a href="/frotas/veiculos/novo" class="btn btn-success">
+                            <i class="fas fa-plus me-1"></i>Novo Veículo
+                        </a>
+                    </div>
+                    <hr>
+                    <div class="small text-muted">
+                        <i class="fas fa-check-circle text-success me-1"></i>Controle de documentação e seguros
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gestão de Motoristas -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3 bg-info text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-id-card me-2"></i>Gestão de Motoristas
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p>Gerencie motoristas, CNH, exames médicos e documentações.</p>
+                    <div class="d-grid gap-2 d-md-flex">
+                        <a href="/frotas/motoristas" class="btn btn-info me-md-2">
+                            <i class="fas fa-list me-1"></i>Ver Motoristas
+                        </a>
+                        <a href="/frotas/motoristas/novo" class="btn btn-outline-info">
+                            <i class="fas fa-plus me-1"></i>Novo Motorista
+                        </a>
+                    </div>
+                    <hr>
+                    <div class="small text-muted">
+                        <i class="fas fa-bell text-warning me-1"></i>Alertas de vencimento de CNH e exames
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rastreamento e Viagens -->
+    <div class="row">
+        <!-- Rastreamento GPS - NOVO -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow border-success">
+                <div class="card-header py-3 bg-success text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-map-marked-alt me-2"></i>Rastreamento GPS
+                        <span class="badge bg-warning text-dark float-end">NOVO!</span>
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p>Rastreie veículos em tempo real com localização GPS integrada.</p>
+                    <div class="d-grid gap-2 d-md-flex">
+                        <a href="/frotas/mapa" class="btn btn-success me-md-2">
+                            <i class="fas fa-map-marker-alt me-1"></i>Ver Mapa ao Vivo
+                        </a>
+                        <a href="/frotas/historico" class="btn btn-outline-success">
+                            <i class="fas fa-history me-1"></i>Histórico
+                        </a>
+                    </div>
+                    <hr>
+                    <div class="small text-muted">
+                        <i class="fas fa-satellite-dish text-success me-1"></i>Localização em tempo real
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gestão de Viagens/Fretes - NOVO -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow border-warning">
+                <div class="card-header py-3 bg-warning text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-route me-2"></i>Gestão de Viagens/Fretes
+                        <span class="badge bg-danger float-end">NOVO!</span>
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p>Gerencie fretes, viagens e integração com Frete Brás API.</p>
+                    <div class="d-grid gap-2 d-md-flex">
+                        <a href="/frotas/viagens" class="btn btn-warning me-md-2">
+                            <i class="fas fa-route me-1"></i>Ver Viagens
+                        </a>
+                        <a href="/frotas/viagens/nova" class="btn btn-outline-warning">
+                            <i class="fas fa-plus me-1"></i>Nova Viagem
+                        </a>
+                    </div>
+                    <hr>
+                    <div class="small text-muted">
+                        <i class="fas fa-link text-warning me-1"></i>Integrado com Frete Brás API
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Manutenção e Abastecimento -->
+    <div class="row">
+        <!-- Controle de Manutenção -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow border-danger">
+                <div class="card-header py-3 bg-danger text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-tools me-2"></i>Controle de Manutenção
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p>Controle preventiva, corretiva e histórico de manutenções.</p>
+                    <div class="d-grid gap-2 d-md-flex">
+                        <a href="/frotas/manutencao" class="btn btn-danger me-md-2">
+                            <i class="fas fa-wrench me-1"></i>Ver Manutenções
+                        </a>
+                        <a href="/frotas/manutencao/agendar" class="btn btn-outline-danger">
+                            <i class="fas fa-calendar-plus me-1"></i>Agendar
+                        </a>
+                    </div>
+                    <hr>
+                    <div class="small text-muted">
+                        <i class="fas fa-calendar-check text-danger me-1"></i>Alertas de manutenção preventiva
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gestão de Combustível -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow border-dark">
+                <div class="card-header py-3 bg-dark text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-gas-pump me-2"></i>Gestão de Combustível
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p>Registre abastecimentos e controle consumo de combustível.</p>
+                    <div class="d-grid gap-2 d-md-flex">
+                        <a href="/frotas/combustivel" class="btn btn-dark me-md-2">
+                            <i class="fas fa-gas-pump me-1"></i>Ver Abastecimentos
+                        </a>
+                        <a href="/frotas/combustivel/registrar" class="btn btn-outline-dark">
+                            <i class="fas fa-plus me-1"></i>Registrar
+                        </a>
+                    </div>
+                    <hr>
+                    <div class="small text-muted">
+                        <i class="fas fa-chart-line text-dark me-1"></i>Análise de consumo e eficiência
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Seguros e Documentação -->
+    <div class="row">
+        <!-- Gestão de Seguros - NOVO -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow border-primary">
+                <div class="card-header py-3 bg-primary text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-shield-alt me-2"></i>Gestão de Seguros
+                        <span class="badge bg-warning text-dark float-end">NOVO!</span>
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p>Controle seguros de veículos com verificação automática via API.</p>
+                    <div class="d-grid gap-2 d-md-flex">
+                        <a href="/frotas/seguros" class="btn btn-primary me-md-2">
+                            <i class="fas fa-shield-alt me-1"></i>Ver Seguros
+                        </a>
+                        <a href="/frotas/seguros/verificar" class="btn btn-outline-primary">
+                            <i class="fas fa-sync me-1"></i>Verificar API
+                        </a>
+                    </div>
+                    <hr>
+                    <div class="small text-muted">
+                        <i class="fas fa-check-circle text-primary me-1"></i>Verificação automática de apólices
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Documentação de Veículos -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow border-info">
+                <div class="card-header py-3 bg-info text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-file-alt me-2"></i>Documentação de Veículos
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p>Gerencie CRLV, IPVA, licenciamento e multas.</p>
+                    <div class="d-grid gap-2 d-md-flex">
+                        <a href="/frotas/documentacao" class="btn btn-info me-md-2">
+                            <i class="fas fa-folder-open me-1"></i>Ver Documentos
+                        </a>
+                        <a href="/frotas/documentacao/alertas" class="btn btn-outline-info">
+                            <i class="fas fa-bell me-1"></i>Alertas
+                        </a>
+                    </div>
+                    <hr>
+                    <div class="small text-muted">
+                        <i class="fas fa-calendar-exclamation text-danger me-1"></i>Alertas de vencimentos
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ações Rápidas -->
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-bolt me-2"></i>Ações Rápidas
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-2">
+                            <a href="/frotas/relatorios/custos" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-dollar-sign me-2"></i>Relatório de Custos
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="/frotas/relatorios/manutencao" class="btn btn-outline-danger w-100">
+                                <i class="fas fa-wrench me-2"></i>Rel. Manutenções
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="/frotas/relatorios/viagens" class="btn btn-outline-warning w-100">
+                                <i class="fas fa-route me-2"></i>Rel. Viagens
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="/frotas/relatorios/geral" class="btn btn-outline-secondary w-100">
+                                <i class="fas fa-chart-bar me-2"></i>Relatório Geral
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resumo das Funcionalidades -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3 bg-light">
+                    <h6 class="m-0 font-weight-bold text-dark">
+                        <i class="fas fa-info-circle me-2"></i>Resumo das Funcionalidades
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="border-start border-primary border-3 ps-3">
+                                <h6 class="text-primary">
+                                    <i class="fas fa-truck me-2"></i>Gestão Completa de Veículos
+                                </h6>
+                                <p class="small text-muted mb-0">
+                                    Cadastro de veículos próprios e terceiros, controle de documentação, 
+                                    seguros, IPVA e licenciamento com alertas automáticos.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="border-start border-success border-3 ps-3">
+                                <h6 class="text-success">
+                                    <i class="fas fa-map-marked-alt me-2"></i>Rastreamento em Tempo Real
+                                </h6>
+                                <p class="small text-muted mb-0">
+                                    Localize veículos em tempo real via GPS, histórico de trajetos, 
+                                    geofencing e alertas de desvio de rota.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="border-start border-warning border-3 ps-3">
+                                <h6 class="text-warning">
+                                    <i class="fas fa-route me-2"></i>Integração Frete Brás
+                                </h6>
+                                <p class="small text-muted mb-0">
+                                    Integração com API Frete Brás para cotação automática, 
+                                    gestão de fretes e relacionamento com parceiros fixos.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="border-start border-danger border-3 ps-3">
+                                <h6 class="text-danger">
+                                    <i class="fas fa-tools me-2"></i>Controle de Manutenção
+                                </h6>
+                                <p class="small text-muted mb-0">
+                                    Manutenção preventiva e corretiva, histórico completo, 
+                                    alertas por KM rodado e agendamento automático.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="border-start border-dark border-3 ps-3">
+                                <h6 class="text-dark">
+                                    <i class="fas fa-gas-pump me-2"></i>Gestão de Combustível
+                                </h6>
+                                <p class="small text-muted mb-0">
+                                    Registro de abastecimentos, cálculo de consumo médio, 
+                                    análise de eficiência e relatórios de custos.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="border-start border-info border-3 ps-3">
+                                <h6 class="text-info">
+                                    <i class="fas fa-shield-alt me-2"></i>Verificação de Seguros
+                                </h6>
+                                <p class="small text-muted mb-0">
+                                    Verificação automática de apólices de seguro via API, 
+                                    alertas de vencimento e controle de sinistros.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Estilos adicionais -->
+<style>
+.card {
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.border-left-primary {
+    border-left: 0.25rem solid #4e73df !important;
+}
+
+.border-left-success {
+    border-left: 0.25rem solid #1cc88a !important;
+}
+
+.border-left-warning {
+    border-left: 0.25rem solid #f6c23e !important;
+}
+
+.border-left-info {
+    border-left: 0.25rem solid #36b9cc !important;
+}
+
+.badge {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+}
+</style>
+
+{% endblock %}

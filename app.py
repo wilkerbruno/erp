@@ -8,6 +8,7 @@ import sys
 import os
 from functools import wraps
 from flask import session
+from sqlalchemy import and_, or_
 
 from app.models import (
     Colaborador, Beneficio, ColaboradorBeneficio, CargoBeneficio,
@@ -148,6 +149,7 @@ class User(db.Model):
         return check_password_hash(self.password_hash, password)
 
 # Rotas
+
 @app.route('/')
 def index():
     """Página inicial"""
@@ -1369,5 +1371,52 @@ def relatorios():
     """Relatórios gerais"""
     return render_template('rh/relatorios/relatorios.html')
 
+
+# ========== RELATÓRIOS ==========
+@bp.route('/relatorio-frequencias')
+@login_required
+def relatorio_frequencias():
+    """Relatório de frequências"""
+    return render_template('rh/relatorios/frequencias.html')
+
+@bp.route('/gerenciar-ferias')
+@login_required
+def gerenciar_ferias():
+    """Gerenciar férias"""
+    return render_template('rh/ferias/gerenciar_ferias.html')
+
+@bp.route('/exportar-dados')
+@login_required
+def exportar_dados():
+    """Exportar dados"""
+    return render_template('rh/exportar_dados.html')
+
+@bp.route('/relatorios')
+@login_required
+def relatorios():
+    """Relatórios gerais"""
+    return render_template('rh/relatorios/relatorios.html')
+
+
+# ========== MÓDULO FINANCEIRO ==========
+@app.route('/financeiro')
+@login_required
+def financeiro():
+    """Página principal do financeiro"""
+    return render_template('financeiro/index.html')
+
+
+
+
+
+# ========== GESTÃO DA VISTA ==========
+@app.route('/gestao-vista')
+@login_required
+def gestao_vista():
+    """Página de gestão da vista"""
+    return render_template('gestao_vista/index.html')
+
+
 if __name__ == '__main__':
     print("🏢 ERP SISTEMA - VERSÃO SIMPLIFICADA")
+

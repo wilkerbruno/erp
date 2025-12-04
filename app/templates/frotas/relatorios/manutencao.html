@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Relatório de Manutenções{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-wrench me-2"></i>Relatório de Manutenções
+        </h1>
+        <div>
+            <button class="btn btn-success" onclick="exportarPDF()">
+                <i class="fas fa-file-pdf me-2"></i>Exportar PDF
+            </button>
+            <button class="btn btn-info" onclick="exportarExcel()">
+                <i class="fas fa-file-excel me-2"></i>Exportar Excel
+            </button>
+        </div>
+    </div>
+
+    <!-- Resumo Executivo -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                        Total de Manutenções
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">156</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                        Preventivas
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">98 (62.8%)</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                        Corretivas
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">58 (37.2%)</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                        Custo Total
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 107.250</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela Detalhada -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Histórico Completo</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Veículo</th>
+                            <th>Tipo</th>
+                            <th>Descrição</th>
+                            <th>KM</th>
+                            <th>Oficina</th>
+                            <th>Valor</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>14/11/2025</td>
+                            <td>ABC-1234</td>
+                            <td><span class="badge bg-info">Preventiva</span></td>
+                            <td>Troca de óleo e filtros</td>
+                            <td>50.000 km</td>
+                            <td>Oficina Central</td>
+                            <td>R$ 450,00</td>
+                            <td><span class="badge bg-success">Concluída</span></td>
+                        </tr>
+                        <!-- Mais linhas aqui -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function exportarPDF() {
+    alert('Exportando para PDF...');
+}
+
+function exportarExcel() {
+    alert('Exportando para Excel...');
+}
+</script>
+{% endblock %}

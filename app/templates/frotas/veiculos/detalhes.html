@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block title %}Detalhes do Veículo - {{ veiculo.placa }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-truck me-2"></i>Veículo {{ veiculo.placa }}
+        </h1>
+        <div>
+            <a href="/frotas/veiculos" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Voltar
+            </a>
+            <a href="/frotas/veiculos/editar/{{ veiculo.id }}" class="btn btn-primary">
+                <i class="fas fa-edit me-2"></i>Editar
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Informações Principais -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3 bg-primary text-white">
+                    <h6 class="m-0 font-weight-bold">Informações do Veículo</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Placa:</strong> {{ veiculo.placa }}
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Tipo:</strong> 
+                            {% if veiculo.tipo == 'proprio' %}
+                                <span class="badge bg-primary">Próprio</span>
+                            {% else %}
+                                <span class="badge bg-warning">Terceiro</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Marca/Modelo:</strong> {{ veiculo.marca }} {{ veiculo.modelo }}
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Ano:</strong> {{ veiculo.ano_fabricacao }}/{{ veiculo.ano_modelo }}
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Categoria:</strong> {{ veiculo.categoria|title }}
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Cor:</strong> {{ veiculo.cor or '-' }}
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Capacidade de Carga:</strong> {{ veiculo.capacidade_carga or '-' }} ton
+                        </div>
+                        <div class="col-md-6">
+                            <strong>KM Atual:</strong> {{ veiculo.km_atual|number_format }} km
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Chassi:</strong> {{ veiculo.chassi or '-' }}
+                        </div>
+                        <div class="col-md-6">
+                            <strong>RENAVAM:</strong> {{ veiculo.renavam or '-' }}
+                        </div>
+                    </div>
+                    
+                    {% if veiculo.tipo == 'terceiro' %}
+                    <hr>
+                    <h6 class="text-warning">Proprietário</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <strong>Nome:</strong> {{ veiculo.proprietario_nome or '-' }}<br>
+                            <strong>CPF/CNPJ:</strong> {{ veiculo.proprietario_cpf_cnpj or '-' }}<br>
+                            <strong>Contato:</strong> {{ veiculo.proprietario_contato or '-' }}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if veiculo.observacoes %}
+                    <hr>
+                    <strong>Observações:</strong><br>
+                    {{ veiculo.observacoes }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Status e Ações Rápidas -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 bg-success text-white">
+                    <h6 class="m-0 font-weight-bold">Status Atual</h6>
+                </div>
+                <div class="card-body text-center">
+                    {% if veiculo.status == 'ativo' %}
+                        <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                        <h5 class="text-success">Ativo</h5>
+                    {% elif veiculo.status == 'manutencao' %}
+                        <i class="fas fa-wrench fa-3x text-warning mb-3"></i>
+                        <h5 class="text-warning">Em Manutenção</h5>
+                    {% elif veiculo.status == 'viagem' %}
+                        <i class="fas fa-route fa-3x text-info mb-3"></i>
+                        <h5 class="text-info">Em Viagem</h5>
+                    {% else %}
+                        <i class="fas fa-times-circle fa-3x text-secondary mb-3"></i>
+                        <h5 class="text-secondary">Inativo</h5>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Ações Rápidas</h6>
+                </div>
+                <div class="card-body">
+                    <a href="/frotas/manutencao/agendar?veiculo={{ veiculo.id }}" 
+                       class="btn btn-warning w-100 mb-2">
+                        <i class="fas fa-wrench me-2"></i>Agendar Manutenção
+                    </a>
+                    <a href="/frotas/viagens/nova?veiculo={{ veiculo.id }}" 
+                       class="btn btn-info w-100 mb-2">
+                        <i class="fas fa-route me-2"></i>Iniciar Viagem
+                    </a>
+                    <a href="/frotas/combustivel/registrar?veiculo={{ veiculo.id }}" 
+                       class="btn btn-dark w-100 mb-2">
+                        <i class="fas fa-gas-pump me-2"></i>Registrar Abastecimento
+                    </a>
+                    <a href="/frotas/rastreamento?veiculo={{ veiculo.id }}" 
+                       class="btn btn-success w-100">
+                        <i class="fas fa-map-marker-alt me-2"></i>Ver Localização
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Histórico Recente -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Histórico Recente</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#manutencoes">Manutenções</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#viagens">Viagens</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#abastecimentos">Abastecimentos</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content pt-3">
+                        <div class="tab-pane active" id="manutencoes">
+                            <p class="text-muted">Últimas manutenções realizadas...</p>
+                        </div>
+                        <div class="tab-pane" id="viagens">
+                            <p class="text-muted">Últimas viagens realizadas...</p>
+                        </div>
+                        <div class="tab-pane" id="abastecimentos">
+                            <p class="text-muted">Últimos abastecimentos registrados...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

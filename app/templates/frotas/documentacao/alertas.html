@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}Alertas de Documentação{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-bell me-2"></i>Alertas de Documentação
+        </h1>
+        <a href="/frotas/documentacao" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Voltar
+        </a>
+    </div>
+
+    <!-- Alertas Críticos -->
+    <div class="card shadow mb-4 border-left-danger">
+        <div class="card-header py-3 bg-danger text-white">
+            <h6 class="m-0 font-weight-bold">
+                <i class="fas fa-exclamation-triangle me-2"></i>Documentos Vencidos - Ação Urgente
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Veículo</th>
+                            <th>Documento</th>
+                            <th>Vencimento</th>
+                            <th>Dias Vencidos</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>GHI-9012</strong></td>
+                            <td>CRLV</td>
+                            <td>15/10/2025</td>
+                            <td><span class="badge bg-danger">30 dias</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-primary">Regularizar</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>GHI-9012</strong></td>
+                            <td>Seguro</td>
+                            <td>20/10/2025</td>
+                            <td><span class="badge bg-danger">25 dias</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-primary">Renovar</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alertas de Atenção -->
+    <div class="card shadow mb-4 border-left-warning">
+        <div class="card-header py-3 bg-warning text-white">
+            <h6 class="m-0 font-weight-bold">
+                <i class="fas fa-exclamation-circle me-2"></i>Documentos Vencendo (30 dias)
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Veículo</th>
+                            <th>Documento</th>
+                            <th>Vencimento</th>
+                            <th>Dias Restantes</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in range(5) %}
+                        <tr>
+                            <td><strong>{{ ['DEF-5678', 'JKL-3456', 'MNO-7890', 'PQR-1234', 'STU-5678'][i] }}</strong></td>
+                            <td>{{ ['CRLV', 'Licenciamento', 'Seguro', 'IPVA', 'CRLV'][i] }}</td>
+                            <td>{{ ['20/12/2025', '25/12/2025', '28/12/2025', '30/12/2025', '05/01/2026'][i] }}</td>
+                            <td><span class="badge bg-warning">{{ [36, 31, 28, 26, 22][i] }} dias</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-info">Ver Detalhes</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- IPVA Pendente -->
+    <div class="card shadow mb-4 border-left-info">
+        <div class="card-header py-3 bg-info text-white">
+            <h6 class="m-0 font-weight-bold">
+                <i class="fas fa-dollar-sign me-2"></i>IPVA Pendente
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Veículo</th>
+                            <th>Ano</th>
+                            <th>Valor Total</th>
+                            <th>Parcelas Pagas</th>
+                            <th>Saldo</th>
+                            <th>Próximo Vencimento</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>ABC-1234</strong></td>
+                            <td>2025</td>
+                            <td>R$ 4.523,00</td>
+                            <td>2/3</td>
+                            <td>R$ 1.507,67</td>
+                            <td>15/12/2025</td>
+                            <td>
+                                <button class="btn btn-sm btn-success">Pagar</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>GHI-9012</strong></td>
+                            <td>2025</td>
+                            <td>R$ 3.890,00</td>
+                            <td>0/3</td>
+                            <td>R$ 3.890,00</td>
+                            <td>Vencido</td>
+                            <td>
+                                <button class="btn btn-sm btn-danger">Pagar</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

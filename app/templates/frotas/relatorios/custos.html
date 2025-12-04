@@ -1,0 +1,325 @@
+{% extends "base.html" %}
+
+{% block title %}Relatório de Custos{% endblock %}
+
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-dollar-sign me-2"></i>Relatório de Custos da Frota
+        </h1>
+        <div>
+            <button class="btn btn-success" onclick="exportarPDF()">
+                <i class="fas fa-file-pdf me-2"></i>Exportar PDF
+            </button>
+            <button class="btn btn-info" onclick="exportarExcel()">
+                <i class="fas fa-file-excel me-2"></i>Exportar Excel
+            </button>
+        </div>
+    </div>
+
+    <!-- Filtros de Período -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Selecionar Período</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <label>Data Inicial</label>
+                    <input type="date" class="form-control" id="dataInicial">
+                </div>
+                <div class="col-md-3">
+                    <label>Data Final</label>
+                    <input type="date" class="form-control" id="dataFinal">
+                </div>
+                <div class="col-md-3">
+                    <label>Veículo</label>
+                    <select class="form-select" id="filtroVeiculo">
+                        <option value="">Todos</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label>&nbsp;</label>
+                    <button class="btn btn-primary w-100" onclick="gerarRelatorio()">
+                        <i class="fas fa-chart-bar me-2"></i>Gerar Relatório
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resumo Geral -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                        Custo Total
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 89.560,00</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                        Combustível
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 45.320,00</div>
+                    <div class="small text-muted">50.6%</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                        Manutenção
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 28.900,00</div>
+                    <div class="small text-muted">32.3%</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                        Outros
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 15.340,00</div>
+                    <div class="small text-muted">17.1%</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="row mb-4">
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Distribuição de Custos</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="graficoPizza" height="280"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Evolução Mensal</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="graficoLinha" height="280"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detalhamento por Categoria -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Detalhamento por Categoria</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Categoria</th>
+                            <th>Quantidade</th>
+                            <th>Valor Total</th>
+                            <th>% do Total</th>
+                            <th>Média por Ocorrência</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><i class="fas fa-gas-pump text-success me-2"></i>Combustível</td>
+                            <td>156 abastecimentos</td>
+                            <td><strong>R$ 45.320,00</strong></td>
+                            <td>50.6%</td>
+                            <td>R$ 290,51</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-wrench text-warning me-2"></i>Manutenção</td>
+                            <td>42 manutenções</td>
+                            <td><strong>R$ 28.900,00</strong></td>
+                            <td>32.3%</td>
+                            <td>R$ 688,10</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-shield-alt text-info me-2"></i>Seguros</td>
+                            <td>12 apólices</td>
+                            <td><strong>R$ 8.500,00</strong></td>
+                            <td>9.5%</td>
+                            <td>R$ 708,33</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-file-invoice text-primary me-2"></i>IPVA/Licenciamento</td>
+                            <td>18 pagamentos</td>
+                            <td><strong>R$ 4.200,00</strong></td>
+                            <td>4.7%</td>
+                            <td>R$ 233,33</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-exclamation-circle text-danger me-2"></i>Multas</td>
+                            <td>8 multas</td>
+                            <td><strong>R$ 1.340,00</strong></td>
+                            <td>1.5%</td>
+                            <td>R$ 167,50</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-ellipsis-h text-secondary me-2"></i>Outros</td>
+                            <td>23 despesas</td>
+                            <td><strong>R$ 1.300,00</strong></td>
+                            <td>1.4%</td>
+                            <td>R$ 56,52</td>
+                        </tr>
+                        <tr class="table-primary">
+                            <td colspan="2"><strong>TOTAL GERAL</strong></td>
+                            <td><strong>R$ 89.560,00</strong></td>
+                            <td><strong>100%</strong></td>
+                            <td>-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top 10 Veículos Mais Caros -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Top 10 Veículos com Maiores Custos</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Veículo</th>
+                            <th>Modelo</th>
+                            <th>Combustível</th>
+                            <th>Manutenção</th>
+                            <th>Outros</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in range(1, 11) %}
+                        <tr>
+                            <td>{{ i }}</td>
+                            <td><strong>ABC-{{ 1000 + i }}</strong></td>
+                            <td>Mercedes Sprinter</td>
+                            <td>R$ {{ (3500 - i*100)|format_currency }}</td>
+                            <td>R$ {{ (2200 - i*50)|format_currency }}</td>
+                            <td>R$ {{ (800 - i*20)|format_currency }}</td>
+                            <td><strong>R$ {{ (6500 - i*170)|format_currency }}</strong></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    inicializarGraficos();
+});
+
+function inicializarGraficos() {
+    // Gráfico de Pizza
+    const ctxPizza = document.getElementById('graficoPizza').getContext('2d');
+    new Chart(ctxPizza, {
+        type: 'doughnut',
+        data: {
+            labels: ['Combustível', 'Manutenção', 'Seguros', 'IPVA/Licenciamento', 'Multas', 'Outros'],
+            datasets: [{
+                data: [45320, 28900, 8500, 4200, 1340, 1300],
+                backgroundColor: [
+                    '#1cc88a',
+                    '#f6c23e',
+                    '#36b9cc',
+                    '#4e73df',
+                    '#e74a3b',
+                    '#858796'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+    // Gráfico de Linha
+    const ctxLinha = document.getElementById('graficoLinha').getContext('2d');
+    new Chart(ctxLinha, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov'],
+            datasets: [
+                {
+                    label: 'Combustível',
+                    data: [42000, 43500, 41000, 44200, 43800, 45320, 46000, 44500, 45800, 47000, 45320],
+                    borderColor: '#1cc88a',
+                    backgroundColor: 'rgba(28, 200, 138, 0.1)',
+                    tension: 0.4
+                },
+                {
+                    label: 'Manutenção',
+                    data: [25000, 27000, 26500, 28000, 27500, 28900, 29500, 28200, 29000, 30000, 28900],
+                    borderColor: '#f6c23e',
+                    backgroundColor: 'rgba(246, 194, 62, 0.1)',
+                    tension: 0.4
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return 'R$ ' + value.toLocaleString('pt-BR');
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function gerarRelatorio() {
+    alert('Gerando relatório personalizado... (Implementar)');
+}
+
+function exportarPDF() {
+    alert('Exportando para PDF... (Implementar)');
+}
+
+function exportarExcel() {
+    alert('Exportando para Excel... (Implementar)');
+}
+</script>
+{% endblock %}

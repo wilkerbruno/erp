@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block title %}Histórico de Rastreamento - {{ veiculo.placa }}{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+#mapaHistorico {
+    height: 500px;
+    width: 100%;
+    border-radius: 0.35rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-history me-2"></i>Histórico - {{ veiculo.placa }}
+        </h1>
+        <a href="/frotas/rastreamento" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Voltar
+        </a>
+    </div>
+
+    <!-- Filtro de Período -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Selecionar Período</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <label>Data Inicial</label>
+                    <input type="date" class="form-control" id="dataInicial" 
+                           value="{{ (now() - timedelta(days=7)).strftime('%Y-%m-%d') }}">
+                </div>
+                <div class="col-md-4">
+                    <label>Data Final</label>
+                    <input type="date" class="form-control" id="dataFinal" 
+                           value="{{ now().strftime('%Y-%m-%d') }}">
+                </div>
+                <div class="col-md-4">
+                    <label>&nbsp;</label>
+                    <button class="btn btn-primary w-100" onclick="carregarHistorico()">
+                        <i class="fas fa-search me-2"></i>Buscar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mapa de Trajeto -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Trajeto</h6>
+        </div>
+        <div class="card-body">
+            <div id="mapaHistorico"></div>
+        </div>
+    </div>
+
+    <!-- Estatísticas do Período -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                        Distância Percorrida
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="distanciaTotal">-</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                        Tempo em Movimento
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="tempoMovimento">-</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                        Velocidade Média
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="velocidadeMedia">-</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                        Velocidade Máxima
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="velocidadeMaxima">-</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+let mapa;
+const veiculoId = {{ veiculo.id }};
+
+document.addEventListener('DOMContentLoaded', function() {
+    inicializarMapa();
+    carregarHistorico();
+});
+
+function inicializarMapa() {
+    mapa = L.map('mapaHistorico').setView([-15.7801, -47.9292], 4);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(mapa);
+}
+
+function carregarHistorico() {
+    const dataInicial = document.getElementById('dataInicial').value;
+    const dataFinal = document.getElementById('dataFinal').value;
+    
+    fetch(`/frotas/api/rastreamento/historico/${veiculoId}?data_inicial=${dataInicial}&data_final=${dataFinal}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.historico && data.historico.length > 0) {
+                desenharTrajeto(data.historico);
+                atualizarEstatisticas(data.estatisticas);
+            } else {
+                alert('Nenhum dado encontrado para o período selecionado.');
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao carregar histórico:', error);
+            alert('Erro ao carregar dados.');
+        });
+}
+
+function desenharTrajeto(historico) {
+    // Limpar camadas anteriores
+    mapa.eachLayer(layer => {
+        if (layer instanceof L.Polyline || layer instanceof L.Marker) {
+            mapa.removeLayer(layer);
+        }
+    });
+    
+    // Criar linha do trajeto
+    const coordenadas = historico.map(h => [h.latitude, h.longitude]);
+    const polyline = L.polyline(coordenadas, {
+        color: '#4e73df',
+        weight: 3,
+        opacity: 0.8
+    }).addTo(mapa);
+    
+    // Marcador de início
+    L.marker(coordenadas[0], {
+        icon: L.divIcon({
+            html: '<div style="background: #28a745; width: 20px; height: 20px; border-radius: 50%; border: 2px solid white;"></div>',
+            iconSize: [20, 20]
+        })
+    }).addTo(mapa).bindPopup('Início');
+    
+    // Marcador de fim
+    L.marker(coordenadas[coordenadas.length - 1], {
+        icon: L.divIcon({
+            html: '<div style="background: #dc3545; width: 20px; height: 20px; border-radius: 50%; border: 2px solid white;"></div>',
+            iconSize: [20, 20]
+        })
+    }).addTo(mapa).bindPopup('Fim');
+    
+    // Ajustar zoom
+    mapa.fitBounds(polyline.getBounds(), { padding: [50, 50] });
+}
+
+function atualizarEstatisticas(stats) {
+    document.getElementById('distanciaTotal').textContent = stats.distancia_km.toFixed(2) + ' km';
+    document.getElementById('tempoMovimento').textContent = stats.tempo_movimento;
+    document.getElementById('velocidadeMedia').textContent = stats.velocidade_media.toFixed(1) + ' km/h';
+    document.getElementById('velocidadeMaxima').textContent = stats.velocidade_maxima.toFixed(1) + ' km/h';
+}
+</script>
+{% endblock %}

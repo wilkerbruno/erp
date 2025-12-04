@@ -1,0 +1,263 @@
+{% extends "base.html" %}
+
+{% block title %}Controle de Manutenção{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-tools me-2"></i>Controle de Manutenção
+        </h1>
+        <a href="/frotas/manutencao/agendar" class="btn btn-primary">
+            <i class="fas fa-calendar-plus me-2"></i>Agendar Manutenção
+        </a>
+    </div>
+
+    <!-- Cards de Status -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                        Agendadas
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">12</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                        Em Andamento
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">5</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                        Concluídas (Mês)
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">28</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                        Custo Total (Mês)
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 45.320</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Filtros</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <label>Status</label>
+                    <select class="form-select" id="filtroStatus">
+                        <option value="">Todos</option>
+                        <option value="agendada" selected>Agendadas</option>
+                        <option value="em_andamento">Em Andamento</option>
+                        <option value="concluida">Concluídas</option>
+                        <option value="cancelada">Canceladas</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label>Tipo</label>
+                    <select class="form-select" id="filtroTipo">
+                        <option value="">Todos</option>
+                        <option value="preventiva">Preventiva</option>
+                        <option value="corretiva">Corretiva</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label>Veículo</label>
+                    <select class="form-select" id="filtroVeiculo">
+                        <option value="">Todos</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label>&nbsp;</label>
+                    <button class="btn btn-primary w-100" onclick="aplicarFiltros()">
+                        <i class="fas fa-search me-2"></i>Filtrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de Manutenções -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Lista de Manutenções</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="tabelaManutencoes">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Veículo</th>
+                            <th>Tipo</th>
+                            <th>Descrição</th>
+                            <th>Data Agendada</th>
+                            <th>Oficina</th>
+                            <th>Valor</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Exemplo de dados -->
+                        <tr>
+                            <td><strong>#001</strong></td>
+                            <td>ABC-1234</td>
+                            <td><span class="badge bg-info">Preventiva</span></td>
+                            <td>Troca de óleo e filtros</td>
+                            <td>15/11/2025</td>
+                            <td>Oficina Central</td>
+                            <td>R$ 450,00</td>
+                            <td><span class="badge bg-warning">Agendada</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-info" onclick="verDetalhes(1)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="iniciarManutencao(1)">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>#002</strong></td>
+                            <td>DEF-5678</td>
+                            <td><span class="badge bg-danger">Corretiva</span></td>
+                            <td>Reparo no sistema de freios</td>
+                            <td>14/11/2025</td>
+                            <td>Auto Peças Silva</td>
+                            <td>R$ 1.200,00</td>
+                            <td><span class="badge bg-info">Em Andamento</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-info" onclick="verDetalhes(2)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-success" onclick="concluirManutencao(2)">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alertas de Manutenção Preventiva -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 bg-warning text-white">
+            <h6 class="m-0 font-weight-bold">
+                <i class="fas fa-exclamation-triangle me-2"></i>Alertas de Manutenção Preventiva
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Veículo</th>
+                            <th>KM Atual</th>
+                            <th>Próxima Manutenção</th>
+                            <th>KM Restantes</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ABC-1234</td>
+                            <td>49.500 km</td>
+                            <td>50.000 km</td>
+                            <td><span class="badge bg-warning">500 km</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="agendarPreventiva('ABC-1234')">
+                                    Agendar
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>GHI-9012</td>
+                            <td>99.200 km</td>
+                            <td>100.000 km</td>
+                            <td><span class="badge bg-danger">800 km</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="agendarPreventiva('GHI-9012')">
+                                    Agendar
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function aplicarFiltros() {
+    alert('Filtros aplicados! (Implementar busca real)');
+}
+
+function verDetalhes(id) {
+    window.location.href = `/frotas/manutencao/${id}`;
+}
+
+function iniciarManutencao(id) {
+    if (confirm('Iniciar manutenção agora?')) {
+        fetch(`/frotas/api/manutencao/${id}/iniciar`, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.status === 'success') {
+                alert('Manutenção iniciada!');
+                location.reload();
+            }
+        });
+    }
+}
+
+function concluirManutencao(id) {
+    const valorReal = prompt('Informe o valor real da manutenção:');
+    if (valorReal) {
+        fetch(`/frotas/api/manutencao/${id}/concluir`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ valor_real: valorReal })
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.status === 'success') {
+                alert('Manutenção concluída com sucesso!');
+                location.reload();
+            }
+        });
+    }
+}
+
+function agendarPreventiva(placa) {
+    window.location.href = `/frotas/manutencao/agendar?placa=${placa}`;
+}
+</script>
+{% endblock %}

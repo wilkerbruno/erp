@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block title %}Gestão de Combustível{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-gas-pump me-2"></i>Gestão de Combustível
+        </h1>
+        <a href="/frotas/combustivel/registrar" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Registrar Abastecimento
+        </a>
+    </div>
+
+    <!-- Cards de Estatísticas -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                        Gasto Total (Mês)
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 23.450</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                        Litros (Mês)
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">4.230 L</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                        Média por Litro
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 5,54</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                        Consumo Médio
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">7,2 km/L</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráfico de Consumo -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-chart-line me-2"></i>Evolução de Gastos - Últimos 6 Meses
+            </h6>
+        </div>
+        <div class="card-body">
+            <canvas id="graficoConsumo" height="80"></canvas>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Filtros</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <label>Veículo</label>
+                    <select class="form-select" id="filtroVeiculo">
+                        <option value="">Todos</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label>Período</label>
+                    <select class="form-select" id="filtroPeriodo">
+                        <option value="mes" selected>Este Mês</option>
+                        <option value="semana">Esta Semana</option>
+                        <option value="hoje">Hoje</option>
+                        <option value="todos">Todos</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label>Tipo Combustível</label>
+                    <select class="form-select" id="filtroTipo">
+                        <option value="">Todos</option>
+                        <option value="diesel">Diesel</option>
+                        <option value="gasolina">Gasolina</option>
+                        <option value="etanol">Etanol</option>
+                        <option value="gnv">GNV</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label>&nbsp;</label>
+                    <button class="btn btn-primary w-100" onclick="aplicarFiltros()">
+                        <i class="fas fa-search me-2"></i>Filtrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de Abastecimentos -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Histórico de Abastecimentos</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="tabelaAbastecimentos">
+                    <thead>
+                        <tr>
+                            <th>Data/Hora</th>
+                            <th>Veículo</th>
+                            <th>Motorista</th>
+                            <th>KM</th>
+                            <th>Tipo</th>
+                            <th>Litros</th>
+                            <th>Valor/L</th>
+                            <th>Total</th>
+                            <th>Consumo</th>
+                            <th>Posto</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Exemplo de dados -->
+                        <tr>
+                            <td>14/11/2025 08:30</td>
+                            <td><strong>ABC-1234</strong></td>
+                            <td>João Silva</td>
+                            <td>45.230 km</td>
+                            <td><span class="badge bg-dark">Diesel</span></td>
+                            <td>85,5 L</td>
+                            <td>R$ 5,54</td>
+                            <td><strong>R$ 473,67</strong></td>
+                            <td><span class="badge bg-success">7,2 km/L</span></td>
+                            <td>Posto Shell</td>
+                        </tr>
+                        <tr>
+                            <td>13/11/2025 16:45</td>
+                            <td><strong>DEF-5678</strong></td>
+                            <td>Maria Santos</td>
+                            <td>32.100 km</td>
+                            <td><span class="badge bg-warning">Gasolina</span></td>
+                            <td>45,0 L</td>
+                            <td>R$ 6,15</td>
+                            <td><strong>R$ 276,75</strong></td>
+                            <td><span class="badge bg-info">9,5 km/L</span></td>
+                            <td>Posto Ipiranga</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    inicializarGrafico();
+});
+
+function inicializarGrafico() {
+    const ctx = document.getElementById('graficoConsumo').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov'],
+            datasets: [{
+                label: 'Gastos com Combustível (R$)',
+                data: [18500, 21200, 19800, 22300, 20900, 23450],
+                borderColor: '#4e73df',
+                backgroundColor: 'rgba(78, 115, 223, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return 'R$ ' + value.toLocaleString('pt-BR');
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function aplicarFiltros() {
+    alert('Filtros aplicados! (Implementar busca real)');
+}
+</script>
+{% endblock %}

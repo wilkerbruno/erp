@@ -1,0 +1,265 @@
+{% extends "base.html" %}
+
+{% block title %}Rastreamento GPS - Tempo Real{% endblock %}
+
+{% block head %}
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+#mapa {
+    height: 600px;
+    width: 100%;
+    border-radius: 0.35rem;
+}
+.veiculo-info {
+    padding: 10px;
+}
+.veiculo-info strong {
+    display: block;
+    margin-bottom: 5px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-map-marked-alt me-2"></i>Rastreamento GPS em Tempo Real
+        </h1>
+        <div>
+            <button class="btn btn-success" onclick="atualizarMapa()">
+                <i class="fas fa-sync me-2"></i>Atualizar
+            </button>
+            <a href="/frotas" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Voltar
+            </a>
+        </div>
+    </div>
+
+    <!-- Estatísticas Rápidas -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                        Veículos Rastreados
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalVeiculos">-</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                        Em Movimento
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="emMovimento">-</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                        Parados
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="parados">-</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                        Última Atualização
+                    </div>
+                    <div class="h6 mb-0 font-weight-bold text-gray-800" id="ultimaAtualizacao">-</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mapa -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-map me-2"></i>Mapa de Rastreamento
+            </h6>
+        </div>
+        <div class="card-body">
+            <div id="mapa"></div>
+        </div>
+    </div>
+
+    <!-- Lista de Veículos -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Veículos Rastreados</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="tabelaVeiculos">
+                    <thead>
+                        <tr>
+                            <th>Placa</th>
+                            <th>Modelo</th>
+                            <th>Motorista</th>
+                            <th>Velocidade</th>
+                            <th>Última Posição</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dados carregados via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+let mapa;
+let marcadores = {};
+
+document.addEventListener('DOMContentLoaded', function() {
+    inicializarMapa();
+    carregarPosicoes();
+    
+    // Atualizar a cada 30 segundos
+    setInterval(carregarPosicoes, 30000);
+});
+
+function inicializarMapa() {
+    // Inicializar mapa centrado no Brasil
+    mapa = L.map('mapa').setView([-15.7801, -47.9292], 4);
+    
+    // Adicionar camada de tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(mapa);
+}
+
+function carregarPosicoes() {
+    fetch('/frotas/api/rastreamento/posicoes')
+        .then(response => response.json())
+        .then(data => {
+            atualizarEstatisticas(data.posicoes);
+            atualizarMarcadores(data.posicoes);
+            atualizarTabela(data.posicoes);
+            
+            document.getElementById('ultimaAtualizacao').textContent = 
+                new Date().toLocaleTimeString('pt-BR');
+        })
+        .catch(error => {
+            console.error('Erro ao carregar posições:', error);
+        });
+}
+
+function atualizarEstatisticas(posicoes) {
+    document.getElementById('totalVeiculos').textContent = posicoes.length;
+    
+    const emMovimento = posicoes.filter(p => p.velocidade > 5).length;
+    const parados = posicoes.filter(p => p.velocidade <= 5).length;
+    
+    document.getElementById('emMovimento').textContent = emMovimento;
+    document.getElementById('parados').textContent = parados;
+}
+
+function atualizarMarcadores(posicoes) {
+    // Remover marcadores antigos
+    Object.values(marcadores).forEach(marcador => {
+        mapa.removeLayer(marcador);
+    });
+    marcadores = {};
+    
+    // Adicionar novos marcadores
+    posicoes.forEach(posicao => {
+        const icon = L.divIcon({
+            html: `<div style="background: ${posicao.velocidade > 5 ? '#28a745' : '#ffc107'}; 
+                    width: 30px; height: 30px; border-radius: 50%; 
+                    border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+                    display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-truck" style="color: white; font-size: 14px;"></i>
+                   </div>`,
+            className: '',
+            iconSize: [30, 30]
+        });
+        
+        const marcador = L.marker([posicao.latitude, posicao.longitude], { icon: icon })
+            .addTo(mapa);
+        
+        const popupContent = `
+            <div class="veiculo-info">
+                <strong>${posicao.placa}</strong>
+                <strong>Modelo:</strong> ${posicao.modelo}<br>
+                <strong>Motorista:</strong> ${posicao.motorista || 'N/A'}<br>
+                <strong>Velocidade:</strong> ${posicao.velocidade || 0} km/h<br>
+                <strong>Ignição:</strong> ${posicao.ignicao ? 'Ligada' : 'Desligada'}<br>
+                <strong>Última Atualização:</strong> ${new Date(posicao.data_hora).toLocaleString('pt-BR')}
+                <hr>
+                <a href="/frotas/veiculo/${posicao.veiculo_id}" class="btn btn-sm btn-primary w-100">
+                    Ver Detalhes
+                </a>
+            </div>
+        `;
+        
+        marcador.bindPopup(popupContent);
+        marcadores[posicao.veiculo_id] = marcador;
+    });
+    
+    // Ajustar zoom para mostrar todos os marcadores
+    if (posicoes.length > 0) {
+        const bounds = posicoes.map(p => [p.latitude, p.longitude]);
+        mapa.fitBounds(bounds, { padding: [50, 50] });
+    }
+}
+
+function atualizarTabela(posicoes) {
+    const tbody = document.querySelector('#tabelaVeiculos tbody');
+    tbody.innerHTML = '';
+    
+    posicoes.forEach(posicao => {
+        const statusBadge = posicao.velocidade > 5 ? 
+            '<span class="badge bg-success">Em Movimento</span>' : 
+            '<span class="badge bg-warning">Parado</span>';
+        
+        tbody.innerHTML += `
+            <tr>
+                <td><strong>${posicao.placa}</strong></td>
+                <td>${posicao.modelo}</td>
+                <td>${posicao.motorista || '-'}</td>
+                <td>${posicao.velocidade || 0} km/h</td>
+                <td>${new Date(posicao.data_hora).toLocaleString('pt-BR')}</td>
+                <td>${statusBadge}</td>
+                <td>
+                    <button class="btn btn-sm btn-info" onclick="centralizarMapa(${posicao.latitude}, ${posicao.longitude}, ${posicao.veiculo_id})">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </button>
+                    <a href="/frotas/historico/${posicao.veiculo_id}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-history"></i>
+                    </a>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+function centralizarMapa(lat, lng, veiculoId) {
+    mapa.setView([lat, lng], 15);
+    if (marcadores[veiculoId]) {
+        marcadores[veiculoId].openPopup();
+    }
+}
+
+function atualizarMapa() {
+    carregarPosicoes();
+}
+</script>
+{% endblock %}

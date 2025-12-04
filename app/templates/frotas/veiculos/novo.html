@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+
+{% block title %}Novo Veículo{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-truck me-2"></i>Cadastrar Novo Veículo
+        </h1>
+        <a href="/frotas/veiculos" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Voltar
+        </a>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <form id="formVeiculo">
+                <!-- Informações Básicas -->
+                <h5 class="text-primary mb-3">
+                    <i class="fas fa-info-circle me-2"></i>Informações Básicas
+                </h5>
+                
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Placa *</label>
+                        <input type="text" class="form-control" name="placa" required 
+                               placeholder="ABC-1234" maxlength="8">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Tipo *</label>
+                        <select class="form-select" name="tipo" id="tipoVeiculo" required>
+                            <option value="">Selecione...</option>
+                            <option value="proprio">Próprio</option>
+                            <option value="terceiro">Terceiro</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Categoria *</label>
+                        <select class="form-select" name="categoria" required>
+                            <option value="">Selecione...</option>
+                            <option value="caminhao">Caminhão</option>
+                            <option value="van">Van</option>
+                            <option value="carro">Carro</option>
+                            <option value="moto">Moto</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Capacidade de Carga (ton)</label>
+                        <input type="number" class="form-control" name="capacidade_carga" 
+                               step="0.01" placeholder="5.5">
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Marca *</label>
+                        <input type="text" class="form-control" name="marca" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Modelo *</label>
+                        <input type="text" class="form-control" name="modelo" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Ano Fabricação *</label>
+                        <input type="number" class="form-control" name="ano_fabricacao" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Ano Modelo *</label>
+                        <input type="number" class="form-control" name="ano_modelo" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Cor</label>
+                        <input type="text" class="form-control" name="cor">
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Chassi</label>
+                        <input type="text" class="form-control" name="chassi">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">RENAVAM</label>
+                        <input type="text" class="form-control" name="renavam">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">KM Atual</label>
+                        <input type="number" class="form-control" name="km_atual" value="0">
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- Proprietário (para terceiros) -->
+                <div id="dadosProprietario" style="display: none;">
+                    <h5 class="text-warning mb-3">
+                        <i class="fas fa-user me-2"></i>Dados do Proprietário (Terceiro)
+                    </h5>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Nome do Proprietário</label>
+                            <input type="text" class="form-control" name="proprietario_nome">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">CPF/CNPJ</label>
+                            <input type="text" class="form-control" name="proprietario_cpf_cnpj">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Contato</label>
+                            <input type="text" class="form-control" name="proprietario_contato" 
+                                   placeholder="(11) 99999-9999">
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+
+                <!-- Observações -->
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label class="form-label">Observações</label>
+                        <textarea class="form-control" name="observacoes" rows="3"></textarea>
+                    </div>
+                </div>
+
+                <div class="text-end">
+                    <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Cadastrar Veículo
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('tipoVeiculo').addEventListener('change', function() {
+    const dadosProprietario = document.getElementById('dadosProprietario');
+    dadosProprietario.style.display = this.value === 'terceiro' ? 'block' : 'none';
+});
+
+document.getElementById('formVeiculo').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData.entries());
+    
+    fetch('/frotas/veiculos/novo', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.status === 'success') {
+            alert('Veículo cadastrado com sucesso!');
+            window.location.href = '/frotas/veiculos';
+        } else {
+            alert('Erro: ' + result.message);
+        }
+    })
+    .catch(error => {
+        alert('Erro ao cadastrar veículo: ' + error);
+    });
+});
+</script>
+{% endblock %}

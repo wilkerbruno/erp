@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+
+{% block title %}Viagens e Fretes{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-route me-2"></i>Viagens e Fretes
+        </h1>
+        <a href="/frotas/viagens/nova" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Nova Viagem
+        </a>
+    </div>
+
+    <!-- Cards de Status -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                        Viagens Ativas
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">23</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                        Finalizadas (Mês)
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">87</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                        Valor Total (Mês)
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 127.500</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                        KM Percorridos (Mês)
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">45.230 km</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Filtros</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <label>Status</label>
+                    <select class="form-select" id="filtroStatus">
+                        <option value="">Todos</option>
+                        <option value="ativa" selected>Ativas</option>
+                        <option value="finalizada">Finalizadas</option>
+                        <option value="cancelada">Canceladas</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label>Período</label>
+                    <select class="form-select" id="filtroPeriodo">
+                        <option value="hoje">Hoje</option>
+                        <option value="semana">Esta Semana</option>
+                        <option value="mes" selected>Este Mês</option>
+                        <option value="todos">Todos</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label>Buscar (Origem/Destino/Cliente)</label>
+                    <input type="text" class="form-control" id="filtroBusca" placeholder="Digite para buscar...">
+                </div>
+                <div class="col-md-2">
+                    <label>&nbsp;</label>
+                    <button class="btn btn-primary w-100" onclick="aplicarFiltros()">
+                        <i class="fas fa-search me-2"></i>Filtrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de Viagens -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Lista de Viagens</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="tabelaViagens">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Veículo</th>
+                            <th>Motorista</th>
+                            <th>Origem → Destino</th>
+                            <th>Cliente</th>
+                            <th>Início</th>
+                            <th>Valor</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dados carregados via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    carregarViagens();
+});
+
+function carregarViagens() {
+    const status = document.getElementById('filtroStatus').value;
+    const periodo = document.getElementById('filtroPeriodo').value;
+    
+    fetch(`/frotas/api/viagens?status=${status}&periodo=${periodo}`)
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.querySelector('#tabelaViagens tbody');
+            tbody.innerHTML = '';
+            
+            data.viagens.forEach(viagem => {
+                const statusBadge = getStatusBadge(viagem.status);
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>#${viagem.id}</strong></td>
+                        <td>${viagem.veiculo}</td>
+                        <td>${viagem.motorista}</td>
+                        <td>
+                            <i class="fas fa-map-marker-alt text-success"></i> ${viagem.origem}<br>
+                            <i class="fas fa-map-marker-alt text-danger"></i> ${viagem.destino}
+                        </td>
+                        <td>${viagem.cliente || '-'}</td>
+                        <td>${new Date(viagem.data_inicio).toLocaleString('pt-BR')}</td>
+                        <td>R$ ${parseFloat(viagem.valor_frete || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <a href="/frotas/viagem/${viagem.id}" class="btn btn-sm btn-info">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            ${viagem.status === 'ativa' ? `
+                                <button class="btn btn-sm btn-success" onclick="finalizarViagem(${viagem.id})">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            ` : ''}
+                        </td>
+                    </tr>
+                `;
+            });
+        });
+}
+
+function getStatusBadge(status) {
+    const badges = {
+        'ativa': '<span class="badge bg-primary">Ativa</span>',
+        'finalizada': '<span class="badge bg-success">Finalizada</span>',
+        'cancelada': '<span class="badge bg-danger">Cancelada</span>'
+    };
+    return badges[status] || status;
+}
+
+function finalizarViagem(id) {
+    if (confirm('Deseja finalizar esta viagem?')) {
+        const kmFinal = prompt('Informe o KM final do veículo:');
+        if (kmFinal) {
+            fetch(`/frotas/api/viagem/${id}/finalizar`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ km_final: kmFinal })
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.status === 'success') {
+                    alert('Viagem finalizada com sucesso!');
+                    carregarViagens();
+                } else {
+                    alert('Erro: ' + result.message);
+                }
+            });
+        }
+    }
+}
+
+function aplicarFiltros() {
+    carregarViagens();
+}
+</script>
+{% endblock %}

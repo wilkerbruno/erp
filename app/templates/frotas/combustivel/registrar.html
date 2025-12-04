@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+
+{% block title %}Registrar Abastecimento{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-gas-pump me-2"></i>Registrar Abastecimento
+        </h1>
+        <a href="/frotas/combustivel" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Voltar
+        </a>
+    </div>
+
+    <div class="row">
+        <!-- Formulário -->
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <form id="formAbastecimento">
+                        <!-- Veículo e Motorista -->
+                        <h5 class="text-primary mb-3">
+                            <i class="fas fa-truck me-2"></i>Veículo e Motorista
+                        </h5>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Veículo *</label>
+                                <select class="form-select" name="veiculo_id" id="veiculoSelect" required>
+                                    <option value="">Selecione...</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Motorista</label>
+                                <select class="form-select" name="motorista_id">
+                                    <option value="">Selecione...</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <!-- Abastecimento -->
+                        <h5 class="text-primary mb-3">
+                            <i class="fas fa-gas-pump me-2"></i>Dados do Abastecimento
+                        </h5>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Data/Hora *</label>
+                                <input type="datetime-local" class="form-control" name="data_hora" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">KM do Veículo *</label>
+                                <input type="number" class="form-control" name="km_veiculo" required
+                                       placeholder="Ex: 50000">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Tipo de Combustível *</label>
+                                <select class="form-select" name="tipo_combustivel" required>
+                                    <option value="">Selecione...</option>
+                                    <option value="diesel">Diesel</option>
+                                    <option value="gasolina">Gasolina</option>
+                                    <option value="etanol">Etanol</option>
+                                    <option value="gnv">GNV</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Litros *</label>
+                                <input type="number" class="form-control" name="litros" required
+                                       step="0.01" placeholder="0,00" id="litros">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Valor por Litro *</label>
+                                <input type="number" class="form-control" name="valor_litro" required
+                                       step="0.01" placeholder="0,00" id="valorLitro">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Valor Total *</label>
+                                <input type="number" class="form-control" name="valor_total" required
+                                       step="0.01" placeholder="0,00" id="valorTotal" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Posto</label>
+                                <input type="text" class="form-control" name="posto" 
+                                       placeholder="Nome do posto">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Nota Fiscal</label>
+                                <input type="text" class="form-control" name="nota_fiscal" 
+                                       placeholder="Número da NF">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Consumo Médio (calculado)</label>
+                                <input type="text" class="form-control" id="consumoMedio" readonly
+                                       placeholder="Será calculado automaticamente">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label class="form-label">Observações</label>
+                                <textarea class="form-control" name="observacoes" rows="2"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="text-end">
+                            <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                                <i class="fas fa-times me-2"></i>Cancelar
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Registrar Abastecimento
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Informações -->
+        <div class="col-lg-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 bg-info text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-info-circle me-2"></i>Informações
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p class="small mb-2">
+                        <strong>Último Abastecimento:</strong><br>
+                        <span id="ultimoAbastecimento">Selecione um veículo</span>
+                    </p>
+                    <hr>
+                    <p class="small mb-0">
+                        <strong>Consumo Médio Histórico:</strong><br>
+                        <span id="consumoHistorico">-</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="card shadow">
+                <div class="card-header py-3 bg-success text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-calculator me-2"></i>Calculadora
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p class="small text-muted">
+                        O valor total é calculado automaticamente multiplicando litros × valor/litro.
+                    </p>
+                    <p class="small text-muted mb-0">
+                        O consumo médio é calculado comparando com o abastecimento anterior.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    carregarVeiculos();
+    carregarMotoristas();
+    configurarCalculos();
+});
+
+function carregarVeiculos() {
+    fetch('/frotas/api/veiculos?status=ativo')
+        .then(response => response.json())
+        .then(data => {
+            const select = document.getElementById('veiculoSelect');
+            data.veiculos.forEach(veiculo => {
+                select.innerHTML += `<option value="${veiculo.id}">${veiculo.placa} - ${veiculo.marca} ${veiculo.modelo}</option>`;
+            });
+        });
+}
+
+function carregarMotoristas() {
+    fetch('/frotas/api/motoristas')
+        .then(response => response.json())
+        .then(data => {
+            const select = document.querySelector('[name="motorista_id"]');
+            data.motoristas.forEach(motorista => {
+                select.innerHTML += `<option value="${motorista.id}">${motorista.nome}</option>`;
+            });
+        });
+}
+
+function configurarCalculos() {
+    const litros = document.getElementById('litros');
+    const valorLitro = document.getElementById('valorLitro');
+    const valorTotal = document.getElementById('valorTotal');
+    
+    function calcularTotal() {
+        const l = parseFloat(litros.value) || 0;
+        const vl = parseFloat(valorLitro.value) || 0;
+        valorTotal.value = (l * vl).toFixed(2);
+    }
+    
+    litros.addEventListener('input', calcularTotal);
+    valorLitro.addEventListener('input', calcularTotal);
+}
+
+document.getElementById('formAbastecimento').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData.entries());
+    
+    fetch('/frotas/combustivel/registrar', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.status === 'success') {
+            alert('Abastecimento registrado com sucesso!');
+            if (result.consumo_medio) {
+                alert(`Consumo médio calculado: ${result.consumo_medio.toFixed(2)} km/L`);
+            }
+            window.location.href = '/frotas/combustivel';
+        } else {
+            alert('Erro: ' + result.message);
+        }
+    })
+    .catch(error => {
+        alert('Erro ao registrar abastecimento: ' + error);
+    });
+});
+</script>
+{% endblock %}

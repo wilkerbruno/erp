@@ -29,7 +29,7 @@ from app.blueprints.gestao_vista import bp as gestao_vista_bp
 from app.blueprints.seguranca_trabalho import bp as seguranca_trabalho_bp
 from app.blueprints.planos import bp as planos_bp
 from app.blueprints.financeiro import bp as financeiro_bp
-
+from app.blueprints.frotas import bp as frotas_bp
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -75,6 +75,7 @@ def create_app(config_name='development'):
     app.register_blueprint(financeiro_bp)
     app.register_blueprint(rh_bp)
     app.register_blueprint(dashboard_bp, url_prefix='/')
+    app.register_blueprint(frotas_bp)
     
     # Modulos
     modules = [
@@ -82,6 +83,7 @@ def create_app(config_name='development'):
         ('qualidade', '/qualidade'),
         ('producao', '/producao'),
         ('compras', '/compras'),
+        ('frotas', '/frotas'),  # ← ADICIONADO
         ('planos_acao', '/planos-acao'),  # ← JÁ ESTAVA CORRETO
         ('consultoria', '/consultoria'),  # ← JÁ ESTAVA CORRETO
         ('financeiro', '/financeiro'),

@@ -304,7 +304,7 @@ function registrarPonto(tipo) {
     })
     .catch(error => {
         console.error('Erro:', error);
-        alert('❌ Erro ao registrar ponto');
+        alert('❌ Erro ao registrar ponto: ' + error.message);
     });
 }
 

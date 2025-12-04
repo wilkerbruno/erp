@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block title %}Relatório Geral da Frota{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-chart-bar me-2"></i>Relatório Geral da Frota
+        </h1>
+        <div>
+            <button class="btn btn-success" onclick="exportarPDF()">
+                <i class="fas fa-file-pdf me-2"></i>Exportar PDF
+            </button>
+            <button class="btn btn-info" onclick="exportarExcel()">
+                <i class="fas fa-file-excel me-2"></i>Exportar Excel
+            </button>
+        </div>
+    </div>
+
+    <!-- Visão Geral -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3 bg-primary text-white">
+                    <h6 class="m-0 font-weight-bold">Visão Geral da Frota</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <h6 class="text-primary">Veículos</h6>
+                            <p class="mb-0">Total: <strong>45</strong></p>
+                            <p class="mb-0">Próprios: 32 | Terceiros: 13</p>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <h6 class="text-success">Motoristas</h6>
+                            <p class="mb-0">Total: <strong>52</strong></p>
+                            <p class="mb-0">Disponíveis: 12</p>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <h6 class="text-warning">Viagens Ativas</h6>
+                            <p class="mb-0">Em andamento: <strong>23</strong></p>
+                            <p class="mb-0">R$ 127.500 em fretes</p>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <h6 class="text-info">KM Totais</h6>
+                            <p class="mb-0">Mês: <strong>45.230 km</strong></p>
+                            <p class="mb-0">Ano: 523.450 km</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Indicadores de Performance -->
+    <div class="row mb-4">
+        <div class="col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Eficiência da Frota</h6>
+                </div>
+                <div class="card-body">
+                    <p><strong>Taxa de Utilização:</strong> 84.4%</p>
+                    <div class="progress mb-3">
+                        <div class="progress-bar bg-success" style="width: 84.4%">84.4%</div>
+                    </div>
+                    
+                    <p><strong>Disponibilidade:</strong> 91.1%</p>
+                    <div class="progress mb-3">
+                        <div class="progress-bar bg-info" style="width: 91.1%">91.1%</div>
+                    </div>
+                    
+                    <p><strong>Manutenções Preventivas:</strong> 62.8%</p>
+                    <div class="progress">
+                        <div class="progress-bar bg-warning" style="width: 62.8%">62.8%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Custos Consolidados</h6>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm">
+                        <tr>
+                            <td>Combustível</td>
+                            <td class="text-end"><strong>R$ 45.320,00</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Manutenção</td>
+                            <td class="text-end"><strong>R$ 28.900,00</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Seguros</td>
+                            <td class="text-end"><strong>R$ 8.500,00</strong></td>
+                        </tr>
+                        <tr>
+                            <td>IPVA/Licenciamento</td>
+                            <td class="text-end"><strong>R$ 4.200,00</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Outros</td>
+                            <td class="text-end"><strong>R$ 2.640,00</strong></td>
+                        </tr>
+                        <tr class="table-primary">
+                            <td><strong>TOTAL</strong></td>
+                            <td class="text-end"><strong>R$ 89.560,00</strong></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ações Recomendadas -->
+    <div class="card shadow">
+        <div class="card-header py-3 bg-warning text-white">
+            <h6 class="m-0 font-weight-bold">
+                <i class="fas fa-lightbulb me-2"></i>Ações Recomendadas
+            </h6>
+        </div>
+        <div class="card-body">
+            <ul class="list-unstyled mb-0">
+                <li class="mb-2">
+                    <i class="fas fa-exclamation-triangle text-danger me-2"></i>
+                    <strong>3 veículos</strong> com documentação irregular - Regularizar imediatamente
+                </li>
+                <li class="mb-2">
+                    <i class="fas fa-wrench text-warning me-2"></i>
+                    <strong>8 veículos</strong> próximos da manutenção preventiva (500 km)
+                </li>
+                <li class="mb-2">
+                    <i class="fas fa-shield-alt text-info me-2"></i>
+                    <strong>5 seguros</strong> vencendo nos próximos 30 dias
+                </li>
+                <li class="mb-2">
+                    <i class="fas fa-chart-line text-success me-2"></i>
+                    Consumo de combustível 8% acima da média histórica - Investigar
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+function exportarPDF() {
+    alert('Exportando relatório completo para PDF...');
+}
+
+function exportarExcel() {
+    alert('Exportando dados para Excel...');
+}
+</script>
+{% endblock %}
+
+

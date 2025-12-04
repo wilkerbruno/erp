@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Relatório de Viagens{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-route me-2"></i>Relatório de Viagens
+        </h1>
+        <div>
+            <button class="btn btn-success" onclick="exportarPDF()">
+                <i class="fas fa-file-pdf me-2"></i>Exportar PDF
+            </button>
+            <button class="btn btn-info" onclick="exportarExcel()">
+                <i class="fas fa-file-excel me-2"></i>Exportar Excel
+            </button>
+        </div>
+    </div>
+
+    <!-- Cards de Resumo -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                        Total de Viagens
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">287</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                        KM Percorridos
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">142.350 km</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                        Valor Total em Fretes
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 427.650</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                        Valor Médio por KM
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 3,00</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de Viagens -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Histórico de Viagens</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Data</th>
+                            <th>Veículo</th>
+                            <th>Motorista</th>
+                            <th>Origem → Destino</th>
+                            <th>KM</th>
+                            <th>Valor</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>#287</td>
+                            <td>14/11/2025</td>
+                            <td>ABC-1234</td>
+                            <td>João Silva</td>
+                            <td>São Paulo → Rio de Janeiro</td>
+                            <td>450 km</td>
+                            <td>R$ 1.850,00</td>
+                            <td><span class="badge bg-success">Finalizada</span></td>
+                        </tr>
+                        <!-- Mais linhas -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function exportarPDF() {
+    alert('Exportando para PDF...');
+}
+
+function exportarExcel() {
+    alert('Exportando para Excel...');
+}
+</script>
+{% endblock %}

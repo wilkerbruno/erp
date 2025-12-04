@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}Veículos da Frota{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Cabeçalho -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-truck me-2"></i>Veículos da Frota
+        </h1>
+        <a href="/frotas/veiculos/novo" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Novo Veículo
+        </a>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-filter me-2"></i>Filtros
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <label>Tipo</label>
+                    <select class="form-select" id="filtroTipo">
+                        <option value="">Todos</option>
+                        <option value="proprio">Próprios</option>
+                        <option value="terceiro">Terceiros</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label>Status</label>
+                    <select class="form-select" id="filtroStatus">
+                        <option value="">Todos</option>
+                        <option value="ativo">Ativo</option>
+                        <option value="manutencao">Em Manutenção</option>
+                        <option value="viagem">Em Viagem</option>
+                        <option value="inativo">Inativo</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label>Categoria</label>
+                    <select class="form-select" id="filtroCategoria">
+                        <option value="">Todas</option>
+                        <option value="caminhao">Caminhão</option>
+                        <option value="van">Van</option>
+                        <option value="carro">Carro</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label>&nbsp;</label>
+                    <button class="btn btn-primary w-100" onclick="aplicarFiltros()">
+                        <i class="fas fa-search me-2"></i>Filtrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de Veículos -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Lista de Veículos</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="tabelaVeiculos">
+                    <thead>
+                        <tr>
+                            <th>Placa</th>
+                            <th>Tipo</th>
+                            <th>Marca/Modelo</th>
+                            <th>Ano</th>
+                            <th>KM Atual</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dados carregados via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    carregarVeiculos();
+});
+
+function carregarVeiculos() {
+    fetch('/frotas/api/veiculos')
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.querySelector('#tabelaVeiculos tbody');
+            tbody.innerHTML = '';
+            
+            data.veiculos.forEach(veiculo => {
+                const statusBadge = getStatusBadge(veiculo.status);
+                const tipoBadge = veiculo.tipo === 'proprio' ? 
+                    '<span class="badge bg-primary">Próprio</span>' : 
+                    '<span class="badge bg-warning">Terceiro</span>';
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${veiculo.placa}</strong></td>
+                        <td>${tipoBadge}</td>
+                        <td>${veiculo.marca} ${veiculo.modelo}</td>
+                        <td>${veiculo.ano}</td>
+                        <td>${veiculo.km_atual.toLocaleString('pt-BR')} km</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <a href="/frotas/veiculo/${veiculo.id}" class="btn btn-sm btn-info">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="/frotas/veiculos/editar/${veiculo.id}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        </td>
+                    </tr>
+                `;
+            });
+        });
+}
+
+function getStatusBadge(status) {
+    const badges = {
+        'ativo': '<span class="badge bg-success">Ativo</span>',
+        'manutencao': '<span class="badge bg-warning">Manutenção</span>',
+        'viagem': '<span class="badge bg-info">Em Viagem</span>',
+        'inativo': '<span class="badge bg-secondary">Inativo</span>'
+    };
+    return badges[status] || status;
+}
+
+function aplicarFiltros() {
+    const tipo = document.getElementById('filtroTipo').value;
+    const status = document.getElementById('filtroStatus').value;
+    const categoria = document.getElementById('filtroCategoria').value;
+    
+    let url = '/frotas/api/veiculos?';
+    if (tipo) url += `tipo=${tipo}&`;
+    if (status) url += `status=${status}&`;
+    if (categoria) url += `categoria=${categoria}`;
+    
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            carregarVeiculos();
+        });
+}
+</script>
+{% endblock %}

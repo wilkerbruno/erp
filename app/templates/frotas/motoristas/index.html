@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}Motoristas{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-id-card me-2"></i>Motoristas
+        </h1>
+        <a href="/frotas/motoristas/novo" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Novo Motorista
+        </a>
+    </div>
+
+    <!-- Alertas de Vencimentos -->
+    <div id="alertasVencimento"></div>
+
+    <!-- Filtros -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Filtros</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <label>Status</label>
+                    <select class="form-select" id="filtroStatus">
+                        <option value="">Todos</option>
+                        <option value="disponivel">Disponíveis</option>
+                        <option value="ocupado">Ocupados</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label>Tipo</label>
+                    <select class="form-select" id="filtroTipo">
+                        <option value="">Todos</option>
+                        <option value="proprio">Funcionários</option>
+                        <option value="terceiro">Terceiros</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label>Categoria CNH</label>
+                    <select class="form-select" id="filtroCategoria">
+                        <option value="">Todas</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                        <option value="D">D</option>
+                        <option value="E">E</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label>&nbsp;</label>
+                    <button class="btn btn-primary w-100" onclick="aplicarFiltros()">
+                        <i class="fas fa-search me-2"></i>Filtrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de Motoristas -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Lista de Motoristas</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="tabelaMotoristas">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>CPF</th>
+                            <th>CNH</th>
+                            <th>Categoria</th>
+                            <th>Validade CNH</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dados carregados via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    carregarMotoristas();
+    carregarAlertas();
+});
+
+function carregarMotoristas() {
+    fetch('/frotas/api/motoristas')
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.querySelector('#tabelaMotoristas tbody');
+            tbody.innerHTML = '';
+            
+            data.motoristas.forEach(motorista => {
+                const statusBadge = motorista.disponivel ? 
+                    '<span class="badge bg-success">Disponível</span>' : 
+                    '<span class="badge bg-warning">Ocupado</span>';
+                    
+                const tipoBadge = motorista.terceiro ? 
+                    '<span class="badge bg-warning">Terceiro</span>' : 
+                    '<span class="badge bg-primary">Funcionário</span>';
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${motorista.nome}</strong><br>${tipoBadge}</td>
+                        <td>${motorista.cpf}</td>
+                        <td>${motorista.cnh_numero}</td>
+                        <td><span class="badge bg-info">${motorista.cnh_categoria}</span></td>
+                        <td>${new Date(motorista.cnh_validade).toLocaleDateString('pt-BR')}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <a href="/frotas/motorista/${motorista.id}" class="btn btn-sm btn-info">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="/frotas/motoristas/editar/${motorista.id}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        </td>
+                    </tr>
+                `;
+            });
+        });
+}
+
+function carregarAlertas() {
+    fetch('/frotas/api/motoristas/alertas')
+        .then(response => response.json())
+        .then(data => {
+            const container = document.getElementById('alertasVencimento');
+            
+            if (data.alertas.cnh.length > 0 || data.alertas.exame.length > 0 || data.alertas.mopp.length > 0) {
+                let alertHTML = '<div class="alert alert-warning alert-dismissible fade show"><h5>⚠️ Documentos Vencendo!</h5>';
+                
+                if (data.alertas.cnh.length > 0) {
+                    alertHTML += '<strong>CNH:</strong> ' + data.alertas.cnh.length + ' motorista(s) com CNH vencendo<br>';
+                }
+                if (data.alertas.exame.length > 0) {
+                    alertHTML += '<strong>Exame Médico:</strong> ' + data.alertas.exame.length + ' motorista(s) com exame vencendo<br>';
+                }
+                if (data.alertas.mopp.length > 0) {
+                    alertHTML += '<strong>MOPP:</strong> ' + data.alertas.mopp.length + ' motorista(s) com MOPP vencendo';
+                }
+                
+                alertHTML += '<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>';
+                container.innerHTML = alertHTML;
+            }
+        });
+}
+</script>
+{% endblock %}
