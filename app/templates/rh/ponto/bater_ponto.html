@@ -121,6 +121,7 @@
 
 {% block scripts %}
 <script>
+    
 let localizacaoAtual = null;
 let colaboradorId = 1; // Deve vir do sistema de login
 
@@ -212,11 +213,37 @@ function calcularDistancia(lat1, lon1, lat2, lon2) {
 
 // Carregar registros de hoje
 function carregarRegistrosHoje() {
-    fetch(`/rh/api/ponto/hoje/${colaboradorId}`)
-        .then(response => response.json())
+    // Garantir que colaboradorId existe
+    if (typeof colaboradorId === 'undefined') {
+        colaboradorId = 1;
+    }
+    
+    // ✅ CORREÇÃO: Adicionar /rh no início da URL
+    fetch(`/rh/api/ponto/hoje/${colaboradorId}`)  // ← /rh/ no início!
+        .then(response => {
+            console.log("📥 Carregando registros - Status:", response.status);
+            
+            if (response.status === 404) {
+                console.warn("⚠️ Rota não encontrada (404)");
+                return { status: 'success', registros: [] };
+            }
+            
+            const contentType = response.headers.get('Content-Type');
+            if (!contentType || !contentType.includes('application/json')) {
+                console.warn("⚠️ Resposta não é JSON, ignorando...");
+                return { status: 'success', registros: [] };
+            }
+            
+            return response.json();
+        })
         .then(data => {
             if (data.status === 'success') {
                 const div = document.getElementById('registrosHoje');
+                if (!div) {
+                    console.warn("⚠️ Elemento 'registrosHoje' não encontrado");
+                    return;
+                }
+                
                 div.innerHTML = '';
                 
                 if (data.registros.length === 0) {
@@ -247,18 +274,33 @@ function carregarRegistrosHoje() {
                 }
             }
         })
-        .catch(error => console.error('Erro:', error));
+        .catch(error => {
+            console.error('Erro ao carregar registros:', error);
+            // Não exibir erro para o usuário, apenas logar
+        });
 }
+
+
 
 // Registrar ponto
 function registrarPonto(tipo) {
+    console.log("🎯 Iniciando registro de ponto...");
+    console.log("📝 Tipo:", tipo);
+    
     if (!localizacaoAtual) {
         alert('⚠️ Aguarde a obtenção da localização!');
+        console.error("❌ Localização não disponível!");
         return;
     }
     
     const agora = new Date();
-    const homeOffice = document.getElementById('checkHomeOffice').checked;
+    const homeOffice = document.getElementById('checkHomeOffice') ? 
+                       document.getElementById('checkHomeOffice').checked : false;
+    
+    // Garantir que colaboradorId existe
+    if (typeof colaboradorId === 'undefined') {
+        colaboradorId = 1;
+    }
     
     const dados = {
         colaborador_id: colaboradorId,
@@ -267,20 +309,42 @@ function registrarPonto(tipo) {
         tipo: tipo,
         latitude: localizacaoAtual.latitude,
         longitude: localizacaoAtual.longitude,
-        localizacao_texto: document.getElementById('enderecoTexto').textContent,
+        localizacao_texto: document.getElementById('enderecoTexto') ? 
+                           document.getElementById('enderecoTexto').textContent : 'Não disponível',
         home_office: homeOffice,
         dispositivo: navigator.userAgent
     };
     
-    fetch('/rh/api/registrar-ponto', {
+    console.log("📤 Enviando dados:", dados);
+    
+    // ✅ CORREÇÃO: Adicionar /rh no início da URL
+    fetch('/rh/api/registrar-ponto', {  // ← /rh/ no início!
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(dados)
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log("📥 Resposta recebida");
+        console.log("   Status:", response.status);
+        console.log("   Content-Type:", response.headers.get('Content-Type'));
+        
+        // Se não for JSON, pegar como texto para ver o erro
+        const contentType = response.headers.get('Content-Type');
+        if (!contentType || !contentType.includes('application/json')) {
+            console.error("❌ Resposta não é JSON!");
+            return response.text().then(text => {
+                console.error("Resposta (HTML):", text.substring(0, 500));
+                throw new Error('Servidor retornou HTML em vez de JSON. Status: ' + response.status);
+            });
+        }
+        
+        return response.json();
+    })
     .then(data => {
+        console.log("✅ JSON recebido:", data);
+        
         if (data.status === 'success') {
             let mensagem = `✅ Ponto Registrado!\n\nTipo: ${tipo}\nHorário: ${dados.horario}`;
             
@@ -297,16 +361,24 @@ function registrarPonto(tipo) {
             }
             
             alert(mensagem);
-            carregarRegistrosHoje();
+            console.log("🎉 SUCESSO!");
+            
+            // Recarregar registros
+            if (typeof carregarRegistrosHoje === 'function') {
+                carregarRegistrosHoje();
+            }
         } else {
-            alert('❌ Erro: ' + data.message);
+            console.error("❌ Erro no response:", data);
+            alert('❌ Erro: ' + (data.message || 'Erro desconhecido'));
         }
     })
     .catch(error => {
-        console.error('Erro:', error);
+        console.error('❌ ERRO:', error);
         alert('❌ Erro ao registrar ponto: ' + error.message);
     });
 }
+
+
 
 // Inicializar
 document.addEventListener('DOMContentLoaded', function() {

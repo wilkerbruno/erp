@@ -48,6 +48,7 @@ from app.blueprints.rh import routes
 def create_app(config_name='development'):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
+    app.config['WTF_CSRF_ENABLED'] = False  # Desabilitar CSRF para APIs
     
     # Initialize extensions
     db.init_app(app)
@@ -98,13 +99,6 @@ def create_app(config_name='development'):
         ('configuracoes', '/configuracoes')
     ]
     
-    for module_name, url_prefix in modules:
-        try:
-            module = __import__(f'app.blueprints.{module_name}', fromlist=['bp'])
-            blueprint = getattr(module, 'bp')
-            app.register_blueprint(blueprint, url_prefix=url_prefix)
-        except Exception as e:
-            print(f"Erro ao registrar {module_name}: {e}")
     
     # Error handlers
     @app.errorhandler(404)

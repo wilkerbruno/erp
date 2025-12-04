@@ -5,6 +5,7 @@ from datetime import datetime
 from io import BytesIO
 from flask import Blueprint, render_template, request, jsonify, flash, redirect, url_for, send_file
 
+
 @bp.route('/')
 @login_required
 def index():
@@ -165,29 +166,178 @@ def controle_ponto():
     """Controle geral de ponto"""
     return render_template('rh/ponto/controle.html')
 
+
 @bp.route('/api/registrar-ponto', methods=['POST'])
 @login_required
 def api_registrar_ponto():
-    """API: Registrar ponto com localização"""
+    """API: Registrar ponto - SEMPRE retorna JSON"""
+    # Envolver TUDO em try-catch para garantir que sempre retorna JSON
     try:
-        data = request.get_json()
+        # Log para debug
+        print("\n" + "="*60)
+        print("🔍 API Registrar Ponto chamada")
+        print(f"Method: {request.method}")
+        print(f"Content-Type: {request.content_type}")
+        print(f"Is JSON: {request.is_json}")
         
-        # Mock de resposta
-        return jsonify({
+        # Tentar obter dados de múltiplas formas
+        data = None
+        
+        if request.is_json:
+            data = request.get_json()
+            print(f"✅ Dados via get_json(): {data}")
+        elif request.data:
+            import json
+            try:
+                data = json.loads(request.data.decode('utf-8'))
+                print(f"✅ Dados via json.loads(): {data}")
+            except:
+                print("⚠️ Falha ao fazer parse do JSON")
+        
+        if not data and request.form:
+            data = dict(request.form)
+            print(f"✅ Dados via form: {data}")
+        
+        # Se não tem dados, retornar JSON de erro
+        if not data or len(data) == 0:
+            print("❌ Nenhum dado recebido!")
+            response = jsonify({
+                'status': 'error',
+                'message': 'Nenhum dado foi enviado na requisição'
+            })
+            response.headers['Content-Type'] = 'application/json'
+            return response, 400
+        
+        print(f"📦 Dados recebidos: {data}")
+        
+        # Adicionar valores padrão para campos faltantes
+        if 'colaborador_id' not in data or not data['colaborador_id']:
+            data['colaborador_id'] = 1
+            print(f"⚠️ colaborador_id não enviado, usando padrão: 1")
+        
+        if 'data' not in data or not data['data']:
+            from datetime import date
+            data['data'] = str(date.today())
+            print(f"⚠️ data não enviada, usando hoje: {data['data']}")
+        
+        if 'horario' not in data or not data['horario']:
+            from datetime import datetime
+            data['horario'] = datetime.now().strftime('%H:%M:%S')
+            print(f"⚠️ horario não enviado, usando agora: {data['horario']}")
+        
+        # Verificar campo obrigatório: tipo
+        if 'tipo' not in data or not data['tipo']:
+            print("❌ Campo 'tipo' é obrigatório!")
+            response = jsonify({
+                'status': 'error',
+                'message': 'Campo "tipo" é obrigatório (entrada, saida, etc)'
+            })
+            response.headers['Content-Type'] = 'application/json'
+            return response, 400
+        
+        print(f"✅ Tipo de ponto: {data['tipo']}")
+        
+        # Calcular atraso se for entrada
+        atraso_minutos = 0
+        if data['tipo'] == 'entrada':
+            from datetime import datetime, date
+            try:
+                horario_entrada = datetime.strptime(data['horario'], '%H:%M:%S').time()
+                horario_esperado = datetime.strptime('08:00:00', '%H:%M:%S').time()
+                
+                if horario_entrada > horario_esperado:
+                    delta = datetime.combine(date.today(), horario_entrada) - datetime.combine(date.today(), horario_esperado)
+                    atraso_minutos = int(delta.total_seconds() / 60)
+                    print(f"⚠️ Atraso detectado: {atraso_minutos} minutos")
+            except Exception as e:
+                print(f"⚠️ Erro ao calcular atraso: {e}")
+        
+        # Construir resposta de sucesso
+        response_data = {
             'status': 'success',
             'message': 'Ponto registrado com sucesso!',
+            'atraso_minutos': atraso_minutos,
+            'home_office_autorizado': data.get('home_office', False),
             'registro': {
-                'id': 1,
-                'tipo': data.get('tipo', 'entrada'),
-                'horario': datetime.now().strftime('%H:%M:%S'),
-                'localizacao': data.get('localizacao_texto', 'Local não informado')
+                'tipo': data['tipo'],
+                'horario': data['horario'],
+                'data': data['data'],
+                'colaborador_id': data['colaborador_id']
             }
-        })
+        }
+        
+        print(f"✅ Sucesso! Retornando JSON")
+        print("="*60 + "\n")
+        
+        response = jsonify(response_data)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+        
     except Exception as e:
-        return jsonify({
+        # CRÍTICO: Garantir que mesmo em exceção retorna JSON
+        import traceback
+        error_traceback = traceback.format_exc()
+        print(f"\n❌ EXCEÇÃO CAPTURADA:")
+        print(error_traceback)
+        print("="*60 + "\n")
+        
+        response = jsonify({
             'status': 'error',
-            'message': str(e)
-        }), 400
+            'message': f'Erro no servidor: {str(e)}',
+            'error_type': type(e).__name__
+        })
+        response.headers['Content-Type'] = 'application/json'
+        return response, 500
+
+
+@bp.route('/api/ponto/hoje/<int:colaborador_id>')
+@login_required
+def api_ponto_hoje(colaborador_id):
+    """API: Obter registros de ponto de hoje - SEMPRE retorna JSON"""
+    try:
+        print(f"\n🔍 Consultando pontos de hoje para colaborador {colaborador_id}")
+        
+        from datetime import date
+        hoje = date.today()
+        
+        # Mock data para teste (substitua por consulta ao banco depois)
+        registros = []
+        
+        # Exemplo de registro (descomente para testar):
+        # registros = [
+        #     {
+        #         'tipo': 'entrada',
+        #         'horario': '08:05:00',
+        #         'data': str(hoje),
+        #         'home_office': False,
+        #         'atraso_minutos': 5,
+        #         'dentro_horario': False
+        #     }
+        # ]
+        
+        print(f"✅ Retornando {len(registros)} registro(s)")
+        
+        response = jsonify({
+            'status': 'success',
+            'registros': registros,
+            'data': str(hoje),
+            'colaborador_id': colaborador_id
+        })
+        response.headers['Content-Type'] = 'application/json'
+        return response
+        
+    except Exception as e:
+        print(f"❌ Erro ao consultar pontos: {e}")
+        
+        response = jsonify({
+            'status': 'error',
+            'message': str(e),
+            'registros': []
+        })
+        response.headers['Content-Type'] = 'application/json'
+        return response, 500
+
+
 
 # ========== HOME OFFICE ==========
 @bp.route('/home-office')

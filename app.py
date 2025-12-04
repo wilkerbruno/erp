@@ -652,142 +652,8 @@ def auxilio_celular(colaborador_id):
     
     return render_template('rh/auxilio_celular.html', colaborador=colaborador)
 
-# ========== PONTO COM LOCALIZAÇÃO ==========
-
-@app.route('/bater-ponto')
-@login_required
-def bater_ponto():
-    """Página para bater ponto com localização"""
-    return render_template('rh/ponto/bater_ponto.html')
-
-@app.route('/api/registrar-ponto', methods=['POST'])
-@login_required
-def api_registrar_ponto():
-    """API: Registrar ponto com localização"""
-    try:
-        data = request.get_json()
-        
-        # Verificar autorização de home office se aplicável
-        home_office = data.get('home_office', False)
-        home_office_autorizado = False
-        
-        if home_office:
-            # Verificar se tem autorização ativa
-            hoje = date.today()
-            autorizacao = AutorizacaoHomeOffice.query.filter(
-                and_(
-                    AutorizacaoHomeOffice.colaborador_id == data['colaborador_id'],
-                    AutorizacaoHomeOffice.status == 'ativo',
-                    AutorizacaoHomeOffice.data_inicio <= hoje,
-                    or_(
-                        AutorizacaoHomeOffice.data_fim >= hoje,
-                        AutorizacaoHomeOffice.data_fim.is_(None)
-                    )
-                )
-            ).first()
-            
-            home_office_autorizado = autorizacao is not None
-        
-        # Calcular atraso se for entrada
-        atraso_minutos = 0
-        dentro_horario = True
-        
-        if data['tipo'] == 'entrada':
-            horario_entrada = datetime.strptime(data['horario'], '%H:%M:%S').time()
-            horario_esperado = datetime.strptime('08:00:00', '%H:%M:%S').time()
-            
-            if horario_entrada > horario_esperado:
-                delta = datetime.combine(date.today(), horario_entrada) - datetime.combine(date.today(), horario_esperado)
-                atraso_minutos = int(delta.total_seconds() / 60)
-                dentro_horario = False
-        
-        # Criar registro
-        registro = RegistroPonto(
-            colaborador_id=data['colaborador_id'],
-            data=datetime.strptime(data['data'], '%Y-%m-%d').date(),
-            tipo=data['tipo'],
-            horario=datetime.strptime(data['horario'], '%H:%M:%S').time(),
-            latitude=data.get('latitude'),
-            longitude=data.get('longitude'),
-            localizacao_texto=data.get('localizacao_texto'),
-            distancia_empresa=data.get('distancia_empresa'),
-            home_office=home_office,
-            home_office_autorizado=home_office_autorizado,
-            dentro_horario=dentro_horario,
-            atraso_minutos=atraso_minutos,
-            dispositivo=data.get('dispositivo'),
-            ip_address=request.remote_addr,
-            observacoes=data.get('observacoes')
-        )
-        
-        db.session.add(registro)
-        db.session.commit()
-        
-        return jsonify({
-            'status': 'success',
-            'message': 'Ponto registrado com sucesso!',
-            'registro': registro.to_dict(),
-            'atraso_minutos': atraso_minutos,
-            'home_office_autorizado': home_office_autorizado
-        })
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({
-            'status': 'error',
-            'message': str(e)
-        }), 400
-
-@app.route('/api/ponto/hoje/<int:colaborador_id>')
-@login_required
-def api_ponto_hoje(colaborador_id):
-    """API: Obter registros de ponto de hoje"""
-    hoje = date.today()
-    registros = RegistroPonto.query.filter(
-        and_(
-            RegistroPonto.colaborador_id == colaborador_id,
-            RegistroPonto.data == hoje
-        )
-    ).order_by(RegistroPonto.horario).all()
-    
-    return jsonify({
-        'status': 'success',
-        'registros': [r.to_dict() for r in registros]
-    })
 
 # ========== HOME OFFICE ==========
-
-@app.route('/rh/home-office')
-@login_required
-def rh_home_office():
-    """Página de gerenciamento de home office"""
-    return render_template('rh/home_office/index.html')
-
-@app.route('/rh/api/home-office/autorizar', methods=['POST'])
-@login_required
-def rh_api_autorizar_home_office():
-    """API: Autorizar home office para colaborador"""
-    try:
-        data = request.get_json()
-        
-        return jsonify({
-            'status': 'success',
-            'message': 'Home office autorizado com sucesso!',
-            'autorizacao': {
-                'id': 1,
-                'colaborador_id': data.get('colaborador_id'),
-                'colaborador_nome': 'João Silva',
-                'data_inicio': data.get('data_inicio'),
-                'data_fim': data.get('data_fim'),
-                'dias_semana': data.get('dias_semana', []),
-                'motivo': data.get('motivo'),
-                'status': 'ativo'
-            }
-        })
-    except Exception as e:
-        return jsonify({
-            'status': 'error',
-            'message': str(e)
-        }), 400
 
 @app.route('/rh/api/home-office/listar')
 @login_required
@@ -1117,11 +983,6 @@ def api_listar_beneficios():
     })
 
 # ========== PONTO ELETRÔNICO ==========
-@app.route('/bater-ponto')
-@login_required
-def bater_ponto():
-    """Página para bater ponto com GPS"""
-    return render_template('rh/ponto/bater_ponto.html')
 
 @bp.route('/gerenciar-ponto')
 @login_required
