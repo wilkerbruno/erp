@@ -1,72 +1,335 @@
 {% extends "base.html" %}
 
-{% block title %}Gerenciar Ponto{% endblock %}
+{% block title %}Gerenciar Ponto - RH{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">
-            <i class="fas fa-chart-bar me-2"></i>Gerenciar Ponto
-        </h1>
-        <a href="/rh" class="btn btn-secondary">
-            <i class="fas fa-arrow-left me-1"></i>Voltar
-        </a>
-    </div>
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header pb-0 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-users-cog me-2"></i>
+                        Gerenciar Registros de Ponto
+                    </h5>
+                    <div>
+                        <button class="btn btn-sm btn-primary" onclick="atualizarLista()">
+                            <i class="fas fa-sync-alt"></i> Atualizar
+                        </button>
+                        <button class="btn btn-sm btn-success" onclick="exportarExcel()">
+                            <i class="fas fa-file-excel"></i> Exportar
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Filtros -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <label class="form-label">Data Inicial</label>
+                            <input type="date" class="form-control" id="dataInicio" value="">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Data Final</label>
+                            <input type="date" class="form-control" id="dataFim" value="">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Colaborador</label>
+                            <select class="form-select" id="colaboradorFiltro">
+                                <option value="">Todos</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">&nbsp;</label>
+                            <button class="btn btn-primary d-block w-100" onclick="filtrarRegistros()">
+                                <i class="fas fa-filter"></i> Filtrar
+                            </button>
+                        </div>
+                    </div>
 
-    <div class="card shadow">
-        <div class="card-header">
-            <h6 class="m-0 font-weight-bold text-primary">Registros de Ponto</h6>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Colaborador</th>
-                            <th>Data</th>
-                            <th>Entrada</th>
-                            <th>Almoço</th>
-                            <th>Volta</th>
-                            <th>Saída</th>
-                            <th>Total</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>João Silva</strong></td>
-                            <td>06/08/2025</td>
-                            <td class="text-success">08:00</td>
-                            <td class="text-warning">12:00</td>
-                            <td class="text-info">13:00</td>
-                            <td class="text-danger">17:00</td>
-                            <td><strong>8h 00m</strong></td>
-                            <td><span class="badge bg-success">Completo</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>Maria Santos</strong></td>
-                            <td>06/08/2025</td>
-                            <td class="text-success">08:15</td>
-                            <td class="text-warning">12:00</td>
-                            <td class="text-info">13:00</td>
-                            <td class="text-danger">17:15</td>
-                            <td><strong>8h 00m</strong></td>
-                            <td><span class="badge bg-warning">Atraso</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>Pedro Costa</strong></td>
-                            <td>06/08/2025</td>
-                            <td class="text-success">08:00</td>
-                            <td>--:--</td>
-                            <td>--:--</td>
-                            <td>--:--</td>
-                            <td>4h 00m</td>
-                            <td><span class="badge bg-primary">Trabalhando</span></td>
-                        </tr>
-                    </tbody>
-                </table>
+                    <!-- Tabela de Registros -->
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover" id="tabelaRegistros">
+                            <thead>
+                                <tr>
+                                    <th>Colaborador</th>
+                                    <th>Data</th>
+                                    <th>Entrada</th>
+                                    <th>Saída Almoço</th>
+                                    <th>Volta Almoço</th>
+                                    <th>Saída</th>
+                                    <th>Total Horas</th>
+                                    <th>Atraso</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="corpoTabela">
+                                <tr>
+                                    <td colspan="9" class="text-center text-muted py-5">
+                                        <i class="fas fa-spinner fa-spin fa-2x mb-3"></i>
+                                        <div>Carregando registros...</div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Paginação -->
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <p class="text-muted mb-0" id="infoRegistros">
+                                Mostrando 0 registros
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Modal Detalhes -->
+<div class="modal fade" id="modalDetalhes" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detalhes dos Registros</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="conteudoDetalhes">
+                <!-- Será preenchido via JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Configuração
+const API_BASE = '/rh/api';
+
+// Carregar dados ao iniciar
+document.addEventListener('DOMContentLoaded', function() {
+    // Definir datas padrão (hoje)
+    const hoje = new Date().toISOString().split('T')[0];
+    document.getElementById('dataInicio').value = hoje;
+    document.getElementById('dataFim').value = hoje;
+    
+    carregarColaboradores();
+    carregarResumoDiario();
+});
+
+// Carregar lista de colaboradores
+async function carregarColaboradores() {
+    try {
+        const response = await fetch(`${API_BASE}/colaboradores`);
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            const select = document.getElementById('colaboradorFiltro');
+            
+            data.colaboradores.forEach(c => {
+                const option = document.createElement('option');
+                option.value = c.id;
+                option.textContent = c.nome;
+                select.appendChild(option);
+            });
+        }
+    } catch (error) {
+        console.error('Erro ao carregar colaboradores:', error);
+    }
+}
+
+// Carregar resumo diário
+async function carregarResumoDiario() {
+    const dataInicio = document.getElementById('dataInicio').value;
+    const dataFim = document.getElementById('dataFim').value;
+    const colaboradorId = document.getElementById('colaboradorFiltro').value;
+
+    const tbody = document.getElementById('corpoTabela');
+    tbody.innerHTML = `
+        <tr>
+            <td colspan="9" class="text-center text-muted py-5">
+                <i class="fas fa-spinner fa-spin fa-2x mb-3"></i>
+                <div>Carregando registros...</div>
+            </td>
+        </tr>
+    `;
+
+    try {
+        let url = `${API_BASE}/resumo-diario?data_inicio=${dataInicio}&data_fim=${dataFim}`;
+        if (colaboradorId) {
+            url += `&colaborador_id=${colaboradorId}`;
+        }
+        
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            const resumos = data.resumos;
+            
+            if (resumos.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="text-center text-info py-5">
+                            <i class="fas fa-info-circle fa-2x mb-3"></i>
+                            <div>Nenhum registro encontrado</div>
+                        </td>
+                    </tr>
+                `;
+                document.getElementById('infoRegistros').textContent = 'Mostrando 0 registros';
+                return;
+            }
+            
+            tbody.innerHTML = '';
+            
+            resumos.forEach(r => {
+                const atraso = calcularAtrasoTotal(r.registros);
+                const badgeAtraso = atraso > 0 ? 
+                    `<span class="badge bg-warning">${atraso} min</span>` : 
+                    `<span class="badge bg-success">OK</span>`;
+                
+                const row = `
+                    <tr>
+                        <td>${r.colaborador_nome || `ID ${r.colaborador_id}`}</td>
+                        <td>${formatarData(r.data)}</td>
+                        <td>${r.entrada}</td>
+                        <td>${r.saida_almoco}</td>
+                        <td>${r.volta_almoco}</td>
+                        <td>${r.saida}</td>
+                        <td><strong>${r.total_horas}h</strong></td>
+                        <td>${badgeAtraso}</td>
+                        <td>
+                            <button class="btn btn-sm btn-info" onclick='verDetalhes(${JSON.stringify(r)})'>
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+            
+            document.getElementById('infoRegistros').textContent = 
+                `Mostrando ${resumos.length} registro(s)`;
+        } else {
+            throw new Error(data.message);
+        }
+    } catch (error) {
+        console.error('Erro ao carregar registros:', error);
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="9" class="text-center text-danger py-5">
+                    <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+                    <div>Erro ao carregar registros</div>
+                    <small class="text-muted d-block mt-2">${error.message}</small>
+                </td>
+            </tr>
+        `;
+    }
+}
+
+// Calcular atraso total do dia
+function calcularAtrasoTotal(registros) {
+    let total = 0;
+    registros.forEach(r => {
+        if (r.atraso_minutos) {
+            total += r.atraso_minutos;
+        }
+    });
+    return total;
+}
+
+// Formatar data
+function formatarData(dataStr) {
+    const data = new Date(dataStr + 'T00:00:00');
+    return data.toLocaleDateString('pt-BR');
+}
+
+// Filtrar registros
+function filtrarRegistros() {
+    carregarResumoDiario();
+}
+
+// Atualizar lista
+function atualizarLista() {
+    carregarResumoDiario();
+}
+
+// Ver detalhes
+function verDetalhes(resumo) {
+    const modal = new bootstrap.Modal(document.getElementById('modalDetalhes'));
+    const conteudo = document.getElementById('conteudoDetalhes');
+    
+    let html = `
+        <h6>Colaborador: ${resumo.colaborador_nome || `ID ${resumo.colaborador_id}`}</h6>
+        <p>Data: ${formatarData(resumo.data)}</p>
+        <hr>
+        <div class="table-responsive">
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Horário</th>
+                        <th>Localização</th>
+                        <th>Home Office</th>
+                    </tr>
+                </thead>
+                <tbody>
+    `;
+    
+    resumo.registros.forEach(r => {
+        const tipoNomes = {
+            'entrada': 'Entrada',
+            'saida_almoco': 'Saída Almoço',
+            'volta_almoco': 'Volta Almoço',
+            'saida': 'Saída'
+        };
+        
+        html += `
+            <tr>
+                <td>${tipoNomes[r.tipo] || r.tipo}</td>
+                <td>${r.horario}</td>
+                <td>${r.localizacao_texto || '-'}</td>
+                <td>${r.home_office ? '<i class="fas fa-check text-success"></i>' : '-'}</td>
+            </tr>
+        `;
+    });
+    
+    html += `
+                </tbody>
+            </table>
+        </div>
+        <div class="alert alert-info mt-3">
+            <strong>Total de Horas Trabalhadas:</strong> ${resumo.total_horas}h
+        </div>
+    `;
+    
+    conteudo.innerHTML = html;
+    modal.show();
+}
+
+// Exportar para Excel
+function exportarExcel() {
+    alert('Funcionalidade de exportação será implementada em breve');
+}
+</script>
+
+<style>
+.table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 0.35em 0.65em;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+</style>
 {% endblock %}

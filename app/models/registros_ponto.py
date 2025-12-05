@@ -7,10 +7,10 @@ from app import db
 from datetime import datetime
 
 class RegistroPonto(db.Model):
-    """Modelo para registro de ponto - ADAPTADO À SUA TABELA EXISTENTE"""
+    """Modelo para registro de ponto - COM CÁLCULO DE HORAS"""
     __tablename__ = 'registros_ponto'
     
-    # Campos da sua tabela
+    # Campos básicos
     id = db.Column(db.Integer, primary_key=True)
     colaborador_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     data = db.Column(db.Date, nullable=False, index=True)
@@ -33,6 +33,9 @@ class RegistroPonto(db.Model):
     # Dispositivo e IP
     dispositivo = db.Column(db.String(500))
     ip_address = db.Column(db.String(50))
+    
+    # ✅ NOVA COLUNA: Total de horas trabalhadas
+    total_horas = db.Column(db.Numeric(5, 2), default=0.00)
     
     # Timestamps
     criado_em = db.Column(db.DateTime, default=datetime.utcnow)
@@ -62,8 +65,128 @@ class RegistroPonto(db.Model):
             'justificativa_atraso': self.justificativa_atraso,
             'dispositivo': self.dispositivo,
             'ip_address': self.ip_address,
+            'total_horas': float(self.total_horas) if self.total_horas else 0.0,
             'criado_em': self.criado_em.strftime('%Y-%m-%d %H:%M:%S') if self.criado_em else None
         }
+    
+    @staticmethod
+    def calcular_horas_trabalhadas(colaborador_id, data):
+        """
+        Calcula o total de horas trabalhadas em um dia
+        
+        Lógica:
+        - Período manhã: entrada até saida_almoco
+        - Período tarde: volta_almoco até saida
+        - Total: soma dos dois períodos
+        
+        Retorna: total de horas em decimal (ex: 8.5 horas)
+        """
+        from datetime import datetime, timedelta
+        
+        # Buscar todos os registros do dia
+        registros = RegistroPonto.query.filter(
+            RegistroPonto.colaborador_id == colaborador_id,
+            RegistroPonto.data == data
+        ).order_by(RegistroPonto.horario.asc()).all()
+        
+        if not registros:
+            return 0.0
+        
+        # Organizar registros por tipo
+        pontos = {}
+        for r in registros:
+            pontos[r.tipo] = r.horario
+        
+        total_horas = 0.0
+        
+        try:
+            # Período manhã: entrada até saida_almoco
+            if 'entrada' in pontos and 'saida_almoco' in pontos:
+                entrada = pontos['entrada']
+                saida_almoco = pontos['saida_almoco']
+                
+                # Converter Time para datetime para calcular diferença
+                dt_entrada = datetime.combine(data, entrada)
+                dt_saida_almoco = datetime.combine(data, saida_almoco)
+                
+                # Calcular diferença
+                delta_manha = dt_saida_almoco - dt_entrada
+                horas_manha = delta_manha.total_seconds() / 3600.0
+                total_horas += horas_manha
+            
+            # Período tarde: volta_almoco até saida
+            if 'volta_almoco' in pontos and 'saida' in pontos:
+                volta_almoco = pontos['volta_almoco']
+                saida = pontos['saida']
+                
+                # Converter Time para datetime
+                dt_volta_almoco = datetime.combine(data, volta_almoco)
+                dt_saida = datetime.combine(data, saida)
+                
+                # Calcular diferença
+                delta_tarde = dt_saida - dt_volta_almoco
+                horas_tarde = delta_tarde.total_seconds() / 3600.0
+                total_horas += horas_tarde
+        
+        except Exception as e:
+            print(f"⚠️ Erro ao calcular horas: {e}")
+            return 0.0
+        
+        return round(total_horas, 2)
+    
+    @staticmethod
+    def atualizar_total_horas(colaborador_id, data):
+        """
+        Atualiza o campo total_horas para todos os registros do dia
+        
+        Deve ser chamado sempre que um registro é adicionado/alterado
+        """
+        from app import db
+        
+        # Calcular total de horas
+        total = RegistroPonto.calcular_horas_trabalhadas(colaborador_id, data)
+        
+        # Atualizar todos os registros do dia
+        RegistroPonto.query.filter(
+            RegistroPonto.colaborador_id == colaborador_id,
+            RegistroPonto.data == data
+        ).update({'total_horas': total})
+        
+        db.session.commit()
+        
+        return total
+    
+    @staticmethod
+    def obter_resumo_dia(colaborador_id, data):
+        """
+        Retorna um resumo do dia com todos os pontos e total de horas
+        """
+        registros = RegistroPonto.query.filter(
+            RegistroPonto.colaborador_id == colaborador_id,
+            RegistroPonto.data == data
+        ).order_by(RegistroPonto.horario.asc()).all()
+        
+        # Organizar por tipo
+        pontos = {}
+        for r in registros:
+            pontos[r.tipo] = r.horario.strftime('%H:%M:%S')
+        
+        # Calcular total de horas
+        total_horas = RegistroPonto.calcular_horas_trabalhadas(colaborador_id, data)
+        
+        return {
+            'colaborador_id': colaborador_id,
+            'data': data.strftime('%Y-%m-%d'),
+            'entrada': pontos.get('entrada', '-'),
+            'saida_almoco': pontos.get('saida_almoco', '-'),
+            'volta_almoco': pontos.get('volta_almoco', '-'),
+            'saida': pontos.get('saida', '-'),
+            'total_horas': total_horas,
+            'registros': [r.to_dict() for r in registros]
+        }
+
+
+
 
 
 class AutorizacaoHomeOffice(db.Model):

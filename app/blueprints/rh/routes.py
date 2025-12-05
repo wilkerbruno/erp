@@ -4,9 +4,10 @@ from app.blueprints.rh import bp
 from datetime import datetime
 from io import BytesIO
 from flask import Blueprint, render_template, request, jsonify, flash, redirect, url_for, send_file
-from app import db
 from app.models.registros_ponto import RegistroPonto, AutorizacaoHomeOffice
-from sqlalchemy import and_
+from app.models.user import User
+from app import db
+from sqlalchemy import and_, func
 
 
 from flask import render_template, request, jsonify
@@ -181,7 +182,7 @@ def controle_ponto():
 @bp.route('/api/registrar-ponto', methods=['POST'])
 @login_required
 def api_registrar_ponto():
-    """API: Registrar ponto - USA DATA DO SERVIDOR"""
+    """API: Registrar ponto - COM CÁLCULO AUTOMÁTICO DE HORAS"""
     try:
         print("\n" + "="*60)
         print("🔍 API Registrar Ponto chamada")
@@ -201,35 +202,29 @@ def api_registrar_ponto():
         
         if not data:
             print("❌ Nenhum dado recebido!")
-            response = jsonify({
+            return jsonify({
                 'status': 'error',
                 'message': 'Nenhum dado foi enviado'
-            })
-            response.headers['Content-Type'] = 'application/json'
-            return response, 400
+            }), 400
         
         print(f"📦 Dados recebidos: {data}")
         
         # ✅ SEMPRE USAR DATA E HORA DO SERVIDOR
         colaborador_id = data.get('colaborador_id', current_user.id)
         
-        # IGNORAR data e horario do cliente, usar do servidor
         agora = datetime.now()
-        data_registro = agora.date()  # Date object
-        horario_registro = agora.time()  # Time object
+        data_registro = agora.date()
+        horario_registro = agora.time()
         
         print(f"⏰ Data/Hora do SERVIDOR: {data_registro} {horario_registro}")
-        print(f"   (Ignorando data do cliente: {data.get('data')})")
         
         # Validar tipo
         tipo = data.get('tipo')
         if not tipo:
-            response = jsonify({
+            return jsonify({
                 'status': 'error',
                 'message': 'Campo "tipo" é obrigatório'
-            })
-            response.headers['Content-Type'] = 'application/json'
-            return response, 400
+            }), 400
         
         # Calcular atraso
         atraso_minutos = 0
@@ -243,7 +238,7 @@ def api_registrar_ponto():
             except Exception as e:
                 print(f"⚠️ Erro ao calcular atraso: {e}")
         
-        # Verificar autorização de home office
+        # Verificar home office
         home_office = data.get('home_office', False)
         home_office_autorizado = False
         
@@ -254,15 +249,15 @@ def api_registrar_ponto():
             )
             print(f"🏠 Home Office autorizado: {home_office_autorizado}")
         
-        # Obter IP do cliente
+        # IP do cliente
         ip_address = request.remote_addr
         
         # ✅ SALVAR NO BANCO
         try:
             novo_registro = RegistroPonto(
                 colaborador_id=colaborador_id,
-                data=data_registro,  # Date do servidor
-                horario=horario_registro,  # Time do servidor
+                data=data_registro,
+                horario=horario_registro,
                 tipo=tipo,
                 latitude=data.get('latitude'),
                 longitude=data.get('longitude'),
@@ -278,32 +273,37 @@ def api_registrar_ponto():
             db.session.commit()
             
             print(f"✅ Registro salvo no banco! ID: {novo_registro.id}")
-            print(f"   Colaborador: {colaborador_id}")
-            print(f"   Data: {data_registro}")
-            print(f"   Horário: {horario_registro}")
-            print(f"   Tipo: {tipo}")
-            print(f"   Atraso: {atraso_minutos} min")
+            
+            # ✅ CALCULAR E ATUALIZAR TOTAL DE HORAS
+            try:
+                total_horas = RegistroPonto.atualizar_total_horas(
+                    colaborador_id, 
+                    data_registro
+                )
+                print(f"⏱️  Total de horas atualizado: {total_horas}h")
+            except Exception as e_horas:
+                print(f"⚠️ Erro ao calcular horas: {e_horas}")
+                total_horas = 0.0
             
         except Exception as e_db:
             print(f"❌ Erro ao salvar no banco: {e_db}")
             db.session.rollback()
             
-            response = jsonify({
+            return jsonify({
                 'status': 'error',
                 'message': f'Erro ao salvar no banco: {str(e_db)}'
-            })
-            response.headers['Content-Type'] = 'application/json'
-            return response, 500
+            }), 500
         
         # Resposta de sucesso
         print(f"✅ Sucesso! Tipo: {tipo}")
         print("="*60 + "\n")
         
-        response = jsonify({
+        return jsonify({
             'status': 'success',
             'message': 'Ponto registrado com sucesso!',
             'atraso_minutos': atraso_minutos,
             'home_office_autorizado': home_office_autorizado,
+            'total_horas': total_horas,
             'registro': {
                 'id': novo_registro.id,
                 'tipo': tipo,
@@ -312,23 +312,20 @@ def api_registrar_ponto():
                 'atraso_minutos': atraso_minutos,
                 'dentro_horario': atraso_minutos == 0,
                 'home_office': home_office,
-                'home_office_autorizado': home_office_autorizado
+                'home_office_autorizado': home_office_autorizado,
+                'total_horas': total_horas
             }
         })
-        response.headers['Content-Type'] = 'application/json'
-        return response
         
     except Exception as e:
         error_traceback = traceback.format_exc()
         print(f"\n❌ ERRO:")
         print(error_traceback)
         
-        response = jsonify({
+        return jsonify({
             'status': 'error',
             'message': str(e)
-        })
-        response.headers['Content-Type'] = 'application/json'
-        return response, 500
+        }), 500
 
 
 @bp.route('/api/ponto/hoje/<int:colaborador_id>')
@@ -625,5 +622,186 @@ def api_listar_dre():
         'status': 'success',
         'dres': dres
     })
+
+
+@bp.route('/api/registros', methods=['GET'])
+@login_required
+def api_listar_registros():
+    """API: Listar registros com filtros"""
+    try:
+        # Parâmetros de filtro
+        data_inicio = request.args.get('data_inicio')
+        data_fim = request.args.get('data_fim')
+        colaborador_id = request.args.get('colaborador_id')
+        page = int(request.args.get('page', 1))
+        per_page = int(request.args.get('per_page', 20))
+        
+        print(f"\n🔍 Listando registros:")
+        print(f"   Data início: {data_inicio}")
+        print(f"   Data fim: {data_fim}")
+        print(f"   Colaborador: {colaborador_id}")
+        print(f"   Página: {page}")
+        
+        # Construir query
+        query = RegistroPonto.query
+        
+        # Filtros
+        if data_inicio:
+            data_inicio_dt = datetime.strptime(data_inicio, '%Y-%m-%d').date()
+            query = query.filter(RegistroPonto.data >= data_inicio_dt)
+        
+        if data_fim:
+            data_fim_dt = datetime.strptime(data_fim, '%Y-%m-%d').date()
+            query = query.filter(RegistroPonto.data <= data_fim_dt)
+        
+        if colaborador_id:
+            query = query.filter(RegistroPonto.colaborador_id == int(colaborador_id))
+        
+        # Ordenar
+        query = query.order_by(
+            RegistroPonto.data.desc(),
+            RegistroPonto.horario.asc()
+        )
+        
+        # Paginar
+        pagination = query.paginate(
+            page=page,
+            per_page=per_page,
+            error_out=False
+        )
+        
+        # Converter para dict
+        registros = [r.to_dict() for r in pagination.items]
+        
+        # Adicionar nome do colaborador
+        for r in registros:
+            colaborador = UserMixin.query.get(r['colaborador_id'])
+            if colaborador:
+                r['colaborador_nome'] = colaborador.username or colaborador.email
+        
+        print(f"✅ Encontrados {pagination.total} registro(s)")
+        
+        return jsonify({
+            'status': 'success',
+            'registros': registros,
+            'total': pagination.total,
+            'page': page,
+            'per_page': per_page,
+            'pages': pagination.pages
+        })
+        
+    except Exception as e:
+        print(f"❌ Erro ao listar registros: {e}")
+        traceback.print_exc()
+        
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        }), 500
+
+
+@bp.route('/api/resumo-diario', methods=['GET'])
+@login_required
+def api_resumo_diario():
+    """API: Resumo diário com total de horas"""
+    try:
+        data_inicio = request.args.get('data_inicio')
+        data_fim = request.args.get('data_fim')
+        colaborador_id = request.args.get('colaborador_id')
+        
+        print(f"\n🔍 Buscando resumo diário:")
+        print(f"   Data início: {data_inicio}")
+        print(f"   Data fim: {data_fim}")
+        print(f"   Colaborador: {colaborador_id}")
+        
+        # Converter datas
+        if not data_inicio:
+            data_inicio = date.today().strftime('%Y-%m-%d')
+        if not data_fim:
+            data_fim = date.today().strftime('%Y-%m-%d')
+        
+        data_inicio_dt = datetime.strptime(data_inicio, '%Y-%m-%d').date()
+        data_fim_dt = datetime.strptime(data_fim, '%Y-%m-%d').date()
+        
+        # Buscar registros agrupados por dia
+        query = db.session.query(
+            RegistroPonto.colaborador_id,
+            RegistroPonto.data,
+            func.max(RegistroPonto.total_horas).label('total_horas')
+        ).filter(
+            RegistroPonto.data >= data_inicio_dt,
+            RegistroPonto.data <= data_fim_dt
+        )
+        
+        if colaborador_id:
+            query = query.filter(RegistroPonto.colaborador_id == int(colaborador_id))
+        
+        query = query.group_by(
+            RegistroPonto.colaborador_id,
+            RegistroPonto.data
+        ).order_by(
+            RegistroPonto.data.desc()
+        )
+        
+        resultados = query.all()
+        
+        # Montar resumos
+        resumos = []
+        for r in resultados:
+            resumo = RegistroPonto.obter_resumo_dia(r.colaborador_id, r.data)
+            
+            # Adicionar nome do colaborador
+            colaborador = User.query.get(r.colaborador_id)
+            if colaborador:
+                resumo['colaborador_nome'] = colaborador.username or colaborador.email
+            
+            resumos.append(resumo)
+        
+        print(f"✅ Encontrados {len(resumos)} dia(s)")
+        
+        return jsonify({
+            'status': 'success',
+            'resumos': resumos,
+            'total': len(resumos)
+        })
+        
+    except Exception as e:
+        print(f"❌ Erro ao buscar resumo: {e}")
+        traceback.print_exc()
+        
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        }), 500
+
+
+@bp.route('/api/colaboradores', methods=['GET'])
+@login_required
+def api_listar_colaboradores():
+    """API: Listar colaboradores ativos"""
+    try:
+        # Buscar usuários
+        colaboradores = User.query.filter_by(active=True).all()
+        
+        resultado = [{
+            'id': c.id,
+            'nome': c.username or c.email,
+            'email': c.email
+        } for c in colaboradores]
+        
+        return jsonify({
+            'status': 'success',
+            'colaboradores': resultado,
+            'total': len(resultado)
+        })
+        
+    except Exception as e:
+        print(f"❌ Erro ao listar colaboradores: {e}")
+        
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        }), 500
+
 
 
