@@ -213,73 +213,154 @@ function calcularDistancia(lat1, lon1, lat2, lon2) {
 
 // Carregar registros de hoje
 function carregarRegistrosHoje() {
+    console.log("\n" + "=".repeat(60));
+    console.log("📥 CARREGANDO REGISTROS DE HOJE");
+    console.log("=".repeat(60));
+    
     // Garantir que colaboradorId existe
     if (typeof colaboradorId === 'undefined') {
+        console.warn("⚠️ colaboradorId não definido, usando 1");
         colaboradorId = 1;
     }
     
-    // ✅ CORREÇÃO: Adicionar /rh no início da URL
-    fetch(`/rh/api/ponto/hoje/${colaboradorId}`)  // ← /rh/ no início!
+    console.log(`👤 Colaborador ID: ${colaboradorId}`);
+    
+    const url = `/rh/api/ponto/hoje/${colaboradorId}`;
+    console.log(`🔗 URL: ${url}`);
+    
+    fetch(url)
         .then(response => {
-            console.log("📥 Carregando registros - Status:", response.status);
+            console.log(`📥 Resposta recebida`);
+            console.log(`   Status: ${response.status}`);
+            console.log(`   Status Text: ${response.statusText}`);
+            console.log(`   Content-Type: ${response.headers.get('Content-Type')}`);
+            console.log(`   OK: ${response.ok}`);
             
             if (response.status === 404) {
                 console.warn("⚠️ Rota não encontrada (404)");
+                console.warn("   Verifique se a função api_ponto_hoje existe em routes.py");
+                return { status: 'success', registros: [] };
+            }
+            
+            if (response.status === 302 || response.status === 401) {
+                console.warn("⚠️ Não autorizado - sessão pode ter expirado");
                 return { status: 'success', registros: [] };
             }
             
             const contentType = response.headers.get('Content-Type');
             if (!contentType || !contentType.includes('application/json')) {
-                console.warn("⚠️ Resposta não é JSON, ignorando...");
-                return { status: 'success', registros: [] };
+                console.error("❌ Resposta não é JSON!");
+                return response.text().then(text => {
+                    console.error("   Resposta:", text.substring(0, 200));
+                    return { status: 'error', registros: [] };
+                });
             }
             
             return response.json();
         })
         .then(data => {
-            if (data.status === 'success') {
-                const div = document.getElementById('registrosHoje');
-                if (!div) {
-                    console.warn("⚠️ Elemento 'registrosHoje' não encontrado");
-                    return;
-                }
-                
-                div.innerHTML = '';
-                
-                if (data.registros.length === 0) {
-                    div.innerHTML = '<div class="col-12 text-center text-muted">Nenhum registro hoje</div>';
-                } else {
-                    data.registros.forEach(r => {
-                        const tipoIcon = {
-                            'entrada': 'sign-in-alt text-success',
-                            'saida_almoco': 'utensils text-warning',
-                            'volta_almoco': 'coffee text-info',
-                            'saida': 'sign-out-alt text-danger'
-                        };
-                        
-                        div.innerHTML += `
-                            <div class="col-md-6 col-lg-3 mb-2">
-                                <div class="card ${r.atraso_minutos > 0 ? 'border-warning' : ''}">
-                                    <div class="card-body text-center p-2">
-                                        <i class="fas fa-${tipoIcon[r.tipo]} fa-2x mb-2"></i>
-                                        <div><strong>${r.tipo.replace('_', ' ').toUpperCase()}</strong></div>
-                                        <div class="text-primary"><strong>${r.horario}</strong></div>
-                                        ${r.home_office ? '<span class="badge bg-info">Home Office</span>' : ''}
-                                        ${r.atraso_minutos > 0 ? `<span class="badge bg-warning">${r.atraso_minutos} min atraso</span>` : ''}
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    });
-                }
+            console.log("\n📦 Dados recebidos:");
+            console.log(data);
+            
+            if (!data || data.status !== 'success') {
+                console.error("❌ Resposta inválida ou erro:", data);
+                return;
             }
+            
+            const registros = data.registros || [];
+            console.log(`\n📊 Total de registros: ${registros.length}`);
+            
+            // Verificar elemento
+            const div = document.getElementById('registrosHoje');
+            if (!div) {
+                console.error("❌ Elemento 'registrosHoje' não encontrado no HTML!");
+                console.log("   Verifique se existe: <div id='registrosHoje'></div>");
+                return;
+            }
+            
+            console.log("✅ Elemento 'registrosHoje' encontrado");
+            
+            // Limpar registros anteriores
+            div.innerHTML = '';
+            
+            if (registros.length === 0) {
+                console.log("📭 Nenhum registro para hoje");
+                div.innerHTML = `
+                    <div class="col-12">
+                        <div class="alert alert-info text-center">
+                            <i class="fas fa-info-circle"></i>
+                            Nenhum registro de ponto hoje
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Ícones para cada tipo
+            const tipoIcons = {
+                'entrada': 'sign-in-alt text-success',
+                'saida_almoco': 'utensils text-warning',
+                'volta_almoco': 'coffee text-info',
+                'saida': 'sign-out-alt text-danger'
+            };
+            
+            const tipoNomes = {
+                'entrada': 'ENTRADA',
+                'saida_almoco': 'SAÍDA ALMOÇO',
+                'volta_almoco': 'VOLTA ALMOÇO',
+                'saida': 'SAÍDA'
+            };
+            
+            console.log("\n🎨 Renderizando cards...");
+            
+            // Criar card para cada registro
+            registros.forEach((r, idx) => {
+                console.log(`   ${idx + 1}. ${r.horario} - ${r.tipo}`);
+                
+                const icon = tipoIcons[r.tipo] || 'clock text-secondary';
+                const nome = tipoNomes[r.tipo] || r.tipo.toUpperCase();
+                const atraso = r.atraso_minutos || 0;
+                const dentroHorario = r.dentro_horario !== false;
+                
+                const cardHtml = `
+                    <div class="col-md-6 col-lg-3 mb-3">
+                        <div class="card ${atraso > 0 ? 'border-warning' : ''}">
+                            <div class="card-body text-center p-3">
+                                <i class="fas fa-${icon} fa-2x mb-2"></i>
+                                <div><strong>${nome}</strong></div>
+                                <div class="text-primary fs-4"><strong>${r.horario}</strong></div>
+                                ${r.home_office ? '<span class="badge bg-info mt-1">Home Office</span>' : ''}
+                                ${atraso > 0 ? `<span class="badge bg-warning text-dark mt-1">${atraso} min atraso</span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                div.innerHTML += cardHtml;
+            });
+            
+            console.log("✅ Cards renderizados com sucesso!");
+            console.log("=".repeat(60) + "\n");
         })
         .catch(error => {
-            console.error('Erro ao carregar registros:', error);
-            // Não exibir erro para o usuário, apenas logar
+            console.error("\n❌ ERRO AO CARREGAR REGISTROS:");
+            console.error(error);
+            console.error("=".repeat(60) + "\n");
         });
 }
 
+// ========================================================================
+// CHAMAR AUTOMATICAMENTE AO CARREGAR A PÁGINA
+// ========================================================================
+
+// Chamar ao carregar a página
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("📄 Página carregada, buscando registros...");
+    carregarRegistrosHoje();
+});
+
+// Recarregar a cada 30 segundos
+ setInterval(carregarRegistrosHoje, 30000);
 
 
 // Registrar ponto
