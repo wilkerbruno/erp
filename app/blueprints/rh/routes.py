@@ -175,7 +175,7 @@ def gerenciar_ponto():
 @login_required
 def controle_ponto():
     """Controle geral de ponto"""
-    return render_template('rh/ponto/controle.html')
+    return render_template('rh/ponto/controle_ponto.html')
 
 
 @bp.route('/api/registrar-ponto', methods=['POST'])
