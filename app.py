@@ -12,7 +12,7 @@ from sqlalchemy import and_, or_
 
 from app.models import (
     Colaborador, Beneficio, ColaboradorBeneficio, CargoBeneficio,
-    RegistroPonto, AutorizacaoHomeOffice, AuxilioCelular, Holerite, DREGerencial
+    RegistroPonto, AutorizacaoHomeOffice, AuxilioCelular, Holerite, DREGerencial, QualidadeNC, compras, planos_acao
 )
 
 # PATCH CRÍTICO PARA PYTHON 3.13 - DEVE VIR ANTES DE QUALQUER IMPORT
@@ -1276,6 +1276,23 @@ def financeiro():
 def gestao_vista():
     """Página de gestão da vista"""
     return render_template('gestao_vista/index.html')
+
+
+@app.route('/qualidade')
+@login_required
+def index():
+    return render_template('qualidade/index.html')
+
+@bp.route('/planos_acao')
+@login_required
+def index():
+    return render_template('planos_acao/index.html')
+
+
+@bp.route('/compras')
+@login_required
+def index():
+    return render_template('compras/index.html')
 
 
 if __name__ == '__main__':

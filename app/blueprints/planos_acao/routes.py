@@ -2,7 +2,7 @@ from flask import render_template
 from flask_login import login_required
 from app.blueprints.planos_acao import bp
 
-@bp.route('/')
+@bp.route('/planos_acao')
 @login_required
 def index():
     return render_template('planos_acao/index.html')

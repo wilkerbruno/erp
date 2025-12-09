@@ -27,9 +27,10 @@ from app.blueprints.reunioes import bp as reunioes_bp
 from app.blueprints.consultoria import bp as consultoria_bp
 from app.blueprints.gestao_vista import bp as gestao_vista_bp
 from app.blueprints.seguranca_trabalho import bp as seguranca_trabalho_bp
-from app.blueprints.planos import bp as planos_bp
+from app.blueprints.planos import bp as planos_acao_bp
 from app.blueprints.financeiro import bp as financeiro_bp
 from app.blueprints.frotas import bp as frotas_bp
+from app.blueprints.compras import bp as compras_bp
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -65,18 +66,24 @@ def create_app(config_name='development'):
     from app.blueprints.auth import bp as auth_bp
     from app.blueprints.rh import bp as rh_bp
     from app.blueprints.dashboard import bp as dashboard_bp
-    
+    from app.blueprints.planos import bp as planos_acao_bp 
+    from app.blueprints.qualidade import bp as qualidade_bp # ← CORRIGIDO: era 'planos', agora é 'planos_acao_bp'
+    from app.blueprints.compras import bp as compras_bp
+
     
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(reunioes_bp)
     app.register_blueprint(consultoria_bp)
     app.register_blueprint(gestao_vista_bp)
     app.register_blueprint(seguranca_trabalho_bp)
-    app.register_blueprint(planos_bp)  # ← CORRIGIDO: era 'planos_bp', agora é 'planos_acao_bp'
+    app.register_blueprint(planos_acao_bp)  # ← CORRIGIDO: era 'planos_bp', agora é 'planos_acao_bp'
     app.register_blueprint(financeiro_bp)
     app.register_blueprint(rh_bp)
     app.register_blueprint(dashboard_bp, url_prefix='/')
     app.register_blueprint(frotas_bp)
+    app.register_blueprint(qualidade_bp)  # ← ADICIONADO: registro do blueprint de qualidade
+    app.register_blueprint(producao_bp)
+    app.register_blueprint(compras_bp)  # ← ADICIONADO: registro do blueprint de compras
     
     # Modulos
     modules = [
