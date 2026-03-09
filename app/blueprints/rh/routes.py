@@ -1,5 +1,5 @@
 from flask import render_template, request, jsonify
-from flask_login import login_required
+from flask_login import UserMixin, login_required
 from app.blueprints.rh import bp
 from datetime import datetime
 from io import BytesIO
@@ -66,15 +66,20 @@ def relatorios():
 @bp.route('/colaborador/<int:colaborador_id>')
 @login_required
 def ver_colaborador(colaborador_id):
-    """Ver detalhes do colaborador"""
-    colaborador = {
-        'id': colaborador_id,
-        'nome': 'João Silva',
-        'cargo': 'Analista',
-        'departamento': 'TI',
-        'email': 'joao@empresa.com'
-    }
-    return render_template('rh/ver_colaborador.html', colaborador=colaborador)
+    from app.models import Colaborador
+    
+    colaborador = Colaborador.query.get_or_404(colaborador_id)
+    
+    return render_template('rh/ver_colaborador.html', colaborador={
+        'id': colaborador.id,
+        'nome': colaborador.nome_completo,
+        'cargo': colaborador.cargo.nome if colaborador.cargo else 'N/A',
+        'departamento': colaborador.departamento.nome if colaborador.departamento else 'N/A',
+        'email': colaborador.email,
+        'telefone': colaborador.telefone,
+        'data_admissao': colaborador.data_admissao,
+        'salario_base': colaborador.salario_base
+    })
 
 @bp.route('/registrar-ponto-acao', methods=['POST'])
 @login_required
@@ -108,58 +113,57 @@ def beneficios():
 @bp.route('/beneficios/novo', methods=['GET', 'POST'])
 @login_required
 def novo_beneficio():
-    """Criar novo benefício"""
     if request.method == 'POST':
-        try:
-            data = request.get_json() if request.is_json else request.form
-            
-            # Aqui você implementaria a lógica de criação
-            # Por enquanto, retorno de sucesso
-            
-            return jsonify({
-                'status': 'success',
-                'message': 'Benefício criado com sucesso!'
-            })
-        except Exception as e:
-            return jsonify({
-                'status': 'error',
-                'message': str(e)
-            }), 400
+        from app.models import Beneficio
+        from app import db
+        
+        data = request.get_json() if request.is_json else request.form
+        
+        beneficio = Beneficio(
+            nome=data.get('nome'),
+            tipo=data.get('tipo', 'fixo'),
+            valor=data.get('valor'),
+            percentual=data.get('percentual'),
+            descricao=data.get('descricao'),
+            requer_desempenho=data.get('requer_desempenho', False),
+            ativo=True
+        )
+        
+        db.session.add(beneficio)
+        db.session.commit()
+        
+        return jsonify({
+            'status': 'success',
+            'message': 'Benefício criado com sucesso!',
+            'beneficio_id': beneficio.id
+        })
     
     return render_template('rh/beneficios/novo.html')
 
 @bp.route('/api/beneficios')
 @login_required
 def api_listar_beneficios():
-    """API: Lista todos os benefícios"""
-    # Mock de dados para não dar erro
-    beneficios = [
-        {
-            'id': 1,
-            'nome': 'Vale Alimentação',
-            'tipo': 'fixo',
-            'valor': 500.00,
-            'ativo': True
-        },
-        {
-            'id': 2,
-            'nome': 'Auxílio Celular',
-            'tipo': 'fixo',
-            'valor': 50.00,
-            'ativo': True
-        }
-    ]
+    from app.models import Beneficio
+    
+    beneficios = Beneficio.query.filter_by(ativo=True).all()
     
     return jsonify({
         'status': 'success',
-        'beneficios': beneficios
+        'beneficios': [
+            {
+                'id': b.id,
+                'nome': b.nome,
+                'tipo': b.tipo,
+                'valor': float(b.valor) if b.valor else 0,
+                'percentual': float(b.percentual) if b.percentual else 0,
+                'descricao': b.descricao,
+                'requer_desempenho': b.requer_desempenho,
+                'ativo': b.ativo
+            }
+            for b in beneficios
+        ]
     })
 
-
-
-
-
-# ========== PONTO ELETRÔNICO ==========
 @bp.route('/bater-ponto')
 @login_required
 def bater_ponto():
@@ -178,155 +182,94 @@ def controle_ponto():
     """Controle geral de ponto"""
     return render_template('rh/ponto/controle_ponto.html')
 
-
 @bp.route('/api/registrar-ponto', methods=['POST'])
 @login_required
 def api_registrar_ponto():
-    """API: Registrar ponto - COM CÁLCULO AUTOMÁTICO DE HORAS"""
+    from app.models import RegistroPonto, AutorizacaoHomeOffice
+    from app import db
+    from datetime import datetime, date, time
+    from sqlalchemy import and_, or_
+    
+    data = request.get_json()
+    
     try:
-        print("\n" + "="*60)
-        print("🔍 API Registrar Ponto chamada")
-        
-        # Obter dados
-        data = None
-        if request.is_json:
-            data = request.get_json()
-        elif request.data:
-            try:
-                data = json.loads(request.data.decode('utf-8'))
-            except:
-                pass
-        
-        if not data:
-            data = dict(request.form) if request.form else {}
-        
-        if not data:
-            print("❌ Nenhum dado recebido!")
-            return jsonify({
-                'status': 'error',
-                'message': 'Nenhum dado foi enviado'
-            }), 400
-        
-        print(f"📦 Dados recebidos: {data}")
-        
-        # ✅ SEMPRE USAR DATA E HORA DO SERVIDOR
-        colaborador_id = data.get('colaborador_id', current_user.id)
-        
-        agora = datetime.now()
-        data_registro = agora.date()
-        horario_registro = agora.time()
-        
-        print(f"⏰ Data/Hora do SERVIDOR: {data_registro} {horario_registro}")
-        
-        # Validar tipo
-        tipo = data.get('tipo')
-        if not tipo:
-            return jsonify({
-                'status': 'error',
-                'message': 'Campo "tipo" é obrigatório'
-            }), 400
-        
-        # Calcular atraso
-        atraso_minutos = 0
-        if tipo == 'entrada':
-            try:
-                horario_esperado = datetime.strptime('08:00:00', '%H:%M:%S').time()
-                if horario_registro > horario_esperado:
-                    delta = datetime.combine(date.today(), horario_registro) - datetime.combine(date.today(), horario_esperado)
-                    atraso_minutos = int(delta.total_seconds() / 60)
-                    print(f"⚠️ Atraso detectado: {atraso_minutos} minutos")
-            except Exception as e:
-                print(f"⚠️ Erro ao calcular atraso: {e}")
-        
-        # Verificar home office
+        # Validar se é home office autorizado
         home_office = data.get('home_office', False)
         home_office_autorizado = False
         
         if home_office:
-            home_office_autorizado = AutorizacaoHomeOffice.verificar_autorizacao(
-                colaborador_id, 
-                data_registro
-            )
-            print(f"🏠 Home Office autorizado: {home_office_autorizado}")
-        
-        # IP do cliente
-        ip_address = request.remote_addr
-        
-        # ✅ SALVAR NO BANCO
-        try:
-            novo_registro = RegistroPonto(
-                colaborador_id=colaborador_id,
-                data=data_registro,
-                horario=horario_registro,
-                tipo=tipo,
-                latitude=data.get('latitude'),
-                longitude=data.get('longitude'),
-                localizacao_texto=data.get('localizacao_texto', data.get('endereco', '')),
-                home_office=home_office,
-                home_office_autorizado=home_office_autorizado,
-                atraso_minutos=atraso_minutos,
-                dispositivo=data.get('dispositivo', request.user_agent.string),
-                ip_address=ip_address
-            )
+            hoje = date.today()
+            dia_semana = hoje.strftime('%A').lower()  # 'monday', 'tuesday', etc.
             
-            db.session.add(novo_registro)
-            db.session.commit()
+            # Mapear dias da semana
+            dias_map = {
+                'monday': 'segunda', 'tuesday': 'terça', 'wednesday': 'quarta',
+                'thursday': 'quinta', 'friday': 'sexta', 'saturday': 'sábado', 'sunday': 'domingo'
+            }
+            dia_pt = dias_map.get(dia_semana)
             
-            print(f"✅ Registro salvo no banco! ID: {novo_registro.id}")
-            
-            # ✅ CALCULAR E ATUALIZAR TOTAL DE HORAS
-            try:
-                total_horas = RegistroPonto.atualizar_total_horas(
-                    colaborador_id, 
-                    data_registro
+            autorizacao = AutorizacaoHomeOffice.query.filter(
+                and_(
+                    AutorizacaoHomeOffice.colaborador_id == data['colaborador_id'],
+                    AutorizacaoHomeOffice.status == 'ativo',
+                    AutorizacaoHomeOffice.data_inicio <= hoje,
+                    or_(
+                        AutorizacaoHomeOffice.data_fim >= hoje,
+                        AutorizacaoHomeOffice.data_fim.is_(None)
+                    )
                 )
-                print(f"⏱️  Total de horas atualizado: {total_horas}h")
-            except Exception as e_horas:
-                print(f"⚠️ Erro ao calcular horas: {e_horas}")
-                total_horas = 0.0
+            ).first()
             
-        except Exception as e_db:
-            print(f"❌ Erro ao salvar no banco: {e_db}")
-            db.session.rollback()
-            
-            return jsonify({
-                'status': 'error',
-                'message': f'Erro ao salvar no banco: {str(e_db)}'
-            }), 500
+            if autorizacao and dia_pt in (autorizacao.dias_semana or []):
+                home_office_autorizado = True
         
-        # Resposta de sucesso
-        print(f"✅ Sucesso! Tipo: {tipo}")
-        print("="*60 + "\n")
+        # Calcular atraso (exemplo: horário de entrada é 8:00)
+        horario_entrada_padrao = time(8, 0)  # 8:00 AM
+        horario_atual = datetime.strptime(data['horario'], '%H:%M:%S').time()
+        atraso_minutos = 0
+        
+        if data['tipo'] == 'entrada' and horario_atual > horario_entrada_padrao:
+            delta = datetime.combine(date.today(), horario_atual) - datetime.combine(date.today(), horario_entrada_padrao)
+            atraso_minutos = int(delta.total_seconds() / 60)
+        
+        # Criar registro
+        registro = RegistroPonto(
+            colaborador_id=data['colaborador_id'],
+            data=datetime.strptime(data['data'], '%Y-%m-%d').date(),
+            tipo=data['tipo'],
+            horario=horario_atual,
+            latitude=data.get('latitude'),
+            longitude=data.get('longitude'),
+            localizacao_texto=data.get('localizacao_texto'),
+            distancia_empresa=data.get('distancia_empresa'),
+            home_office=home_office,
+            home_office_autorizado=home_office_autorizado,
+            dentro_horario=(atraso_minutos == 0),
+            atraso_minutos=atraso_minutos,
+            dispositivo=data.get('dispositivo'),
+            ip_address=request.remote_addr,
+            observacoes=data.get('observacoes')
+        )
+        
+        db.session.add(registro)
+        db.session.commit()
         
         return jsonify({
             'status': 'success',
             'message': 'Ponto registrado com sucesso!',
-            'atraso_minutos': atraso_minutos,
-            'home_office_autorizado': home_office_autorizado,
-            'total_horas': total_horas,
             'registro': {
-                'id': novo_registro.id,
-                'tipo': tipo,
-                'horario': str(horario_registro),
-                'data': str(data_registro),
-                'atraso_minutos': atraso_minutos,
-                'dentro_horario': atraso_minutos == 0,
-                'home_office': home_office,
-                'home_office_autorizado': home_office_autorizado,
-                'total_horas': total_horas
-            }
+                'id': registro.id,
+                'tipo': registro.tipo,
+                'horario': registro.horario.strftime('%H:%M:%S'),
+                'localizacao': registro.localizacao_texto
+            },
+            'atraso_minutos': atraso_minutos,
+            'home_office_autorizado': home_office_autorizado
         })
         
     except Exception as e:
-        error_traceback = traceback.format_exc()
-        print(f"\n❌ ERRO:")
-        print(error_traceback)
-        
-        return jsonify({
-            'status': 'error',
-            'message': str(e)
-        }), 500
-
+        db.session.rollback()
+        return jsonify({'status': 'error', 'message': str(e)}), 400
 
 @bp.route('/api/ponto/hoje/<int:colaborador_id>')
 @login_required
@@ -446,45 +389,64 @@ def home_office():
 @bp.route('/api/home-office/autorizar', methods=['POST'])
 @login_required
 def api_autorizar_home_office():
-    """API: Autorizar home office para colaborador"""
+    from app.models import AutorizacaoHomeOffice
+    from app import db
+    from datetime import datetime
+    
+    data = request.get_json()
+    
     try:
-        data = request.get_json()
+        autorizacao = AutorizacaoHomeOffice(
+            colaborador_id=data['colaborador_id'],
+            data_inicio=datetime.strptime(data['data_inicio'], '%Y-%m-%d').date(),
+            data_fim=datetime.strptime(data['data_fim'], '%Y-%m-%d').date() if data.get('data_fim') else None,
+            dias_semana=data.get('dias_semana', []),
+            autorizado_por=current_user.id,
+            motivo=data.get('motivo'),
+            status='ativo'
+        )
         
-        # Mock de resposta
+        db.session.add(autorizacao)
+        db.session.commit()
+        
         return jsonify({
             'status': 'success',
             'message': 'Home office autorizado com sucesso!',
             'autorizacao': {
-                'id': 1,
-                'colaborador_id': data.get('colaborador_id'),
-                'data_inicio': data.get('data_inicio'),
-                'data_fim': data.get('data_fim')
+                'id': autorizacao.id,
+                'colaborador_id': autorizacao.colaborador_id,
+                'data_inicio': autorizacao.data_inicio.isoformat(),
+                'data_fim': autorizacao.data_fim.isoformat() if autorizacao.data_fim else None,
+                'dias_semana': autorizacao.dias_semana
             }
         })
+        
     except Exception as e:
-        return jsonify({
-            'status': 'error',
-            'message': str(e)
-        }), 400
+        db.session.rollback()
+        return jsonify({'status': 'error', 'message': str(e)}), 400
 
 @bp.route('/api/home-office/listar')
 @login_required
 def api_listar_home_office():
-    """API: Listar autorizações de home office"""
-    # Mock de dados
-    autorizacoes = [
-        {
-            'id': 1,
-            'colaborador': 'João Silva',
-            'data_inicio': '2024-01-15',
-            'data_fim': '2024-01-19',
-            'status': 'ativo'
-        }
-    ]
+    from app.models import AutorizacaoHomeOffice
+    
+    autorizacoes = AutorizacaoHomeOffice.query.filter_by(status='ativo').all()
     
     return jsonify({
         'status': 'success',
-        'autorizacoes': autorizacoes
+        'autorizacoes': [
+            {
+                'id': a.id,
+                'colaborador_id': a.colaborador_id,
+                'colaborador_nome': a.colaborador.nome_completo if a.colaborador else 'N/A',
+                'data_inicio': a.data_inicio.isoformat(),
+                'data_fim': a.data_fim.isoformat() if a.data_fim else None,
+                'dias_semana': a.dias_semana,
+                'status': a.status,
+                'motivo': a.motivo
+            }
+            for a in autorizacoes
+        ]
     })
 
 # ========== HOLERITES ==========
@@ -497,49 +459,164 @@ def holerites():
 @bp.route('/api/holerite/gerar', methods=['POST'])
 @login_required
 def api_gerar_holerite():
-    """API: Gerar holerite para colaborador"""
+    from app.models import Holerite, Colaborador, ColaboradorBeneficio
+    from app import db
+    from decimal import Decimal
+    
+    data = request.get_json()
+    
     try:
-        data = request.get_json()
+        colaborador = Colaborador.query.get_or_404(data['colaborador_id'])
+        mes = int(data['mes'])
+        ano = int(data['ano'])
         
-        # Mock de resposta
+        # Verificar se já existe holerite para este mês/ano
+        holerite_existente = Holerite.query.filter_by(
+            colaborador_id=colaborador.id,
+            mes=mes,
+            ano=ano
+        ).first()
+        
+        if holerite_existente:
+            return jsonify({
+                'status': 'error',
+                'message': f'Já existe holerite para {mes}/{ano}'
+            }), 400
+        
+        # Cálculos
+        salario_base = colaborador.salario_base
+        
+        # Benefícios ativos
+        beneficios_ativos = ColaboradorBeneficio.query.filter_by(
+            colaborador_id=colaborador.id,
+            ativo=True
+        ).all()
+        
+        vale_alimentacao = sum(b.valor_customizado or b.beneficio.valor 
+                               for b in beneficios_ativos 
+                               if b.beneficio.nome == 'Vale Alimentação')
+        
+        vale_transporte_valor = sum(b.valor_customizado or b.beneficio.valor 
+                                    for b in beneficios_ativos 
+                                    if b.beneficio.nome == 'Vale Transporte')
+        
+        auxilio_celular = sum(b.valor_customizado or b.beneficio.valor 
+                              for b in beneficios_ativos 
+                              if b.beneficio.nome == 'Auxílio Celular')
+        
+        # Total de vencimentos
+        total_vencimentos = salario_base + vale_alimentacao + vale_transporte_valor + auxilio_celular
+        
+        # Descontos
+        # INSS - Tabela simplificada (2024)
+        if salario_base <= Decimal('1412.00'):
+            inss = salario_base * Decimal('0.075')
+        elif salario_base <= Decimal('2666.68'):
+            inss = salario_base * Decimal('0.09')
+        elif salario_base <= Decimal('4000.03'):
+            inss = salario_base * Decimal('0.12')
+        else:
+            inss = salario_base * Decimal('0.14')
+        
+        # IRRF - Tabela simplificada
+        base_irrf = salario_base - inss
+        if base_irrf <= Decimal('2112.00'):
+            irrf = Decimal('0')
+        elif base_irrf <= Decimal('2826.65'):
+            irrf = (base_irrf * Decimal('0.075')) - Decimal('158.40')
+        elif base_irrf <= Decimal('3751.05'):
+            irrf = (base_irrf * Decimal('0.15')) - Decimal('370.40')
+        elif base_irrf <= Decimal('4664.68'):
+            irrf = (base_irrf * Decimal('0.225')) - Decimal('651.73')
+        else:
+            irrf = (base_irrf * Decimal('0.275')) - Decimal('884.96')
+        
+        # Vale transporte (desconto 6%)
+        vale_transporte_desconto = salario_base * Decimal('0.06') if vale_transporte_valor > 0 else Decimal('0')
+        
+        total_descontos = inss + irrf + vale_transporte_desconto
+        liquido = total_vencimentos - total_descontos
+        
+        # Criar holerite
+        holerite = Holerite(
+            colaborador_id=colaborador.id,
+            mes=mes,
+            ano=ano,
+            salario_base=salario_base,
+            vale_alimentacao=vale_alimentacao,
+            vale_transporte=vale_transporte_valor,
+            auxilio_celular=auxilio_celular,
+            total_vencimentos=total_vencimentos,
+            inss=inss,
+            irrf=irrf,
+            vale_transporte_desconto=vale_transporte_desconto,
+            total_descontos=total_descontos,
+            liquido=liquido,
+            status='gerado',
+            gerado_por=current_user.id
+        )
+        
+        db.session.add(holerite)
+        db.session.commit()
+        
         return jsonify({
             'status': 'success',
             'message': 'Holerite gerado com sucesso!',
             'holerite': {
-                'id': 1,
-                'colaborador_id': data.get('colaborador_id'),
-                'mes': data.get('mes'),
-                'ano': data.get('ano'),
-                'salario_base': data.get('salario_base', 0),
-                'total_vencimentos': data.get('salario_base', 0),
-                'total_descontos': 0,
-                'liquido': data.get('salario_base', 0)
+                'id': holerite.id,
+                'colaborador_id': holerite.colaborador_id,
+                'colaborador_nome': colaborador.nome_completo,
+                'mes': holerite.mes,
+                'ano': holerite.ano,
+                'salario_base': float(holerite.salario_base),
+                'total_vencimentos': float(holerite.total_vencimentos),
+                'total_descontos': float(holerite.total_descontos),
+                'liquido': float(holerite.liquido)
             }
         })
+        
     except Exception as e:
-        return jsonify({
-            'status': 'error',
-            'message': str(e)
-        }), 400
+        db.session.rollback()
+        return jsonify({'status': 'error', 'message': str(e)}), 400
 
 @bp.route('/api/holerite/listar')
 @login_required
 def api_listar_holerites():
-    """API: Listar holerites"""
-    # Mock de dados
-    holerites = [
-        {
-            'id': 1,
-            'colaborador': 'João Silva',
-            'mes': 1,
-            'ano': 2024,
-            'liquido': 2500.00
-        }
-    ]
+    from app.models import Holerite
+    
+    # Filtros opcionais
+    colaborador_id = request.args.get('colaborador_id', type=int)
+    mes = request.args.get('mes', type=int)
+    ano = request.args.get('ano', type=int)
+    
+    query = Holerite.query
+    
+    if colaborador_id:
+        query = query.filter_by(colaborador_id=colaborador_id)
+    if mes:
+        query = query.filter_by(mes=mes)
+    if ano:
+        query = query.filter_by(ano=ano)
+    
+    holerites = query.order_by(Holerite.ano.desc(), Holerite.mes.desc()).all()
     
     return jsonify({
         'status': 'success',
-        'holerites': holerites
+        'holerites': [
+            {
+                'id': h.id,
+                'colaborador_id': h.colaborador_id,
+                'colaborador_nome': h.colaborador.nome_completo if h.colaborador else 'N/A',
+                'mes': h.mes,
+                'ano': h.ano,
+                'salario_base': float(h.salario_base),
+                'total_vencimentos': float(h.total_vencimentos),
+                'total_descontos': float(h.total_descontos),
+                'liquido': float(h.liquido),
+                'status': h.status
+            }
+            for h in holerites
+        ]
     })
 
 @bp.route('/api/holerite/<int:id>/pdf')
@@ -574,27 +651,76 @@ def dre_gerencial():
 @bp.route('/api/dre/importar', methods=['POST'])
 @login_required
 def api_importar_dre():
-    """API: Importar DRE do contador"""
+    from app.models import DREGerencial
+    from app import db
+    from decimal import Decimal
+    
+    # Pode vir como form-data (arquivo) ou JSON
+    if request.is_json:
+        data = request.get_json()
+    else:
+        data = request.form.to_dict()
+    
     try:
-        # Mock de resposta
+        mes = int(data.get('mes'))
+        ano = int(data.get('ano'))
+        
+        # Verificar se já existe DRE para este mês/ano
+        dre_existente = DREGerencial.query.filter_by(mes=mes, ano=ano).first()
+        
+        if dre_existente:
+            # Atualizar
+            dre_existente.receita_bruta = Decimal(data.get('receita_bruta', 0))
+            dre_existente.deducoes = Decimal(data.get('deducoes', 0))
+            dre_existente.receita_liquida = Decimal(data.get('receita_liquida', 0))
+            dre_existente.custo_mercadorias = Decimal(data.get('custo_mercadorias', 0))
+            dre_existente.lucro_bruto = Decimal(data.get('lucro_bruto', 0))
+            dre_existente.despesas_vendas = Decimal(data.get('despesas_vendas', 0))
+            dre_existente.despesas_administrativas = Decimal(data.get('despesas_administrativas', 0))
+            dre_existente.despesas_financeiras = Decimal(data.get('despesas_financeiras', 0))
+            dre_existente.receitas_financeiras = Decimal(data.get('receitas_financeiras', 0))
+            dre_existente.resultado_operacional = Decimal(data.get('resultado_operacional', 0))
+            dre_existente.resultado_liquido = Decimal(data.get('resultado_liquido', 0))
+            dre_existente.importado_de = data.get('importado_de', 'sistema')
+            
+            dre = dre_existente
+        else:
+            # Criar novo
+            dre = DREGerencial(
+                mes=mes,
+                ano=ano,
+                receita_bruta=Decimal(data.get('receita_bruta', 0)),
+                deducoes=Decimal(data.get('deducoes', 0)),
+                receita_liquida=Decimal(data.get('receita_liquida', 0)),
+                custo_mercadorias=Decimal(data.get('custo_mercadorias', 0)),
+                lucro_bruto=Decimal(data.get('lucro_bruto', 0)),
+                despesas_vendas=Decimal(data.get('despesas_vendas', 0)),
+                despesas_administrativas=Decimal(data.get('despesas_administrativas', 0)),
+                despesas_financeiras=Decimal(data.get('despesas_financeiras', 0)),
+                receitas_financeiras=Decimal(data.get('receitas_financeiras', 0)),
+                resultado_operacional=Decimal(data.get('resultado_operacional', 0)),
+                resultado_liquido=Decimal(data.get('resultado_liquido', 0)),
+                importado_de=data.get('importado_de', 'sistema')
+            )
+            db.session.add(dre)
+        
+        db.session.commit()
+        
         return jsonify({
             'status': 'success',
             'message': 'DRE importada com sucesso!',
             'dre': {
-                'id': 1,
-                'mes': request.form.get('mes', 1),
-                'ano': request.form.get('ano', 2024),
-                'receita_bruta': 100000.00,
-                'receita_liquida': 90000.00,
-                'lucro_bruto': 50000.00,
-                'resultado_liquido': 30000.00
+                'id': dre.id,
+                'mes': dre.mes,
+                'ano': dre.ano,
+                'receita_bruta': float(dre.receita_bruta),
+                'resultado_liquido': float(dre.resultado_liquido)
             }
         })
+        
     except Exception as e:
-        return jsonify({
-            'status': 'error',
-            'message': str(e)
-        }), 400
+        db.session.rollback()
+        return jsonify({'status': 'error', 'message': str(e)}), 400
 
 @bp.route('/api/dre/listar')
 @login_required
@@ -803,5 +929,72 @@ def api_listar_colaboradores():
             'message': str(e)
         }), 500
 
+@bp.route('/api/home-office/<int:id>/cancelar', methods=['POST'])
+@login_required
+def api_cancelar_home_office(id):
+    """API: Cancelar autorização de home office"""
+    from app.models import AutorizacaoHomeOffice
+    from app import db
+    
+    try:
+        autorizacao = AutorizacaoHomeOffice.query.get_or_404(id)
+        autorizacao.status = 'cancelado'
+        
+        db.session.commit()
+        
+        return jsonify({
+            'status': 'success',
+            'message': 'Autorização cancelada com sucesso!'
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        }), 400
 
-
+@bp.route('/colaborador/<int:colaborador_id>/auxilio-celular', methods=['GET', 'POST'])
+@login_required
+def auxilio_celular(colaborador_id):
+    """Gerenciar auxílio celular"""
+    from app.models import Colaborador, AuxilioCelular
+    from app import db
+    from datetime import datetime
+    
+    colaborador = Colaborador.query.get_or_404(colaborador_id)
+    
+    if request.method == 'POST':
+        try:
+            data = request.get_json() if request.is_json else request.form
+            
+            # Verificar se já existe
+            auxilio = AuxilioCelular.query.filter_by(colaborador_id=colaborador_id).first()
+            
+            if auxilio:
+                auxilio.ativo = data.get('ativo', True)
+                auxilio.valor_mensal = data.get('valor_mensal', 50.00)
+            else:
+                auxilio = AuxilioCelular(
+                    colaborador_id=colaborador_id,
+                    valor_mensal=data.get('valor_mensal', 50.00),
+                    ativo=data.get('ativo', True),
+                    data_inicio=datetime.utcnow().date(),
+                    motivo_concessao=data.get('motivo_concessao'),
+                    criado_por=current_user.id
+                )
+                db.session.add(auxilio)
+            
+            db.session.commit()
+            
+            return jsonify({
+                'status': 'success',
+                'message': 'Auxílio celular atualizado com sucesso!'
+            })
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({
+                'status': 'error',
+                'message': str(e)
+            }), 400
+    
+    return render_template('rh/auxilio_celular.html', colaborador=colaborador)
