@@ -9,7 +9,7 @@
             <i class="fas fa-hard-hat me-2"></i>Dashboard - Segurança do Trabalho
         </h1>
         <div class="btn-group">
-            <a href="{{ url_for('seguranca_trabalho.novo_acidente') }}" class="btn btn-danger">
+            <a href="{{ url_for('seg_trabalho_novo_acidente') }}" class="btn btn-danger">
                 <i class="fas fa-exclamation-triangle me-1"></i>Registrar Acidente
             </a>
             <button class="btn btn-outline-primary" onclick="atualizarDados()">
@@ -25,19 +25,19 @@
                 <h5><i class="fas fa-check-circle me-2"></i>✅ Sistema de Segurança Ativo</h5>
                 <p class="mb-0">Acesse rapidamente todas as funcionalidades de segurança:</p>
                 <div class="mt-2">
-                    <a href="{{ url_for('seguranca_trabalho.acidentes') }}" class="btn btn-outline-danger btn-sm me-2">
+                    <a href="{{ url_for('seg_trabalho_acidentes') }}" class="btn btn-outline-danger btn-sm me-2">
                         🚨 Acidentes
                     </a>
-                    <a href="{{ url_for('seguranca_trabalho.treinamentos') }}" class="btn btn-outline-success btn-sm me-2">
+                    <a href="{{ url_for('seg_trabalho_treinamentos') }}" class="btn btn-outline-success btn-sm me-2">
                         📚 Treinamentos
                     </a>
-                    <a href="{{ url_for('seguranca_trabalho.inspecoes') }}" class="btn btn-outline-warning btn-sm me-2">
+                    <a href="{{ url_for('seg_trabalho_inspecoes') }}" class="btn btn-outline-warning btn-sm me-2">
                         🔍 Inspeções
                     </a>
-                    <a href="{{ url_for('seguranca_trabalho.epis') }}" class="btn btn-outline-info btn-sm me-2">
+                    <a href="{{ url_for('seg_trabalho_epis') }}" class="btn btn-outline-info btn-sm me-2">
                         🦺 EPIs
                     </a>
-                    <a href="{{ url_for('seguranca_trabalho.relatorios') }}" class="btn btn-outline-secondary btn-sm">
+                    <a href="{{ url_for('seg_trabalho_relatorios') }}" class="btn btn-outline-secondary btn-sm">
                         📊 Relatórios
                     </a>
                 </div>
@@ -48,7 +48,7 @@
     <!-- KPIs de Segurança -->
     <div class="row mb-4">
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('seguranca_trabalho.acidentes') }}'">
+            <div class="card border-left-success shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('seg_trabalho_acidentes') }}'">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
@@ -69,7 +69,7 @@
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-warning shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('seguranca_trabalho.acidentes') }}'">
+            <div class="card border-left-warning shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('seg_trabalho_acidentes') }}'">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
@@ -90,7 +90,7 @@
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('seguranca_trabalho.treinamentos') }}'">
+            <div class="card border-left-info shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('seg_trabalho_treinamentos') }}'">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
@@ -111,7 +111,7 @@
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('seguranca_trabalho.epis') }}'">
+            <div class="card border-left-primary shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('seg_trabalho_epis') }}'">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
@@ -149,7 +149,7 @@
                             </div>
                             <h5 class="card-title">Acidentes e Incidentes</h5>
                             <p class="card-text text-muted">Registro, investigação e acompanhamento de acidentes e incidentes de trabalho</p>
-                            <a href="{{ url_for('seguranca_trabalho.acidentes') }}" class="btn btn-danger w-100">
+                            <a href="{{ url_for('seg_trabalho_acidentes') }}" class="btn btn-danger w-100">
                                 <i class="fas fa-exclamation-triangle me-1"></i>Acessar Acidentes
                             </a>
                         </div>
@@ -164,7 +164,7 @@
                             </div>
                             <h5 class="card-title">Treinamentos</h5>
                             <p class="card-text text-muted">Gestão de treinamentos de segurança, capacitações e certificações dos funcionários</p>
-                            <a href="{{ url_for('seguranca_trabalho.treinamentos') }}" class="btn btn-success w-100">
+                            <a href="{{ url_for('seg_trabalho_treinamentos') }}" class="btn btn-success w-100">
                                 <i class="fas fa-graduation-cap me-1"></i>Ver Treinamentos
                             </a>
                         </div>
@@ -179,7 +179,7 @@
                             </div>
                             <h5 class="card-title">Inspeções</h5>
                             <p class="card-text text-muted">Inspeções de segurança, auditorias e verificações de conformidade</p>
-                            <a href="{{ url_for('seguranca_trabalho.inspecoes') }}" class="btn btn-warning w-100">
+                            <a href="{{ url_for('seg_trabalho_inspecoes') }}" class="btn btn-warning w-100">
                                 <i class="fas fa-search me-1"></i>Acessar Inspeções
                             </a>
                         </div>
@@ -194,7 +194,7 @@
                             </div>
                             <h5 class="card-title">EPIs</h5>
                             <p class="card-text text-muted">Controle de Equipamentos de Proteção Individual, estoque e distribuição</p>
-                            <a href="{{ url_for('seguranca_trabalho.epis') }}" class="btn btn-info w-100">
+                            <a href="{{ url_for('seg_trabalho_epis') }}" class="btn btn-info w-100">
                                 <i class="fas fa-hard-hat me-1"></i>Gerenciar EPIs
                             </a>
                         </div>
@@ -209,7 +209,7 @@
                             </div>
                             <h5 class="card-title">Documentos</h5>
                             <p class="card-text text-muted">Gestão de normas, procedimentos e documentos de segurança</p>
-                            <a href="{{ url_for('seguranca_trabalho.documentos') }}" class="btn btn-secondary w-100">
+                            <a href="{{ url_for('seg_trabalho_documentos') }}" class="btn btn-secondary w-100">
                                 <i class="fas fa-file-alt me-1"></i>Ver Documentos
                             </a>
                         </div>
@@ -224,7 +224,7 @@
                             </div>
                             <h5 class="card-title">Relatórios</h5>
                             <p class="card-text text-muted">Relatórios, estatísticas e análises de segurança do trabalho</p>
-                            <a href="{{ url_for('seguranca_trabalho.relatorios') }}" class="btn btn-primary w-100">
+                            <a href="{{ url_for('seg_trabalho_relatorios') }}" class="btn btn-primary w-100">
                                 <i class="fas fa-chart-line me-1"></i>Ver Relatórios
                             </a>
                         </div>
@@ -242,37 +242,37 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-md-2 mb-3">
-                    <a href="{{ url_for('seguranca_trabalho.novo_acidente') }}" class="btn btn-outline-danger w-100">
+                    <a href="{{ url_for('seg_trabalho_novo_acidente') }}" class="btn btn-outline-danger w-100">
                         <i class="fas fa-exclamation-triangle d-block mb-2"></i>
                         Registrar Acidente
                     </a>
                 </div>
                 <div class="col-md-2 mb-3">
-                    <a href="{{ url_for('seguranca_trabalho.novo_treinamento') }}" class="btn btn-outline-success w-100">
+                    <a href="{{ url_for('seg_trabalho_novo_treinamento') }}" class="btn btn-outline-success w-100">
                         <i class="fas fa-graduation-cap d-block mb-2"></i>
                         Novo Treinamento
                     </a>
                 </div>
                 <div class="col-md-2 mb-3">
-                    <a href="{{ url_for('seguranca_trabalho.nova_inspecao') }}" class="btn btn-outline-warning w-100">
+                    <a href="{{ url_for('seg_trabalho_nova_inspecao') }}" class="btn btn-outline-warning w-100">
                         <i class="fas fa-search d-block mb-2"></i>
                         Nova Inspeção
                     </a>
                 </div>
                 <div class="col-md-2 mb-3">
-                    <a href="{{ url_for('seguranca_trabalho.epis') }}" class="btn btn-outline-info w-100">
+                    <a href="{{ url_for('seg_trabalho_epis') }}" class="btn btn-outline-info w-100">
                         <i class="fas fa-hard-hat d-block mb-2"></i>
                         Controle EPIs
                     </a>
                 </div>
                 <div class="col-md-2 mb-3">
-                    <a href="{{ url_for('seguranca_trabalho.relatorios') }}" class="btn btn-outline-primary w-100">
+                    <a href="{{ url_for('seg_trabalho_relatorios') }}" class="btn btn-outline-primary w-100">
                         <i class="fas fa-chart-bar d-block mb-2"></i>
                         Relatórios
                     </a>
                 </div>
                 <div class="col-md-2 mb-3">
-                    <a href="{{ url_for('seguranca_trabalho.documentos') }}" class="btn btn-outline-secondary w-100">
+                    <a href="{{ url_for('seg_trabalho_documentos') }}" class="btn btn-outline-secondary w-100">
                         <i class="fas fa-file-alt d-block mb-2"></i>
                         Documentos
                     </a>

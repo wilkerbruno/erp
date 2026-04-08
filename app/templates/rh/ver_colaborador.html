@@ -1,14 +1,97 @@
 {% extends "base.html" %}
-{% block title %}Colaborador - {{ colaborador.nome }}{% endblock %}
+{% block title %}Colaborador - {{ colaborador.nome_completo }}{% endblock %}
+
 {% block content %}
 <div class="container-fluid">
-    <h1 class="h3 mb-4"><i class="fas fa-user me-2"></i>{{ colaborador.nome }}</h1>
-    <div class="card shadow">
-        <div class="card-body">
-            <p><strong>Cargo:</strong> {{ colaborador.cargo }}</p>
-            <p><strong>Departamento:</strong> {{ colaborador.departamento }}</p>
-            <p><strong>Email:</strong> {{ colaborador.email }}</p>
-            <a href="/rh/colaboradores" class="btn btn-secondary">Voltar</a>
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-user me-2"></i>{{ colaborador.nome_completo }}
+        </h1>
+        <div>
+            <a href="/rh/colaborador/editar/{{ colaborador.id }}" class="btn btn-warning me-2">
+                <i class="fas fa-edit me-1"></i>Editar
+            </a>
+            <a href="/rh/colaboradores" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Voltar
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header"><h6 class="m-0 font-weight-bold text-primary">Dados Pessoais</h6></div>
+                <div class="card-body">
+                    <table class="table table-sm table-borderless">
+                        <tr><td class="text-muted" style="width:40%">Matricula</td><td>{{ colaborador.matricula or '-' }}</td></tr>
+                        <tr><td class="text-muted">CPF</td><td>{{ colaborador.cpf or '-' }}</td></tr>
+                        <tr><td class="text-muted">RG</td><td>{{ colaborador.rg or '-' }}</td></tr>
+                        <tr><td class="text-muted">Data de Nascimento</td><td>{{ colaborador.data_nascimento.strftime('%d/%m/%Y') if colaborador.data_nascimento else '-' }}</td></tr>
+                        <tr><td class="text-muted">Sexo</td><td>{{ 'Masculino' if colaborador.sexo == 'M' else ('Feminino' if colaborador.sexo == 'F' else '-') }}</td></tr>
+                        <tr><td class="text-muted">Estado Civil</td><td>{{ colaborador.estado_civil or '-' }}</td></tr>
+                        <tr><td class="text-muted">Email</td><td>{{ colaborador.email or '-' }}</td></tr>
+                        <tr><td class="text-muted">Celular</td><td>{{ colaborador.celular or '-' }}</td></tr>
+                        <tr><td class="text-muted">Telefone</td><td>{{ colaborador.telefone or '-' }}</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header"><h6 class="m-0 font-weight-bold text-success">Dados Profissionais</h6></div>
+                <div class="card-body">
+                    <table class="table table-sm table-borderless">
+                        <tr><td class="text-muted" style="width:40%">Cargo</td><td>{{ colaborador.cargo.nome if colaborador.cargo else '-' }}</td></tr>
+                        <tr><td class="text-muted">Departamento</td><td>{{ colaborador.departamento.nome if colaborador.departamento else '-' }}</td></tr>
+                        <tr><td class="text-muted">Salario Base</td><td>R$ {{ "%.2f"|format(colaborador.salario_base) if colaborador.salario_base else '-' }}</td></tr>
+                        <tr><td class="text-muted">Admissao</td><td>{{ colaborador.data_admissao.strftime('%d/%m/%Y') if colaborador.data_admissao else '-' }}</td></tr>
+                        <tr><td class="text-muted">Tipo Contrato</td><td>{{ colaborador.tipo_contrato or '-' }}</td></tr>
+                        <tr><td class="text-muted">Jornada</td><td>{{ colaborador.jornada_trabalho or '-' }}</td></tr>
+                        <tr>
+                            <td class="text-muted">Status</td>
+                            <td>
+                                {% if colaborador.ativo %}
+                                    <span class="badge bg-success">Ativo</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Inativo</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header"><h6 class="m-0 font-weight-bold text-info">Endereco</h6></div>
+                <div class="card-body">
+                    <table class="table table-sm table-borderless">
+                        <tr><td class="text-muted" style="width:40%">Endereco</td><td>{{ colaborador.endereco or '-' }}{% if colaborador.numero %}, {{ colaborador.numero }}{% endif %}</td></tr>
+                        <tr><td class="text-muted">Complemento</td><td>{{ colaborador.complemento or '-' }}</td></tr>
+                        <tr><td class="text-muted">Bairro</td><td>{{ colaborador.bairro or '-' }}</td></tr>
+                        <tr><td class="text-muted">Cidade</td><td>{{ colaborador.cidade or '-' }}</td></tr>
+                        <tr><td class="text-muted">Estado</td><td>{{ colaborador.estado or '-' }}</td></tr>
+                        <tr><td class="text-muted">CEP</td><td>{{ colaborador.cep or '-' }}</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header"><h6 class="m-0 font-weight-bold text-warning">Dados Bancarios</h6></div>
+                <div class="card-body">
+                    <table class="table table-sm table-borderless">
+                        <tr><td class="text-muted" style="width:40%">Banco</td><td>{{ colaborador.banco or '-' }}</td></tr>
+                        <tr><td class="text-muted">Agencia</td><td>{{ colaborador.agencia or '-' }}</td></tr>
+                        <tr><td class="text-muted">Conta</td><td>{{ colaborador.conta or '-' }}</td></tr>
+                        <tr><td class="text-muted">Tipo</td><td>{{ colaborador.tipo_conta or '-' }}</td></tr>
+                        <tr><td class="text-muted">PIX</td><td>{{ colaborador.pix or '-' }}</td></tr>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>

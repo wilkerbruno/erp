@@ -1,0 +1,20 @@
+def register_all_routes():
+    from app.routes import auth
+    from app.routes import dashboard
+    from app.routes import rh
+    from app.routes import financeiro
+    from app.routes import empresas
+    from app.routes import frotas
+    from app.routes import planos
+    from app.routes import consultoria
+    from app.routes import efo
+    from app.routes import producao
+    from app.routes import qualidade     
+    from app.routes import compras       
+    from app.routes import manutencao    
+    from app.routes import projetos      
+    from app.routes import relatorios    
+    from app.routes import configuracoes 
+    from app.routes import reunioes      
+    from app.routes import gestao_vista  
+    from app.routes import seg_trabalho  

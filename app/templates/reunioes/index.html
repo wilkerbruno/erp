@@ -9,7 +9,7 @@
             <i class="fas fa-users me-2"></i>Dashboard - Reuniões
         </h1>
         <div class="btn-group">
-            <a href="{{ url_for('reunioes.nova_reuniao') }}" class="btn btn-success">
+            <a href="{{ url_for('reunioes_nova') }}" class="btn btn-success">
                 <i class="fas fa-plus me-1"></i>Nova Reunião
             </a>
             <button class="btn btn-outline-primary" onclick="atualizarDados()">
@@ -25,19 +25,19 @@
                 <h5><i class="fas fa-calendar-alt me-2"></i>🤝 Gestão de Reuniões Ativa</h5>
                 <p class="mb-0">Organize, acompanhe e documente todas as reuniões:</p>
                 <div class="mt-2">
-                    <a href="{{ url_for('reunioes.agenda') }}" class="btn btn-outline-primary btn-sm me-2">
+                    <a href="{{ url_for('reunioes_agenda') }}" class="btn btn-outline-primary btn-sm me-2">
                         📅 Agenda
                     </a>
-                    <a href="{{ url_for('reunioes.atas') }}" class="btn btn-outline-success btn-sm me-2">
+                    <a href="{{ url_for('reunioes_atas') }}" class="btn btn-outline-success btn-sm me-2">
                         📋 Atas
                     </a>
-                    <a href="{{ url_for('reunioes.participantes') }}" class="btn btn-outline-info btn-sm me-2">
+                    <a href="{{ url_for('reunioes_participantes') }}" class="btn btn-outline-info btn-sm me-2">
                         👥 Participantes
                     </a>
-                    <a href="{{ url_for('reunioes.acoes') }}" class="btn btn-outline-warning btn-sm me-2">
+                    <a href="{{ url_for('reunioes_acoes') }}" class="btn btn-outline-warning btn-sm me-2">
                         ✅ Ações
                     </a>
-                    <a href="{{ url_for('reunioes.salas') }}" class="btn btn-outline-secondary btn-sm">
+                    <a href="{{ url_for('reunioes_salas') }}" class="btn btn-outline-secondary btn-sm">
                         🏢 Salas
                     </a>
                 </div>
@@ -48,7 +48,7 @@
     <!-- KPIs de Reuniões -->
     <div class="row mb-4">
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('reunioes.agenda') }}'">
+            <div class="card border-left-primary shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('reunioes_agenda') }}'">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
@@ -69,7 +69,7 @@
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('reunioes.atas') }}'">
+            <div class="card border-left-success shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('reunioes_atas') }}'">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
@@ -90,7 +90,7 @@
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-warning shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('reunioes.acoes') }}'">
+            <div class="card border-left-warning shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('reunioes_acoes') }}'">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
@@ -111,7 +111,7 @@
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('reunioes.salas') }}'">
+            <div class="card border-left-info shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('reunioes_salas') }}'">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
@@ -149,7 +149,7 @@
                             </div>
                             <h5 class="card-title">Agenda</h5>
                             <p class="card-text text-muted">Visualize e gerencie todas as reuniões agendadas</p>
-                            <a href="{{ url_for('reunioes.agenda') }}" class="btn btn-primary w-100">
+                            <a href="{{ url_for('reunioes_agenda') }}" class="btn btn-primary w-100">
                                 <i class="fas fa-calendar-alt me-1"></i>Ver Agenda
                             </a>
                         </div>
@@ -164,7 +164,7 @@
                             </div>
                             <h5 class="card-title">Atas de Reunião</h5>
                             <p class="card-text text-muted">Elabore e gerencie atas de todas as reuniões</p>
-                            <a href="{{ url_for('reunioes.atas') }}" class="btn btn-success w-100">
+                            <a href="{{ url_for('reunioes_atas') }}" class="btn btn-success w-100">
                                 <i class="fas fa-file-alt me-1"></i>Gerenciar Atas
                             </a>
                         </div>
@@ -179,7 +179,7 @@
                             </div>
                             <h5 class="card-title">Participantes</h5>
                             <p class="card-text text-muted">Gerencie participantes e convites das reuniões</p>
-                            <a href="{{ url_for('reunioes.participantes') }}" class="btn btn-info w-100">
+                            <a href="{{ url_for('reunioes_participantes') }}" class="btn btn-info w-100">
                                 <i class="fas fa-users me-1"></i>Ver Participantes
                             </a>
                         </div>
@@ -194,7 +194,7 @@
                             </div>
                             <h5 class="card-title">Ações e Follow-up</h5>
                             <p class="card-text text-muted">Acompanhe ações definidas nas reuniões</p>
-                            <a href="{{ url_for('reunioes.acoes') }}" class="btn btn-warning w-100">
+                            <a href="{{ url_for('reunioes_acoes') }}" class="btn btn-warning w-100">
                                 <i class="fas fa-tasks me-1"></i>Ver Ações
                             </a>
                         </div>
@@ -209,7 +209,7 @@
                             </div>
                             <h5 class="card-title">Salas de Reunião</h5>
                             <p class="card-text text-muted">Gerencie reservas e disponibilidade das salas</p>
-                            <a href="{{ url_for('reunioes.salas') }}" class="btn btn-secondary w-100">
+                            <a href="{{ url_for('reunioes_salas') }}" class="btn btn-secondary w-100">
                                 <i class="fas fa-door-open me-1"></i>Gerenciar Salas
                             </a>
                         </div>

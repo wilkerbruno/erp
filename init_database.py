@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-"""
-Script para inicializar o banco de dados do ERP Corrigindo à Rota
-- Cria todas as tabelas
-- Insere usuário administrador
-- Insere dados básicos do sistema
-"""
-
 import os
 import sys
 from datetime import datetime, date

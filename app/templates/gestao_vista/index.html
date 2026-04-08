@@ -25,19 +25,19 @@
                 <h5><i class="fas fa-tachometer-alt me-2"></i>🎯 Gestão à Vista Ativa</h5>
                 <p class="mb-0">Monitore seus indicadores e metas em tempo real:</p>
                 <div class="mt-2">
-                    <a href="{{ url_for('gestao_vista.indicadores') }}" class="btn btn-outline-primary btn-sm me-2">
+                    <a href="{{ url_for('gestao_vista_indicadores') }}" class="btn btn-outline-primary btn-sm me-2">
                         📊 Indicadores
                     </a>
-                    <a href="{{ url_for('gestao_vista.metas') }}" class="btn btn-outline-success btn-sm me-2">
+                    <a href="{{ url_for('gestao_vista_metas') }}" class="btn btn-outline-success btn-sm me-2">
                         🎯 Metas
                     </a>
-                    <a href="{{ url_for('gestao_vista.paineis') }}" class="btn btn-outline-warning btn-sm me-2">
+                    <a href="{{ url_for('gestao_vista_paineis') }}" class="btn btn-outline-warning btn-sm me-2">
                         📈 Painéis
                     </a>
-                    <a href="{{ url_for('gestao_vista.dashboards') }}" class="btn btn-outline-info btn-sm me-2">
+                    <a href="{{ url_for('gestao_vista_dashboards') }}" class="btn btn-outline-info btn-sm me-2">
                         🖥️ Dashboards
                     </a>
-                    <a href="{{ url_for('gestao_vista.relatorios') }}" class="btn btn-outline-secondary btn-sm">
+                    <a href="{{ url_for('gestao_vista_relatorios') }}" class="btn btn-outline-secondary btn-sm">
                         📋 Relatórios
                     </a>
                 </div>
@@ -48,7 +48,7 @@
     <!-- KPIs Principais -->
     <div class="row mb-4">
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('gestao_vista.indicadores') }}'">
+            <div class="card border-left-success shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('gestao_vista_indicadores') }}'">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
@@ -69,7 +69,7 @@
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('gestao_vista.indicadores') }}'">
+            <div class="card border-left-primary shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('gestao_vista_indicadores') }}'">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
@@ -90,7 +90,7 @@
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-warning shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('gestao_vista.paineis') }}'">
+            <div class="card border-left-warning shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('gestao_vista_paineis') }}'">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
@@ -111,7 +111,7 @@
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('gestao_vista.metas') }}'">
+            <div class="card border-left-info shadow h-100 py-2 cursor-pointer" onclick="window.location.href='{{ url_for('gestao_vista_metas') }}'">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
@@ -149,7 +149,7 @@
                             </div>
                             <h5 class="card-title">Indicadores</h5>
                             <p class="card-text text-muted">Acompanhe KPIs, métricas e indicadores de performance em tempo real</p>
-                            <a href="{{ url_for('gestao_vista.indicadores') }}" class="btn btn-primary w-100">
+                            <a href="{{ url_for('gestao_vista_indicadores') }}" class="btn btn-primary w-100">
                                 <i class="fas fa-chart-bar me-1"></i>Ver Indicadores
                             </a>
                         </div>
@@ -164,7 +164,7 @@
                             </div>
                             <h5 class="card-title">Metas e Objetivos</h5>
                             <p class="card-text text-muted">Defina, acompanhe e monitore metas estratégicas e operacionais</p>
-                            <a href="{{ url_for('gestao_vista.metas') }}" class="btn btn-success w-100">
+                            <a href="{{ url_for('gestao_vista_metas') }}" class="btn btn-success w-100">
                                 <i class="fas fa-bullseye me-1"></i>Gerenciar Metas
                             </a>
                         </div>
@@ -179,7 +179,7 @@
                             </div>
                             <h5 class="card-title">Painéis Visuais</h5>
                             <p class="card-text text-muted">Crie e customize painéis visuais para diferentes departamentos</p>
-                            <a href="{{ url_for('gestao_vista.paineis') }}" class="btn btn-warning w-100">
+                            <a href="{{ url_for('gestao_vista_paineis') }}" class="btn btn-warning w-100">
                                 <i class="fas fa-desktop me-1"></i>Acessar Painéis
                             </a>
                         </div>
@@ -194,7 +194,7 @@
                             </div>
                             <h5 class="card-title">Dashboards</h5>
                             <p class="card-text text-muted">Dashboards personalizados com gráficos e relatórios interativos</p>
-                            <a href="{{ url_for('gestao_vista.dashboards') }}" class="btn btn-info w-100">
+                            <a href="{{ url_for('gestao_vista_dashboards') }}" class="btn btn-info w-100">
                                 <i class="fas fa-tachometer-alt me-1"></i>Ver Dashboards
                             </a>
                         </div>
@@ -209,7 +209,7 @@
                             </div>
                             <h5 class="card-title">Relatórios</h5>
                             <p class="card-text text-muted">Relatórios gerenciais e executivos com análises detalhadas</p>
-                            <a href="{{ url_for('gestao_vista.relatorios') }}" class="btn btn-secondary w-100">
+                            <a href="{{ url_for('gestao_vista_relatorios') }}" class="btn btn-secondary w-100">
                                 <i class="fas fa-file-chart-line me-1"></i>Gerar Relatórios
                             </a>
                         </div>

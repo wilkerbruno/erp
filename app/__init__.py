@@ -1,128 +1,49 @@
+import os
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
-# Patch de compatibilidade Flask Markup
-try:
-    from markupsafe import Markup
-    import flask
-    if not hasattr(flask, 'Markup'):
-        flask.Markup = Markup
-except:
-    pass
-
-# Patch url_encode para werkzeug
-try:
-    from werkzeug import urls
-    if not hasattr(urls, 'url_encode'):
-        from urllib.parse import urlencode
-        urls.url_encode = urlencode
-except:
-    pass
-
 from flask_wtf.csrf import CSRFProtect
-from config import config
-from app.blueprints.producao import bp as producao_bp
-from app.blueprints.reunioes import bp as reunioes_bp
-from app.blueprints.consultoria import bp as consultoria_bp
-from app.blueprints.gestao_vista import bp as gestao_vista_bp
-from app.blueprints.seguranca_trabalho import bp as seguranca_trabalho_bp
-from app.blueprints.planos import bp as planos_acao_bp
-from app.blueprints.financeiro import bp as financeiro_bp
-from app.blueprints.frotas import bp as frotas_bp
-from app.blueprints.compras import bp as compras_bp
+from config import config as config_dict
 
-db = SQLAlchemy()
-login_manager = LoginManager()
-migrate = Migrate()
-csrf = CSRFProtect()
+_base = os.path.dirname(os.path.abspath(__file__))
+_env = os.getenv('FLASK_ENV', 'development')
+if os.getenv('PORT') or os.getenv('EASYPANEL_PROJECT_ID'):
+    _env = 'production'
 
-"""
-Blueprint de RH - Recursos Humanos
-"""
-from flask import Blueprint
+app = Flask(
+    __name__,
+    template_folder=os.path.join(_base, 'templates'),
+    static_folder=os.path.join(_base, 'static')
+)
+app.config.from_object(config_dict.get(_env, config_dict['development']))
 
-bp = Blueprint('rh', __name__, url_prefix='/rh')
+db = SQLAlchemy(app)
+login_manager = LoginManager(app)
+migrate = Migrate(app, db)
+csrf = CSRFProtect(app)
 
-from app.blueprints.rh import routes
+login_manager.login_view = 'login'
+login_manager.login_message = 'Faca login para acessar esta pagina.'
+login_manager.login_message_category = 'info'
 
-def create_app(config_name='development'):
-    app = Flask(__name__)
-    app.config.from_object(config[config_name])
-    app.config['WTF_CSRF_ENABLED'] = False  # Desabilitar CSRF para APIs
-    
-    # Initialize extensions
-    db.init_app(app)
-    login_manager.init_app(app)
-    migrate.init_app(app, db)
-    csrf.init_app(app)
-    
-    # Configure login manager
-    login_manager.login_view = 'auth.login'
-    login_manager.login_message = 'Faca login para acessar esta pagina.'
-    login_manager.login_message_category = 'info'
-    
-    # Register blueprints - MUITO SIMPLES
-    from app.blueprints.auth import bp as auth_bp
-    from app.blueprints.rh import bp as rh_bp
-    from app.blueprints.dashboard import bp as dashboard_bp
-    from app.blueprints.planos import bp as planos_acao_bp 
-    from app.blueprints.qualidade import bp as qualidade_bp # ← CORRIGIDO: era 'planos', agora é 'planos_acao_bp'
-    from app.blueprints.compras import bp as compras_bp
-
-    
-    app.register_blueprint(auth_bp, url_prefix='/auth')
-    app.register_blueprint(reunioes_bp)
-    app.register_blueprint(consultoria_bp)
-    app.register_blueprint(gestao_vista_bp)
-    app.register_blueprint(seguranca_trabalho_bp)
-    app.register_blueprint(planos_acao_bp)  # ← CORRIGIDO: era 'planos_bp', agora é 'planos_acao_bp'
-    app.register_blueprint(financeiro_bp)
-    app.register_blueprint(rh_bp)
-    app.register_blueprint(dashboard_bp, url_prefix='/')
-    app.register_blueprint(frotas_bp)
-    app.register_blueprint(qualidade_bp)  # ← ADICIONADO: registro do blueprint de qualidade
-    app.register_blueprint(producao_bp)
-    app.register_blueprint(compras_bp)  # ← ADICIONADO: registro do blueprint de compras
-    
-    # Modulos
-    modules = [
-        ('rh', '/rh'),
-        ('qualidade', '/qualidade'),
-        ('producao', '/producao'),
-        ('compras', '/compras'),
-        ('frotas', '/frotas'),  # ← ADICIONADO
-        ('planos_acao', '/planos-acao'),  # ← JÁ ESTAVA CORRETO
-        ('consultoria', '/consultoria'),  # ← JÁ ESTAVA CORRETO
-        ('financeiro', '/financeiro'),
-        ('manutencao', '/manutencao'),
-        ('projetos', '/projetos'),                     
-        ('relatorios', '/relatorios'),             
-        ('empresas', '/empresas'),             
-        ('efo', '/efo'),
-        ('gestao_vista', '/gestao-vista'),  # ← ADICIONADO
-        ('seguranca_trabalho', '/seguranca-trabalho'),  # ← ADICIONADO
-        ('reunioes', '/reunioes'),  # ← ADICIONADO
-        ('configuracoes', '/configuracoes')
-    ]
-    
-    
-    # Error handlers
-    @app.errorhandler(404)
-    def not_found_error(error):
-        return render_template('errors/404.html'), 404
-    
-    @app.errorhandler(500)
-    def internal_error(error):
-        db.session.rollback()
-        return render_template('errors/500.html'), 500
-    
-    return app
 
 @login_manager.user_loader
 def load_user(user_id):
-    try:
-        from app.models.user import User
-        return User.query.get(int(user_id))
-    except Exception:
-        return None
+    from app.models.user import User
+    return User.query.get(int(user_id))
+
+
+@app.errorhandler(404)
+def not_found_error(error):
+    return render_template('errors/404.html'), 404
+
+
+@app.errorhandler(500)
+def internal_error(error):
+    db.session.rollback()
+    return render_template('errors/500.html'), 500
+
+
+from app.routes import register_all_routes
+register_all_routes()

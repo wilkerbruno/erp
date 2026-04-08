@@ -13,152 +13,115 @@
         </a>
     </div>
 
-    <!-- Status Cards -->
     <div class="row mb-4">
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                Total de Colaboradores
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">127</div>
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total de Colaboradores</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="cardTotal">-</div>
                         </div>
-                        <div class="col-auto">
-                            <i class="fas fa-users fa-2x text-gray-300"></i>
-                        </div>
+                        <div class="col-auto"><i class="fas fa-users fa-2x text-gray-300"></i></div>
                     </div>
                 </div>
             </div>
         </div>
-
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-success shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                Colaboradores Ativos
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">124</div>
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Ativos</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="cardAtivos">-</div>
                         </div>
-                        <div class="col-auto">
-                            <i class="fas fa-user-check fa-2x text-gray-300"></i>
-                        </div>
+                        <div class="col-auto"><i class="fas fa-user-check fa-2x text-gray-300"></i></div>
                     </div>
                 </div>
             </div>
         </div>
-
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-warning shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                Novos Contratados (Mês)
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">8</div>
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Novos no Mes</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="cardNovos">-</div>
                         </div>
-                        <div class="col-auto">
-                            <i class="fas fa-user-plus fa-2x text-gray-300"></i>
-                        </div>
+                        <div class="col-auto"><i class="fas fa-user-plus fa-2x text-gray-300"></i></div>
                     </div>
                 </div>
             </div>
         </div>
-
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-info shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                Departamentos
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">12</div>
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Departamentos</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="cardDepartamentos">-</div>
                         </div>
-                        <div class="col-auto">
-                            <i class="fas fa-building fa-2x text-gray-300"></i>
-                        </div>
+                        <div class="col-auto"><i class="fas fa-building fa-2x text-gray-300"></i></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Lista de Colaboradores -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="row align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label">Buscar</label>
+                    <input type="text" class="form-control" id="filtBusca" placeholder="Nome, CPF, email ou matricula...">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Departamento</label>
+                    <select class="form-select" id="filtDepartamento">
+                        <option value="">Todos</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Status</label>
+                    <select class="form-select" id="filtStatus">
+                        <option value="todos">Todos</option>
+                        <option value="ativos" selected>Ativos</option>
+                        <option value="inativos">Inativos</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-primary w-100" onclick="carregarColaboradores()">
+                        <i class="fas fa-search me-1"></i>Filtrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="card shadow">
-        <div class="card-header py-3">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
             <h6 class="m-0 font-weight-bold text-primary">Lista de Colaboradores</h6>
+            <span class="badge bg-secondary" id="badgeTotal">0 registros</span>
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered">
+                <table class="table table-hover">
                     <thead>
                         <tr>
+                            <th>Matricula</th>
                             <th>Nome</th>
                             <th>Cargo</th>
                             <th>Departamento</th>
-                            <th>E-mail</th>
+                            <th>Email</th>
+                            <th>Admissao</th>
                             <th>Status</th>
-                            <th>Ações</th>
+                            <th>Acoes</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="corpoTabela">
                         <tr>
-                            <td><strong>João Silva</strong></td>
-                            <td>Analista de Sistemas</td>
-                            <td>TI</td>
-                            <td>joao.silva@empresa.com</td>
-                            <td><span class="badge bg-success">Ativo</span></td>
-                            <td>
-                                <a href="/rh/colaborador/1" class="btn btn-sm btn-info me-1" title="Ver">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <button class="btn btn-sm btn-warning me-1" title="Editar" onclick="alert('Edição em desenvolvimento')">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger" title="Excluir" onclick="alert('Exclusão em desenvolvimento')">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>Maria Santos</strong></td>
-                            <td>Gerente de RH</td>
-                            <td>Recursos Humanos</td>
-                            <td>maria.santos@empresa.com</td>
-                            <td><span class="badge bg-success">Ativo</span></td>
-                            <td>
-                                <a href="/rh/colaborador/2" class="btn btn-sm btn-info me-1">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <button class="btn btn-sm btn-warning me-1" onclick="alert('Edição em desenvolvimento')">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger" onclick="alert('Exclusão em desenvolvimento')">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>Pedro Costa</strong></td>
-                            <td>Analista Financeiro</td>
-                            <td>Financeiro</td>
-                            <td>pedro.costa@empresa.com</td>
-                            <td><span class="badge bg-warning">Férias</span></td>
-                            <td>
-                                <a href="/rh/colaborador/3" class="btn btn-sm btn-info me-1">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <button class="btn btn-sm btn-warning me-1" onclick="alert('Edição em desenvolvimento')">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger" onclick="alert('Exclusão em desenvolvimento')">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+                            <td colspan="8" class="text-center text-muted py-4">
+                                <i class="fas fa-spinner fa-spin me-2"></i>Carregando...
                             </td>
                         </tr>
                     </tbody>
@@ -167,4 +130,126 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    carregarEstatisticas();
+    carregarDepartamentos();
+    carregarColaboradores();
+    document.getElementById('filtBusca').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') carregarColaboradores();
+    });
+});
+
+function carregarEstatisticas() {
+    fetch('/rh/api/colaboradores/estatisticas')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.status === 'success') {
+                document.getElementById('cardTotal').textContent = data.total;
+                document.getElementById('cardAtivos').textContent = data.ativos;
+                document.getElementById('cardNovos').textContent = data.novos_mes;
+                document.getElementById('cardDepartamentos').textContent = data.departamentos;
+            }
+        });
+}
+
+function carregarDepartamentos() {
+    fetch('/rh/api/departamentos')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.status === 'success') {
+                var select = document.getElementById('filtDepartamento');
+                data.departamentos.forEach(function(dep) {
+                    var opt = document.createElement('option');
+                    opt.value = dep.id;
+                    opt.textContent = dep.nome;
+                    select.appendChild(opt);
+                });
+            }
+        });
+}
+
+function carregarColaboradores() {
+    var params = new URLSearchParams();
+    var busca = document.getElementById('filtBusca').value;
+    var dep = document.getElementById('filtDepartamento').value;
+    var status = document.getElementById('filtStatus').value;
+    if (busca) params.append('busca', busca);
+    if (dep) params.append('departamento_id', dep);
+    if (status) params.append('status', status);
+
+    var corpo = document.getElementById('corpoTabela');
+    corpo.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4"><i class="fas fa-spinner fa-spin me-2"></i>Carregando...</td></tr>';
+
+    fetch('/rh/api/colaboradores?' + params.toString())
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.status === 'success') {
+                document.getElementById('badgeTotal').textContent = data.total + ' registros';
+                renderizarTabela(data.colaboradores);
+            } else {
+                corpo.innerHTML = '<tr><td colspan="8" class="text-center text-danger py-4">Erro: ' + data.message + '</td></tr>';
+            }
+        })
+        .catch(function(err) {
+            corpo.innerHTML = '<tr><td colspan="8" class="text-center text-danger py-4">Erro de conexao: ' + err.message + '</td></tr>';
+        });
+}
+
+function renderizarTabela(colaboradores) {
+    var corpo = document.getElementById('corpoTabela');
+    if (colaboradores.length === 0) {
+        corpo.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">Nenhum colaborador encontrado</td></tr>';
+        return;
+    }
+    var html = '';
+    colaboradores.forEach(function(c) {
+        var badge = c.ativo
+            ? '<span class="badge bg-success">Ativo</span>'
+            : '<span class="badge bg-danger">Inativo</span>';
+        var dataAdm = c.data_admissao
+            ? new Date(c.data_admissao + 'T00:00:00').toLocaleDateString('pt-BR')
+            : '-';
+        html += '<tr>' +
+            '<td>' + (c.matricula || '-') + '</td>' +
+            '<td><strong>' + c.nome_completo + '</strong></td>' +
+            '<td>' + (c.cargo || '-') + '</td>' +
+            '<td>' + (c.departamento || '-') + '</td>' +
+            '<td>' + (c.email || '-') + '</td>' +
+            '<td>' + dataAdm + '</td>' +
+            '<td>' + badge + '</td>' +
+            '<td>' +
+                '<a href="/rh/colaborador/' + c.id + '" class="btn btn-sm btn-info me-1" title="Ver"><i class="fas fa-eye"></i></a>' +
+                '<a href="/rh/colaborador/editar/' + c.id + '" class="btn btn-sm btn-warning me-1" title="Editar"><i class="fas fa-edit"></i></a>' +
+                '<button class="btn btn-sm btn-danger" title="Desativar" onclick="desativarColaborador(' + c.id + ', \'' + c.nome_completo.replace(/'/g, "\\'") + '\')"><i class="fas fa-user-slash"></i></button>' +
+            '</td></tr>';
+    });
+    corpo.innerHTML = html;
+}
+
+function desativarColaborador(id, nome) {
+    if (!confirm('Desativar o colaborador ' + nome + '?')) return;
+    var motivo = prompt('Motivo do desligamento:');
+    if (motivo === null) return;
+
+    fetch('/rh/api/colaboradores/' + id, {
+        method: 'DELETE',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({motivo: motivo})
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.status === 'success') {
+            alert(data.message);
+            carregarColaboradores();
+            carregarEstatisticas();
+        } else {
+            alert('Erro: ' + data.message);
+        }
+    });
+}
+</script>
 {% endblock %}

@@ -24,16 +24,16 @@
         <h5><i class="fas fa-info-circle me-2"></i>Teste de Navegação</h5>
         <p>Clique nos botões abaixo para testar se todas as páginas estão funcionando:</p>
         <div class="btn-group-sm" role="group">
-            <button class="btn btn-outline-primary me-2" data-url="{{ url_for('planos.novos_planos') }}" data-nome="Novos Planos">
+            <button class="btn btn-outline-primary me-2" data-url="{{ url_for('planos_novos') }}" data-nome="Novos Planos">
                 📝 Novos Planos
             </button>
-            <button class="btn btn-outline-success me-2" data-url="{{ url_for('planos.planos_andamento') }}" data-nome="Em Andamento">
+            <button class="btn btn-outline-success me-2" data-url="{{ url_for('planos_andamento') }}" data-nome="Em Andamento">
                 ⏳ Em Andamento
             </button>
-            <button class="btn btn-outline-info me-2" data-url="{{ url_for('planos.kanban_planos') }}" data-nome="Kanban">
+            <button class="btn btn-outline-info me-2" data-url="{{ url_for('planos_kanban') }}" data-nome="Kanban">
                 📋 Kanban
             </button>
-            <button class="btn btn-outline-warning" data-url="{{ url_for('planos.novo_plano') }}" data-nome="Novo Plano">
+            <button class="btn btn-outline-warning" data-url="{{ url_for('planos_novo') }}" data-nome="Novo Plano">
                 ➕ Novo Plano
             </button>
         </div>
@@ -42,7 +42,7 @@
     <!-- Cards de Resumo -->
     <div class="row mb-4">
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2 cursor-pointer" data-url="{{ url_for('planos.novos_planos') }}">
+            <div class="card border-left-primary shadow h-100 py-2 cursor-pointer" data-url="{{ url_for('planos_novos') }}">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
@@ -63,7 +63,7 @@
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2 cursor-pointer" data-url="{{ url_for('planos.planos_andamento') }}">
+            <div class="card border-left-success shadow h-100 py-2 cursor-pointer" data-url="{{ url_for('planos_andamento') }}">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
@@ -84,7 +84,7 @@
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-warning shadow h-100 py-2 cursor-pointer" data-url="{{ url_for('planos.planos_andamento') }}">
+            <div class="card border-left-warning shadow h-100 py-2 cursor-pointer" data-url="{{ url_for('planos_andamento') }}">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
@@ -105,7 +105,7 @@
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2 cursor-pointer" data-url="{{ url_for('planos.kanban_planos') }}">
+            <div class="card border-left-info shadow h-100 py-2 cursor-pointer" data-url="{{ url_for('planos_kanban') }}">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
@@ -143,7 +143,7 @@
                             </div>
                             <h5 class="card-title">Novos Planos</h5>
                             <p class="card-text text-muted">Visualizar, aprovar e gerenciar novos planos criados pela equipe</p>
-                            <a href="{{ url_for('planos.novos_planos') }}" class="btn btn-primary w-100">
+                            <a href="{{ url_for('planos_novos') }}" class="btn btn-primary w-100">
                                 <i class="fas fa-arrow-right me-1"></i>Acessar Novos Planos
                             </a>
                         </div>
@@ -158,7 +158,7 @@
                             </div>
                             <h5 class="card-title">Em Andamento</h5>
                             <p class="card-text text-muted">Acompanhar execução e progress dos planos ativos e em desenvolvimento</p>
-                            <a href="{{ url_for('planos.planos_andamento') }}" class="btn btn-success w-100">
+                            <a href="{{ url_for('planos_andamento') }}" class="btn btn-success w-100">
                                 <i class="fas fa-arrow-right me-1"></i>Ver Andamento
                             </a>
                         </div>
@@ -173,7 +173,7 @@
                             </div>
                             <h5 class="card-title">Visão Kanban</h5>
                             <p class="card-text text-muted">Visualização em quadros com funcionalidade drag-and-drop</p>
-                            <a href="{{ url_for('planos.kanban_planos') }}" class="btn btn-info w-100">
+                            <a href="{{ url_for('planos_kanban') }}" class="btn btn-info w-100">
                                 <i class="fas fa-arrow-right me-1"></i>Abrir Kanban
                             </a>
                         </div>
@@ -188,7 +188,7 @@
                             </div>
                             <h5 class="card-title">Criar Novo</h5>
                             <p class="card-text text-muted">Criar novo plano de ação com formulário completo e templates</p>
-                            <a href="{{ url_for('planos.novo_plano') }}" class="btn btn-warning w-100">
+                            <a href="{{ url_for('planos_novo') }}" class="btn btn-warning w-100">
                                 <i class="fas fa-plus me-1"></i>Criar Plano
                             </a>
                         </div>
@@ -253,25 +253,25 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-md-2 mb-3">
-                    <a href="{{ url_for('planos.novo_plano') }}" class="btn btn-outline-success w-100">
+                    <a href="{{ url_for('planos_novo') }}" class="btn btn-outline-success w-100">
                         <i class="fas fa-plus-circle d-block mb-2"></i>
                         Criar Plano
                     </a>
                 </div>
                 <div class="col-md-2 mb-3">
-                    <a href="{{ url_for('planos.novos_planos') }}" class="btn btn-outline-primary w-100">
+                    <a href="{{ url_for('planos_novos') }}" class="btn btn-outline-primary w-100">
                         <i class="fas fa-list d-block mb-2"></i>
                         Listar Novos
                     </a>
                 </div>
                 <div class="col-md-2 mb-3">
-                    <a href="{{ url_for('planos.kanban_planos') }}" class="btn btn-outline-info w-100">
+                    <a href="{{ url_for('planos_kanban') }}" class="btn btn-outline-info w-100">
                         <i class="fas fa-columns d-block mb-2"></i>
                         Visão Kanban
                     </a>
                 </div>
                 <div class="col-md-2 mb-3">
-                    <a href="{{ url_for('planos.planos_andamento') }}" class="btn btn-outline-warning w-100">
+                    <a href="{{ url_for('planos_andamento') }}" class="btn btn-outline-warning w-100">
                         <i class="fas fa-running d-block mb-2"></i>
                         Em Andamento
                     </a>
@@ -295,7 +295,7 @@
 
 <!-- Hidden URLs for JavaScript -->
 <div id="urls" style="display: none;">
-    <span data-novo-plano="{{ url_for('planos.novo_plano') }}"></span>
+    <span data-novo-plano="{{ url_for('planos_novo') }}"></span>
 </div>
 
 {% endblock %}
