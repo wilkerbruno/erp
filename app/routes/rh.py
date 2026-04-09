@@ -316,3 +316,4 @@ def rh_api_listar_departamentos():
         })
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
+
