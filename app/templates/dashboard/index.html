@@ -1,340 +1,80 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - ERP Corrigindo à Rota</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Nunito', sans-serif;
-            background-color: #f8f9fc;
-        }
-        .navbar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        .card {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
-        }
-        .module-card {
-            transition: transform 0.2s;
-            cursor: pointer;
-        }
-        .module-card:hover {
-            transform: translateY(-5px);
-        }
-        .border-left-primary { border-left: 0.25rem solid #4e73df !important; }
-        .border-left-success { border-left: 0.25rem solid #1cc88a !important; }
-        .border-left-info { border-left: 0.25rem solid #36b9cc !important; }
-        .border-left-warning { border-left: 0.25rem solid #f6c23e !important; }
-    </style>
-</head>
-<body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/">
-                <i class="fas fa-route me-2"></i>ERP Corrigindo à Rota
-            </a>
-            <div class="navbar-nav ms-auto">
-                <div class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                        <i class="fas fa-user me-1"></i>
-                        {% if current_user.is_authenticated %}
-                            {{ current_user.username|title }}
-                        {% else %}
-                            Usuário
-                        {% endif %}
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="/auth/logout">
-                            <i class="fas fa-sign-out-alt me-2"></i>Sair
-                        </a></li>
-                    </ul>
-                </div>
-            </div>
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+        </h1>
+        <div>
+            <span class="text-muted">
+                <i class="fas fa-clock me-1"></i>
+                <span id="current-time"></span>
+            </span>
         </div>
-    </nav>
+    </div>
 
-    <!-- Main Content -->
-    <div class="container-fluid mt-4">
-        <!-- Header -->
-        <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">
-                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
-            </h1>
-            <div>
-                <span class="text-muted">
-                    <i class="fas fa-clock me-1"></i>
-                    <span id="current-time"></span>
-                </span>
-            </div>
-        </div>
-
-        <!-- Alert de Sucesso -->
-         <!--
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <h4 class="alert-heading">
-                <i class="fas fa-check-circle me-2"></i>Sistema Funcionando!
-            </h4>
-            <p>Bem-vindo ao ERP Corrigindo à Rota. O sistema está operacional e pronto para uso.</p>
-            <hr>
-            <p class="mb-0">
-                <strong>Usuário:</strong> 
-                {% if current_user.is_authenticated %}
-                    {{ current_user.username|title }}
-                {% else %}
-                    Não identificado
-                {% endif %}
-                | <strong>Versão:</strong> 1.0.0
-            </p>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-        -->
-        <!-- Statistics Cards -->
-        <div class="row mb-4">
-            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4">
-                <div class="card border-left-primary shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                    Status do Sistema
-                                </div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">Online</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-server fa-2x text-gray-300"></i>
-                            </div>
+    <div class="row mb-4">
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Status do Sistema</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">Online</div>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4">
-                <div class="card border-left-success shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                    Módulos Ativos
-                                </div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">12</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-puzzle-piece fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4">
-                <div class="card border-left-info shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                    Última Atualização
-                                </div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">Hoje</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-clock fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4">
-                <div class="card border-left-warning shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                    Versão
-                                </div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">1.0.0</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-code-branch fa-2x text-gray-300"></i>
-                            </div>
+                        <div class="col-auto">
+                            <i class="fas fa-server fa-2x text-gray-300"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Módulos -->
-        <div class="card shadow mb-3">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">
-                    <i class="fas fa-th-large me-2"></i>Módulos do Sistema
-                </h6>
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Modulos Ativos</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">12</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-cubes fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-                <div class="row">
-                    <!-- RH -->
-                    <div class="col-lg-3 col-md-6 mb-4">
-                        <div class="card module-card h-100" onclick="acessarModulo('/rh')" >
-                            <div class="card-body text-center">
-                                <i class="fas fa-users fa-3x text-info mb-3"></i>
-                                <h5>Recursos Humanos</h5>
-                                <p class="text-muted">Gestão de colaboradores</p>
-                                <button class="btn btn-info btn-sm">
-                                    <i class="fas fa-arrow-right me-1"></i>Acessar
-                                </button>
-                            </div>
+        </div>
+
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Banco de Dados</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">Conectado</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-database fa-2x text-gray-300"></i>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
 
-                    <!-- Qualidade -->
-                    <div class="col-lg-3 col-md-6 mb-4">
-                        <div class="card module-card h-100" onclick="acessarModulo('/qualidade')">
-                            <div class="card-body text-center">
-                                <i class="fas fa-award fa-3x text-warning mb-3"></i>
-                                <h5>Qualidade</h5>
-                                <p class="text-muted">NCs e auditorias</p>
-                                <button class="btn btn-warning btn-sm">
-                                    <i class="fas fa-arrow-right me-1"></i>Acessar
-                                </button>
-                            </div>
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Versao</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">1.0.0</div>
                         </div>
-                    </div>
-
-                    <!-- Produção -->
-                    <div class="col-lg-3 col-md-6 mb-4">
-                        <div class="card module-card h-100" onclick="acessarModulo('/producao')">
-                            <div class="card-body text-center">
-                                <i class="fas fa-industry fa-3x text-primary mb-3"></i>
-                                <h5>Produção</h5>
-                                <p class="text-muted">PCP e controle</p>
-                                <button class="btn btn-primary btn-sm">
-                                    <i class="fas fa-arrow-right me-1"></i>Acessar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Planos de Ação -->
-                    <div class="col-lg-3 col-md-6 mb-4">
-                        <div class="card module-card h-100" onclick="acessarModulo('/planos-acao')">
-                            <div class="card-body text-center">
-                                <i class="fas fa-tasks fa-3x text-success mb-3"></i>
-                                <h5>Planos de Ação</h5>
-                                <p class="text-muted">5W2H e melhorias</p>
-                                <button class="btn btn-success btn-sm">
-                                    <i class="fas fa-arrow-right me-1"></i>Acessar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Segurança do Trabalho -->
-                    <div class="col-lg-3 col-md-6 mb-4">
-                        <div class="card module-card h-100" onclick="acessarModulo('/seguranca-trabalho')">
-                            <div class="card-body text-center">
-                                <i class="fas fa-hard-hat fa-3x text-danger mb-3"></i>
-                                <h5>Segurança do Trabalho</h5>
-                                <p class="text-muted">SST e EPIs</p>
-                                <button class="btn btn-danger btn-sm">
-                                    <i class="fas fa-arrow-right me-1"></i>Acessar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Gestão à Vista -->
-                    <div class="col-lg-3 col-md-6 mb-4">
-                        <div class="card module-card h-100" onclick="acessarModulo('/gestao-vista')">
-                            <div class="card-body text-center">
-                                <i class="fas fa-chart-line fa-3x text-info mb-3"></i>
-                                <h5>Gestão à Vista</h5>
-                                <p class="text-muted">Indicadores e KPIs</p>
-                                <button class="btn btn-info btn-sm">
-                                    <i class="fas fa-arrow-right me-1"></i>Acessar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Consultoria -->
-                    <div class="col-lg-3 col-md-6 mb-4">
-                        <div class="card module-card h-100" onclick="acessarModulo('/consultoria')">
-                            <div class="card-body text-center">
-                                <i class="fas fa-briefcase fa-3x text-secondary mb-3"></i>
-                                <h5>Consultoria</h5>
-                                <p class="text-muted">Projetos e clientes</p>
-                                <button class="btn btn-secondary btn-sm">
-                                    <i class="fas fa-arrow-right me-1"></i>Acessar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Reuniões -->
-                    <div class="col-lg-3 col-md-6 mb-4">
-                        <div class="card module-card h-100" onclick="acessarModulo('/reunioes')">
-                            <div class="card-body text-center">
-                                <i class="fas fa-users-cog fa-3x text-warning mb-3"></i>
-                                <h5>Reuniões</h5>
-                                <p class="text-muted">Atas e follow-up</p>
-                                <button class="btn btn-warning btn-sm">
-                                    <i class="fas fa-arrow-right me-1"></i>Acessar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Financeiro -->
-                    <div class="col-lg-3 col-md-6 mb-4">
-                        <div class="card module-card h-100" onclick="acessarModulo('/financeiro')">
-                            <div class="card-body text-center">
-                                <i class="fas fa-dollar-sign fa-3x text-success mb-3"></i>
-                                <h5>Financeiro</h5>
-                                <p class="text-muted">DRE e controle</p>
-                                <button class="btn btn-success btn-sm"><i class="fas fa-arrow-right me-1"></i>Acessar</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Compras -->
-                    <div class="col-lg-3 col-md-6 mb-4">
-                        <div class="card module-card h-100" onclick="acessarModulo('/compras')">
-                            <div class="card-body text-center">
-                                <i class="fas fa-shopping-cart fa-3x text-info mb-3"></i>
-                                <h5>Compras</h5>
-                                <p class="text-muted">Gestão de compras</p>
-                                <button class="btn btn-primary btn-sm"><i class="fas fa-arrow-right me-1"></i>Acessar</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Relatórios -->
-                    <div class="col-lg-3 col-md-6 mb-4">
-                        <div class="card module-card h-100" onclick="acessarModulo('/relatorios')">
-                            <div class="card-body text-center">
-                                <i class="fas fa-chart-bar fa-3x text-primary mb-3"></i>
-                                <h5>Relatórios</h5>
-                                <p class="text-muted">Analytics e KPIs</p>
-                                <button class="btn btn-primary btn-sm"><i class="fas fa-arrow-right me-1"></i>Acessar</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Configurações -->
-                    <div class="col-lg-3 col-md-6 mb-4">
-                        <div class="card module-card h-100" onclick="acessarModulo('/configuracoes')">
-                            <div class="card-body text-center">
-                                <i class="fas fa-cogs fa-3x text-dark mb-3"></i>
-                                <h5>Configurações</h5>
-                                <p class="text-muted">Configurações gerais</p>
-                                <button class="btn btn-dark btn-sm"><i class="fas fa-arrow-right me-1"></i>Acessar</button>
-                            </div>
+                        <div class="col-auto">
+                            <i class="fas fa-code-branch fa-2x text-gray-300"></i>
                         </div>
                     </div>
                 </div>
@@ -342,49 +82,184 @@
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../../static/js/modal_novo_projeto.js"></script>
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-th-large me-2"></i>Modulos do Sistema
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card module-card h-100" onclick="acessarModulo('/rh')">
+                        <div class="card-body text-center">
+                            <i class="fas fa-users fa-3x text-info mb-3"></i>
+                            <h5>Recursos Humanos</h5>
+                            <p class="text-muted">Gestao de colaboradores</p>
+                            <button class="btn btn-info btn-sm"><i class="fas fa-arrow-right me-1"></i>Acessar</button>
+                        </div>
+                    </div>
+                </div>
 
-    <script>
-        // Função para acessar os módulos
-        function acessarModulo(url) {
-            // Adiciona feedback visual ao clique
-            event.currentTarget.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                event.currentTarget.style.transform = '';
-            }, 150);
-            
-            // Redireciona para a URL do módulo
-            window.location.href = url;
-        }
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card module-card h-100" onclick="acessarModulo('/qualidade')">
+                        <div class="card-body text-center">
+                            <i class="fas fa-award fa-3x text-warning mb-3"></i>
+                            <h5>Qualidade</h5>
+                            <p class="text-muted">NCs e auditorias</p>
+                            <button class="btn btn-warning btn-sm"><i class="fas fa-arrow-right me-1"></i>Acessar</button>
+                        </div>
+                    </div>
+                </div>
 
-        // Função para atualizar o horário atual
-        function atualizarHorario() {
-            const agora = new Date();
-            const opcoes = {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            };
-            const horarioFormatado = agora.toLocaleDateString('pt-BR', opcoes);
-            const elementoHorario = document.getElementById('current-time');
-            if (elementoHorario) {
-                elementoHorario.textContent = horarioFormatado;
-            }
-        }
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card module-card h-100" onclick="acessarModulo('/producao')">
+                        <div class="card-body text-center">
+                            <i class="fas fa-industry fa-3x text-primary mb-3"></i>
+                            <h5>Producao</h5>
+                            <p class="text-muted">PCP e controle</p>
+                            <button class="btn btn-primary btn-sm"><i class="fas fa-arrow-right me-1"></i>Acessar</button>
+                        </div>
+                    </div>
+                </div>
 
-        // Atualizar horário a cada segundo
-        setInterval(atualizarHorario, 1000);
-        atualizarHorario(); // Chamada inicial
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card module-card h-100" onclick="acessarModulo('/planos-acao')">
+                        <div class="card-body text-center">
+                            <i class="fas fa-tasks fa-3x text-success mb-3"></i>
+                            <h5>Planos de Acao</h5>
+                            <p class="text-muted">5W2H e melhorias</p>
+                            <button class="btn btn-success btn-sm"><i class="fas fa-arrow-right me-1"></i>Acessar</button>
+                        </div>
+                    </div>
+                </div>
 
-        // Log para debug (remover em produção)
-        console.log('Dashboard carregado com sucesso!');
-        console.log('Função acessarModulo definida');
-    </script>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card module-card h-100" onclick="acessarModulo('/seguranca-trabalho')">
+                        <div class="card-body text-center">
+                            <i class="fas fa-hard-hat fa-3x text-danger mb-3"></i>
+                            <h5>Seguranca do Trabalho</h5>
+                            <p class="text-muted">SST e EPIs</p>
+                            <button class="btn btn-danger btn-sm"><i class="fas fa-arrow-right me-1"></i>Acessar</button>
+                        </div>
+                    </div>
+                </div>
 
-</body>
-</html>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card module-card h-100" onclick="acessarModulo('/gestao-vista')">
+                        <div class="card-body text-center">
+                            <i class="fas fa-chart-line fa-3x text-info mb-3"></i>
+                            <h5>Gestao a Vista</h5>
+                            <p class="text-muted">Indicadores e KPIs</p>
+                            <button class="btn btn-info btn-sm"><i class="fas fa-arrow-right me-1"></i>Acessar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card module-card h-100" onclick="acessarModulo('/consultoria')">
+                        <div class="card-body text-center">
+                            <i class="fas fa-briefcase fa-3x text-secondary mb-3"></i>
+                            <h5>Consultoria</h5>
+                            <p class="text-muted">Projetos e clientes</p>
+                            <button class="btn btn-secondary btn-sm"><i class="fas fa-arrow-right me-1"></i>Acessar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card module-card h-100" onclick="acessarModulo('/reunioes')">
+                        <div class="card-body text-center">
+                            <i class="fas fa-users-cog fa-3x text-warning mb-3"></i>
+                            <h5>Reunioes</h5>
+                            <p class="text-muted">Atas e follow-up</p>
+                            <button class="btn btn-warning btn-sm"><i class="fas fa-arrow-right me-1"></i>Acessar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card module-card h-100" onclick="acessarModulo('/financeiro')">
+                        <div class="card-body text-center">
+                            <i class="fas fa-dollar-sign fa-3x text-success mb-3"></i>
+                            <h5>Financeiro</h5>
+                            <p class="text-muted">DRE e controle</p>
+                            <button class="btn btn-success btn-sm"><i class="fas fa-arrow-right me-1"></i>Acessar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card module-card h-100" onclick="acessarModulo('/compras')">
+                        <div class="card-body text-center">
+                            <i class="fas fa-shopping-cart fa-3x text-info mb-3"></i>
+                            <h5>Compras</h5>
+                            <p class="text-muted">Gestao de compras</p>
+                            <button class="btn btn-primary btn-sm"><i class="fas fa-arrow-right me-1"></i>Acessar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card module-card h-100" onclick="acessarModulo('/relatorios')">
+                        <div class="card-body text-center">
+                            <i class="fas fa-chart-bar fa-3x text-primary mb-3"></i>
+                            <h5>Relatorios</h5>
+                            <p class="text-muted">Analytics e KPIs</p>
+                            <button class="btn btn-primary btn-sm"><i class="fas fa-arrow-right me-1"></i>Acessar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card module-card h-100" onclick="acessarModulo('/configuracoes')">
+                        <div class="card-body text-center">
+                            <i class="fas fa-cogs fa-3x text-dark mb-3"></i>
+                            <h5>Configuracoes</h5>
+                            <p class="text-muted">Configuracoes gerais</p>
+                            <button class="btn btn-dark btn-sm"><i class="fas fa-arrow-right me-1"></i>Acessar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card module-card h-100" onclick="acessarModulo('/frotas')">
+                        <div class="card-body text-center">
+                            <i class="fas fa-truck fa-3x text-primary mb-3"></i>
+                            <h5>Gestao de Frotas</h5>
+                            <p class="text-muted">Veiculos e motoristas</p>
+                            <button class="btn btn-primary btn-sm"><i class="fas fa-arrow-right me-1"></i>Acessar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card module-card h-100" onclick="acessarModulo('/empresas')">
+                        <div class="card-body text-center">
+                            <i class="fas fa-building fa-3x text-secondary mb-3"></i>
+                            <h5>Empresas</h5>
+                            <p class="text-muted">Gerenciamento</p>
+                            <button class="btn btn-secondary btn-sm"><i class="fas fa-arrow-right me-1"></i>Acessar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card module-card h-100" onclick="acessarModulo('/efo')">
+                        <div class="card-body text-center">
+                            <i class="fas fa-chart-radar fa-3x text-info mb-3"></i>
+                            <h5>EFO - Diagnostico</h5>
+                            <p class="text-muted">Avaliacao empresarial</p>
+                            <button class="btn btn-info btn-sm"><i class="fas fa-arrow-right me-1"></i>Acessar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

@@ -1,280 +1,223 @@
 {% extends "base.html" %}
 
-{% block title %}Holerites{% endblock %}
+{% block title %}Holerites Digitais{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">
-            <i class="fas fa-file-invoice-dollar me-2"></i>Holerites / Contra-Cheques
+            <i class="fas fa-file-invoice-dollar me-2"></i>Holerites Digitais
         </h1>
-        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalGerarHolerite">
-            <i class="fas fa-plus me-1"></i>Gerar Holerite
-        </button>
+        <div>
+            <button class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#modalGerarHolerite">
+                <i class="fas fa-plus me-1"></i>Gerar Individual
+            </button>
+            <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalGerarLote">
+                <i class="fas fa-layer-group me-1"></i>Gerar em Lote
+            </button>
+        </div>
     </div>
 
-    <!-- Filtros -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Holerites</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalHolerites">-</div>
+                        </div>
+                        <div class="col-auto"><i class="fas fa-file-invoice-dollar fa-2x text-gray-300"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Pagos</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalPagos">-</div>
+                        </div>
+                        <div class="col-auto"><i class="fas fa-check-circle fa-2x text-gray-300"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Gerados</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalGerados">-</div>
+                        </div>
+                        <div class="col-auto"><i class="fas fa-clock fa-2x text-gray-300"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Enviados</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalEnviados">-</div>
+                        </div>
+                        <div class="col-auto"><i class="fas fa-paper-plane fa-2x text-gray-300"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary d-inline">Filtros</h6>
+        </div>
         <div class="card-body">
             <div class="row">
-                <div class="col-md-3">
-                    <label class="form-label">Mês</label>
+                <div class="col-md-3 mb-2">
+                    <label class="form-label">Mes</label>
                     <select class="form-select" id="filtroMes">
                         <option value="">Todos</option>
-                        <option value="1">Janeiro</option>
-                        <option value="2">Fevereiro</option>
-                        <option value="3">Março</option>
-                        <option value="4">Abril</option>
-                        <option value="5">Maio</option>
-                        <option value="6">Junho</option>
-                        <option value="7">Julho</option>
-                        <option value="8">Agosto</option>
-                        <option value="9">Setembro</option>
-                        <option value="10">Outubro</option>
-                        <option value="11">Novembro</option>
-                        <option value="12">Dezembro</option>
+                        <option value="1">Janeiro</option><option value="2">Fevereiro</option>
+                        <option value="3">Marco</option><option value="4">Abril</option>
+                        <option value="5">Maio</option><option value="6">Junho</option>
+                        <option value="7">Julho</option><option value="8">Agosto</option>
+                        <option value="9">Setembro</option><option value="10">Outubro</option>
+                        <option value="11">Novembro</option><option value="12">Dezembro</option>
                     </select>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2 mb-2">
                     <label class="form-label">Ano</label>
-                    <select class="form-select" id="filtroAno">
-                        <option value="">Todos</option>
-                        <option value="2025" selected>2025</option>
-                        <option value="2024">2024</option>
-                        <option value="2023">2023</option>
-                    </select>
+                    <input type="number" class="form-control" id="filtroAno" value="2025" min="2020" max="2030">
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3 mb-2">
                     <label class="form-label">Colaborador</label>
                     <select class="form-select" id="filtroColaborador">
                         <option value="">Todos</option>
                     </select>
                 </div>
-                <div class="col-md-2 d-flex align-items-end">
+                <div class="col-md-2 mb-2">
+                    <label class="form-label">Status</label>
+                    <select class="form-select" id="filtroStatusHolerite">
+                        <option value="">Todos</option>
+                        <option value="gerado">Gerado</option>
+                        <option value="enviado">Enviado</option>
+                        <option value="pago">Pago</option>
+                    </select>
+                </div>
+                <div class="col-md-2 mb-2 d-flex align-items-end">
                     <button class="btn btn-primary w-100" onclick="filtrarHolerites()">
-                        <i class="fas fa-filter me-1"></i>Filtrar
+                        <i class="fas fa-search me-1"></i>Filtrar
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Lista de Holerites -->
-    <div class="card shadow">
+    <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Holerites Gerados</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Holerites</h6>
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered" id="tabelaHolerites">
+                <table class="table table-bordered">
                     <thead>
                         <tr>
                             <th>Colaborador</th>
-                            <th>Período</th>
-                            <th>Salário Base</th>
-                            <th>Total Vencimentos</th>
-                            <th>Total Descontos</th>
-                            <th>Líquido</th>
+                            <th>Competencia</th>
+                            <th>Salario Base</th>
+                            <th>Vencimentos</th>
+                            <th>Descontos</th>
+                            <th>Liquido</th>
                             <th>Status</th>
-                            <th>Ações</th>
+                            <th>Acoes</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <!-- Exemplos -->
-                        <tr>
-                            <td>João Silva</td>
-                            <td>Outubro/2025</td>
-                            <td>R$ 3.500,00</td>
-                            <td>R$ 4.200,00</td>
-                            <td>R$ 850,00</td>
-                            <td><strong class="text-success">R$ 3.350,00</strong></td>
-                            <td><span class="badge bg-success">Pago</span></td>
-                            <td>
-                                <button class="btn btn-sm btn-info" onclick="visualizarHolerite(1)">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger" onclick="gerarPDF(1)">
-                                    <i class="fas fa-file-pdf"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Maria Santos</td>
-                            <td>Outubro/2025</td>
-                            <td>R$ 5.000,00</td>
-                            <td>R$ 6.500,00</td>
-                            <td>R$ 1.250,00</td>
-                            <td><strong class="text-success">R$ 5.250,00</strong></td>
-                            <td><span class="badge bg-warning">Aprovado</span></td>
-                            <td>
-                                <button class="btn btn-sm btn-info" onclick="visualizarHolerite(2)">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger" onclick="gerarPDF(2)">
-                                    <i class="fas fa-file-pdf"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
+                    <tbody id="bodyHolerites"></tbody>
                 </table>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modal Gerar Holerite -->
 <div class="modal fade" id="modalGerarHolerite" tabindex="-1">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title">Gerar Novo Holerite</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            <div class="modal-header">
+                <h5 class="modal-title">Gerar Holerite Individual</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <form id="formGerarHolerite">
-                    <!-- Dados Básicos -->
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Colaborador *</label>
-                            <select class="form-select" name="colaborador_id" required>
+                            <select class="form-select" name="colaborador_id" required id="selectColabHolerite">
                                 <option value="">Selecione...</option>
-                                <option value="1">João Silva</option>
-                                <option value="2">Maria Santos</option>
                             </select>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label class="form-label">Mês *</label>
+                            <label class="form-label">Mes *</label>
                             <select class="form-select" name="mes" required>
-                                <option value="10" selected>Outubro</option>
-                                <option value="11">Novembro</option>
+                                <option value="1">Janeiro</option><option value="2">Fevereiro</option>
+                                <option value="3">Marco</option><option value="4">Abril</option>
+                                <option value="5">Maio</option><option value="6">Junho</option>
+                                <option value="7">Julho</option><option value="8">Agosto</option>
+                                <option value="9">Setembro</option><option value="10">Outubro</option>
+                                <option value="11">Novembro</option><option value="12">Dezembro</option>
                             </select>
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Ano *</label>
-                            <select class="form-select" name="ano" required>
-                                <option value="2025" selected>2025</option>
-                            </select>
+                            <input type="number" class="form-control" name="ano" value="2025" required>
                         </div>
                     </div>
-
                     <hr>
-
-                    <!-- Vencimentos -->
-                    <h6 class="text-primary mb-3">
-                        <i class="fas fa-plus-circle me-2"></i>Vencimentos
-                    </h6>
+                    <h6 class="text-muted mb-3">Adicionais (opcional)</h6>
                     <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Salário Base *</label>
-                            <input type="number" class="form-control" name="salario_base" step="0.01" required>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Horas Extras</label>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Horas Extras (R$)</label>
                             <input type="number" class="form-control" name="horas_extras" step="0.01" value="0">
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Adicional Noturno</label>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Adic. Noturno (R$)</label>
                             <input type="number" class="form-control" name="adicional_noturno" step="0.01" value="0">
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Comissões</label>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Comissoes (R$)</label>
                             <input type="number" class="form-control" name="comissoes" step="0.01" value="0">
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Bônus</label>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Bonus (R$)</label>
                             <input type="number" class="form-control" name="bonus" step="0.01" value="0">
                         </div>
                     </div>
-
-                    <hr>
-
-                    <!-- Benefícios -->
-                    <h6 class="text-success mb-3">
-                        <i class="fas fa-gift me-2"></i>Benefícios
-                    </h6>
+                    <h6 class="text-muted mb-3">Descontos adicionais (opcional)</h6>
                     <div class="row">
                         <div class="col-md-3 mb-3">
-                            <label class="form-label">Vale Alimentação</label>
-                            <input type="number" class="form-control" name="vale_alimentacao" step="0.01" value="0">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Vale Transporte</label>
-                            <input type="number" class="form-control" name="vale_transporte" step="0.01" value="0">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Auxílio Celular</label>
-                            <input type="number" class="form-control" name="auxilio_celular" step="0.01" value="50.00">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Plano de Saúde</label>
-                            <input type="number" class="form-control" name="plano_saude" step="0.01" value="0">
-                        </div>
-                    </div>
-
-                    <hr>
-
-                    <!-- Descontos -->
-                    <h6 class="text-danger mb-3">
-                        <i class="fas fa-minus-circle me-2"></i>Descontos
-                    </h6>
-                    <div class="row">
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">INSS</label>
-                            <input type="number" class="form-control" name="inss" step="0.01" value="0">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">IRRF</label>
-                            <input type="number" class="form-control" name="irrf" step="0.01" value="0">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">VT (Desconto)</label>
-                            <input type="number" class="form-control" name="vale_transporte_desc" step="0.01" value="0">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Plano Saúde (Desc)</label>
-                            <input type="number" class="form-control" name="plano_saude_desc" step="0.01" value="0">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Faltas</label>
-                            <input type="number" class="form-control" name="faltas" step="0.01" value="0">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Atrasos</label>
-                            <input type="number" class="form-control" name="atrasos" step="0.01" value="0">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Outros Descontos</label>
-                            <input type="number" class="form-control" name="outros_descontos" step="0.01" value="0">
-                        </div>
-                    </div>
-
-                    <hr>
-
-                    <!-- Informações Adicionais -->
-                    <h6 class="text-info mb-3">
-                        <i class="fas fa-info-circle me-2"></i>Informações Adicionais
-                    </h6>
-                    <div class="row">
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Dias Trabalhados</label>
-                            <input type="number" class="form-control" name="dias_trabalhados" min="0" max="31">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Horas Trabalhadas</label>
-                            <input type="number" class="form-control" name="horas_trabalhadas" step="0.01">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Qtd. Faltas</label>
+                            <label class="form-label">Faltas (qtd)</label>
                             <input type="number" class="form-control" name="faltas_quantidade" min="0" value="0">
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label class="form-label">Qtd. Atrasos</label>
+                            <label class="form-label">Atrasos (qtd)</label>
                             <input type="number" class="form-control" name="atrasos_quantidade" min="0" value="0">
                         </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Adiantamento (R$)</label>
+                            <input type="number" class="form-control" name="adiantamento" step="0.01" value="0">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Emprestimos (R$)</label>
+                            <input type="number" class="form-control" name="emprestimos" step="0.01" value="0">
+                        </div>
                     </div>
-
                     <div class="mb-3">
-                        <label class="form-label">Observações</label>
+                        <label class="form-label">Observacoes</label>
                         <textarea class="form-control" name="observacoes" rows="2"></textarea>
                     </div>
                 </form>
@@ -288,53 +231,60 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="modalGerarLote" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Gerar Holerites em Lote</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted">Gera holerites para todos os colaboradores ativos com salario base cadastrado. Beneficios vinculados sao integrados automaticamente.</p>
+                <form id="formGerarLote">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Mes *</label>
+                            <select class="form-select" name="mes" required id="selectMesLote">
+                                <option value="1">Janeiro</option><option value="2">Fevereiro</option>
+                                <option value="3">Marco</option><option value="4">Abril</option>
+                                <option value="5">Maio</option><option value="6">Junho</option>
+                                <option value="7">Julho</option><option value="8">Agosto</option>
+                                <option value="9">Setembro</option><option value="10">Outubro</option>
+                                <option value="11">Novembro</option><option value="12">Dezembro</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Ano *</label>
+                            <input type="number" class="form-control" name="ano" value="2025" required id="inputAnoLote">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-warning" onclick="gerarHoleritesLote()" id="btnGerarLote">
+                    <i class="fas fa-layer-group me-1"></i>Gerar para Todos
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalDetalhesHolerite" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detalhes do Holerite</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="bodyDetalhesHolerite"></div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
-<script>
-function gerarHolerite() {
-    const form = document.getElementById('formGerarHolerite');
-    const formData = new FormData(form);
-    const data = {};
-    
-    formData.forEach((value, key) => {
-        data[key] = value;
-    });
-    
-    fetch('/rh/api/holerite/gerar', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 'success') {
-            alert('Holerite gerado com sucesso!');
-            bootstrap.Modal.getInstance(document.getElementById('modalGerarHolerite')).hide();
-            form.reset();
-            // Recarregar tabela
-        } else {
-            alert('Erro: ' + data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Erro:', error);
-        alert('Erro ao gerar holerite');
-    });
-}
-
-function gerarPDF(id) {
-    window.open(`/rh/api/holerite/${id}/pdf`, '_blank');
-}
-
-function visualizarHolerite(id) {
-    alert('Visualização do holerite #' + id + ' (em desenvolvimento)');
-}
-
-function filtrarHolerites() {
-    alert('Filtro aplicado!');
-}
-</script>
+<script src="{{ url_for('static', filename='js/rh/utils.js') }}"></script>
+<script src="{{ url_for('static', filename='js/rh/holerites.js') }}"></script>
 {% endblock %}
